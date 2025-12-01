@@ -279,7 +279,7 @@
         #magic-particles {
             position: absolute; top: 50%; left: 50%;
             width: 0; height: 0; transform-style: preserve-3d;
-            z-index: 80; /* ЗА КАРТОЙ */
+            z-index: 80; /* ЗА КАРТОЙ - УВЕЛИЧИЛ С 80 ДО 90 */
             pointer-events: none;
         }
         .particle {
@@ -365,24 +365,23 @@
     <script>
         // --- КОНФИГУРАЦИЯ ---
         
-        // Все картинки (предсказания и рубашка) должны быть в формате .webp и лежать в папке images/
-        const predictionImages = Array.from({length: 12}, (_, i) => `images/${i + 1}.webp`);
-        const backCoverImageSrc = 'images/back.webp'; 
-
+        // Данные предсказаний с соответствующими картинками
         const predictionData = [
-            "Вы не лошадь. Снимите ярмо, подковы и делегируйте свои задачи коллегам.",
-            "Танцуйте танго, пейте вино. Счастливый начальник — это нормальная атмосфера в коллективе.",
-            "Let it be. Иногда у нас не получается строить бизнес, возможно пришло время для наставничества.",
-            "Медитация: вдох и выдох. Успокойте ум, чтобы увидеть решения ясно.",
-            "Рискуйте. Удача любит смелых, особенно в первом квартале 2026 года.",
-            "Автоматизируйте. Роботы не спят, пусть работают они, а вы творите.",
-            "Нетворкинг — ваша сила. Один звонок может решить проблему года.",
-            "Берегите ресурсы. Оптимизация расходов даст неожиданный рост.",
-            "Учитесь. Новые знания откроют голубой океан там, где была конкуренция.",
-            "Интуиция не врет. Слушайте внутренний голос, он громче отчетов.",
-            "Смените фокус. Иногда нужно отойти, чтобы увидеть картину целиком.",
-            "Празднуйте победы. Маленькие шаги ведут к большой цели."
+            { text: "Вы не лошадь. Снимите ярмо, подковы и делегируйте свои задачи коллегам.", image: "1.webp" },
+            { text: "Танцуйте танго, пейте вино. Счастливый начальник — это нормальная атмосфера в коллективе.", image: "2.webp" },
+            { text: "Let it be. Иногда у нас не получается строить бизнес, возможно пришло время для наставничества.", image: "3.webp" },
+            { text: "Медитация: вдох и выдох. Успокойте ум, чтобы увидеть решения ясно.", image: "4.webp" },
+            { text: "Рискуйте. Удача любит смелых, особенно в первом квартале 2026 года.", image: "5.webp" },
+            { text: "Автоматизируйте. Роботы не спят, пусть работают они, а вы творите.", image: "6.webp" },
+            { text: "Нетворкинг — ваша сила. Один звонок может решить проблему года.", image: "7.webp" },
+            { text: "Берегите ресурсы. Оптимизация расходов даст неожиданный рост.", image: "8.webp" },
+            { text: "Учитесь. Новые знания откроют голубой океан там, где была конкуренция.", image: "9.webp" },
+            { text: "Интуиция не врет. Слушайте внутренний голос, он громче отчетов.", image: "10.webp" },
+            { text: "Смените фокус. Иногда нужно отойти, чтобы увидеть картину целиком.", image: "11.webp" },
+            { text: "Празднуйте победы. Маленькие шаги ведут к большой цели.", image: "12.webp" }
         ];
+
+        const backCoverImageSrc = 'images/back.webp'; 
 
         const app = document.getElementById('app-container');
         const intro = document.getElementById('scene-intro');
@@ -483,8 +482,7 @@
             for(let i=0; i<count; i++) {
                 const el = document.createElement('div');
                 el.className = 'card-container interactive';
-                const text = predictionData[i % predictionData.length];
-                const imgName = predictionImages[i % predictionImages.length];
+                const prediction = predictionData[i % predictionData.length];
                 
                 el.innerHTML = `
                     <div class="card">
@@ -495,9 +493,9 @@
                         <!-- Back - это лицевая сторона с предсказанием -->
                         <div class="card-face card-back">
                             <!-- Индивидуальная картинка -->
-                            <img class="pred-image" src="${imgName}" alt="Предсказание" style="filter: blur(15px); transition: filter 0.8s ease;" onerror="this.style.display='none'; this.parentNode.style.backgroundColor='#00A691';">
+                            <img class="pred-image" src="images/${prediction.image}" alt="Предсказание" style="filter: blur(15px); transition: filter 0.8s ease;" onerror="this.style.display='none'; this.parentNode.style.backgroundColor='#00A691';">
                             <div class="pred-text-container" style="opacity: 0; transition: opacity 0.5s ease 0.5s;">
-                                <div class="pred-text-content">${text}</div>
+                                <div class="pred-text-content">${prediction.text}</div>
                             </div>
                         </div>
                     </div>
