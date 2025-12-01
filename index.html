@@ -92,8 +92,8 @@
             z-index: 10;
             display: flex; flex-direction: column;
             align-items: center; justify-content: center;
-            /* Сильная перспектива для эффекта Fisheye */
-            perspective: 600px; 
+            /* Стандартная перспектива */
+            perspective: 1000px; 
             overflow: hidden;
         }
 
@@ -196,14 +196,13 @@
         .carousel-pivot {
             position: absolute; top: 50%; left: 50%;
             transform-style: preserve-3d;
-            /* Немного наклоняем, чтобы подчеркнуть Fisheye/объем, но без вихря */
-            transform: rotateX(-2deg);
+            /* Наклоняем кольцо, чтобы видеть задние карты */
+            transform: rotateX(-10deg);
         }
 
         /* --- КАРТОЧКА --- */
         .card-wrapper {
             position: absolute; top: 50%; left: 50%;
-            /* Использование переменных для точного размера */
             width: var(--card-base-width);
             height: var(--card-height);
             margin-left: calc(var(--card-base-width) * -0.5);
@@ -306,8 +305,7 @@
             .pred-text { font-size: 14px; }
             .pred-text-box { padding: 20px 15px 30px; }
             
-            /* На мобильных чуть уменьшаем перспективу, чтобы "рыбий глаз" не был слишком диким на узком экране */
-            #app-container { perspective: 500px; }
+            #app-container { perspective: 800px; }
         }
     </style>
 </head>
@@ -483,7 +481,7 @@
             loop();
         }
 
-        // --- ЛОГИКА ГАЛЕРЕИ (БЕЗ ВИХРЯ, НО С FISHEYE) ---
+        // --- ЛОГИКА ГАЛЕРЕИ (БЕЗ ВИХРЯ, КЛАССИЧЕСКАЯ 3D-КАРУСЕЛЬ) ---
         function renderCarousel() {
             if (state === 'result') return;
 
@@ -496,8 +494,7 @@
             }
 
             // Настройка радиуса карусели
-            // Делаем радиус достаточно большим, чтобы между 12 картами было пространство
-            const radius = window.innerWidth < 768 ? 400 : 700;
+            const radius = window.innerWidth < 768 ? 320 : 600;
             
             cards.forEach(card => {
                 const base = parseFloat(card.dataset.baseAngle);
@@ -507,45 +504,37 @@
                 const x = Math.sin(theta) * radius;
                 const z = Math.cos(theta) * radius;
                 
-                // УБРАН ВИХРЬ (Y был с искажением, теперь 0)
                 const y = 0; 
 
-                // Угол поворота карты (смотрит в центр)
+                // Угол поворота карты
                 const rotY = (base + angle);
                 
-                // --- ЛОГИКА FISHEYE И BLUR ---
-                // Используем нормализованную Z (-radius..+radius) для эффектов
-                // Карты сзади (z < 0) должны быть размыты и меньше
+                // --- ГЛУБИНА И ЭФФЕКТЫ ---
+                // Нормализация Z: +radius это спереди, -radius это сзади
+                // Диапазон Z примерно от -radius до +radius
                 
-                // distFactor: 1 (спереди), 0 (сзади)
-                let distFactor = (z + radius) / (2 * radius); 
+                let distFactor = (z + radius) / (2 * radius); // 0 (далеко/сзади) ... 1 (близко/спереди)
                 
+                // Легкое изменение масштаба для перспективы (0.85 сзади, 1.0 спереди)
+                // Сделали разницу меньше, чтобы задние карты были хорошо видны
+                let scale = 0.85 + (distFactor * 0.15); 
+                
+                // Легкий блюр только для самых дальних карт
+                // Если карта на заднем плане (distFactor < 0.5)
                 let blur = 0;
-                let opacity = 1;
-                let scale = 1;
-
-                if (z < 50) { // Если карта не на переднем плане
-                   // Плавное нарастание блюра назад
-                   blur = (radius - z) / 25; 
-                   // Прозрачность падает
-                   opacity = 0.3 + distFactor * 0.7;
-                   // Масштаб сзади меньше (подчеркивает Fisheye)
-                   scale = 0.7;
-                } else {
-                    // Передние карты
-                    blur = 0;
-                    opacity = 1;
-                    scale = 1;
+                if (distFactor < 0.4) {
+                    blur = (0.4 - distFactor) * 10; // Максимум 4px блюра
                 }
+                
+                // Прозрачность
+                let opacity = 0.6 + (distFactor * 0.4);
 
                 card.style.transform = `translate3d(${x}px, ${y}px, ${z}px) rotateY(${rotY}deg) scale(${scale})`;
                 card.style.opacity = opacity;
                 
-                // Применяем фильтр для размытия
                 const inner = card.querySelector('.card');
-                inner.style.filter = blur > 0 ? `blur(${blur}px)` : 'none';
-                // Затемнение задних карт
-                inner.style.brightness = 0.5 + (distFactor * 0.5); 
+                inner.style.filter = blur > 0.5 ? `blur(${blur}px)` : 'none';
+                inner.style.brightness = 0.6 + (distFactor * 0.4); 
             });
 
             animationFrame = requestAnimationFrame(renderCarousel);
