@@ -55,15 +55,14 @@
             pointer-events: none; z-index: 1;
         }
 
-        /* --- КОНТЕЙНЕР (Fish-eye Perspective) --- */
+        /* --- КОНТЕЙНЕР --- */
         #app-container {
             position: relative;
             width: 100%; height: 100%;
             z-index: 10;
             display: flex; flex-direction: column;
             align-items: center; justify-content: center;
-            /* Сильная перспектива для эффекта линзы */
-            perspective: 800px; 
+            perspective: 1000px; 
             overflow: hidden;
         }
 
@@ -159,8 +158,8 @@
         #scene-vortex {
             z-index: 15; opacity: 0; pointer-events: none;
             transform-style: preserve-3d;
-            /* Дополнительный наклон всей сцены для объема */
-            transform: rotateX(5deg); 
+            /* Убрали наклон для плоской карусели */
+            transform: rotateX(0deg); 
         }
         #scene-vortex.active { opacity: 1; pointer-events: auto; }
 
@@ -178,7 +177,6 @@
             margin-top: calc(var(--card-base-width) * var(--card-ratio) * -0.5);
             transform-style: preserve-3d;
             cursor: pointer;
-            /* Улучшаем рендеринг */
             backface-visibility: hidden; 
         }
 
@@ -311,7 +309,7 @@
         <!-- СЦЕНА 2: ВИХРЬ -->
         <div id="scene-vortex" class="scene">
             <div class="carousel-pivot" id="carousel-root"></div>
-            <div style="position: absolute; bottom: 8%; opacity: 0.6; font-size: 13px; text-transform: uppercase; letter-spacing: 2px;">Вращайте спираль</div>
+            <div style="position: absolute; bottom: 8%; opacity: 0.6; font-size: 13px; text-transform: uppercase; letter-spacing: 2px;">Вращайте карты</div>
         </div>
 
         <!-- UI ФИНАЛА -->
@@ -350,8 +348,8 @@
             { text: "Празднуйте победы. Маленькие шаги ведут к большой цели.", img: "images/12.webp" }
         ];
 
-        // Удваиваем данные для плотности спирали (24 шт)
-        const predictions = [...rawData, ...rawData];
+        // Используем 12 карточек в кольце, этого достаточно для экрана
+        const predictions = [...rawData];
 
         const backImage = "images/back.webp";
 
@@ -407,11 +405,6 @@
                 
                 wrapper.dataset.baseAngle = index * step;
                 wrapper.dataset.index = index;
-                
-                // Для спирали: смещение по вертикали
-                // Индексы от 0 до 23. Сделаем так, чтобы 0 и 23 были "выше/ниже", а в центре сходились.
-                // Или просто linear spiral:
-                wrapper.dataset.yOffset = (index - count/2) * 25; // Растягиваем по вертикали
 
                 wrapper.addEventListener('click', () => {
                     if (state === 'spinning' && Math.abs(currentVelocity) < 1.5) selectCard(wrapper);
@@ -426,86 +419,59 @@
         }
 
         function handleResize() {
-            // Размеры задаются через CSS переменные в медиа-запросах,
-            // но радиус орбиты можно подкорректировать тут
+            // Размеры задаются через CSS переменные в медиа-запросах
         }
 
         function renderCarousel() {
             if (state === 'result') return;
             if (!isDragging && state === 'spinning') {
-                currentVelocity *= 0.96; // Чуть больше инерции
+                currentVelocity *= 0.96; // Инерция
                 angle += currentVelocity;
                 if (Math.abs(currentVelocity) < 0.05) angle += 0.05; 
             }
 
-            // Радиус вихря. Меньше - плотнее.
-            let radius = window.innerWidth < 768 ? 280 : 450;
+            // Радиус кольца. Подбираем так, чтобы все помещалось.
+            // При 12 картах и ширине карты ~200px, периметр ~2400+. R = P/2PI ~= 380px.
+            // На мобильных R должен быть меньше.
+            let radius = window.innerWidth < 768 ? 200 : 380;
             
-            // Основной наклон вихря для эффекта объема
-            const tiltX = 10; // Наклон вперед/назад
-
             cards.forEach(card => {
                 const base = parseFloat(card.dataset.baseAngle);
-                const yOffset = parseFloat(card.dataset.yOffset);
                 
                 // Текущий угол в радианах
                 const theta = (base + angle) * Math.PI / 180;
                 
-                // Расчет координат (Спираль)
-                // x и z - круг
-                // y - зависит от индекса, но мы хотим чтобы "активная" зона (перед зрителем) была в центре по Y
+                const x = Math.sin(theta) * radius;
+                const z = Math.cos(theta) * radius; // Z на нас положителен, если cos(0)
                 
-                // Нормализуем угол, чтобы найти "расстояние" до переднего плана (270 градусов или PI*1.5 обычно низ, 90 верх, 0 право, 180 лево. 
-                // В CSS 3D обычно 0 - это Z+ (на нас) или X+? translateZ смещает на нас. 
-                // Math.sin/cos: cos(0)=1 (право), sin(0)=0. cos(90)=0, sin(90)=1 (вглубь/назад). 
-                // Сделаем Z на нас это sin(theta).
-                
-                const x = Math.cos(theta) * radius;
-                const z = Math.sin(theta) * radius; 
-                
-                // Спираль должна закручиваться. Добавим смещение по Y, зависящее от угла поворота (чтобы спираль крутилась)
-                // Или просто фиксированная спираль, которая вращается целиком?
-                // Фиксированная спираль вращается вокруг Y.
-                
-                // Простая модель: фиксированное смещение yOffset
-                let y = yOffset;
+                // Плоское кольцо, Y = 0
+                let y = 0;
 
-                // Fish-eye искажение
-                // Чем ближе Z к нам (положительное), тем больше масштаб
-                // Но CSS perspective делает это сам, если мы не будем сильно скейлить вручную.
-                // Чтобы усилить эффект "линзы", мы можем "выпучивать" центральные элементы.
-                
-                // Дистанция до "переднего плана" (z = radius)
-                // z меняется от -radius до +radius.
-                
+                // Эффект глубины и масштаба для "линзы" (передние крупнее)
                 let scale = 1;
                 let blur = 0;
                 let opacity = 1;
 
                 if (z > 0) {
                     // Передний план
-                    scale = 1 + (z / radius) * 0.2; // Небольшое увеличение
+                    scale = 1 + (z / radius) * 0.15; // Небольшое увеличение в центре
                     blur = 0;
                     opacity = 1;
                 } else {
                     // Задний план
-                    scale = 1 - (Math.abs(z) / radius) * 0.4;
-                    blur = (Math.abs(z) / radius) * 10; // Сильный блюр сзади
-                    opacity = 0.5 + (1 - Math.abs(z)/radius) * 0.5;
+                    scale = 1 - (Math.abs(z) / radius) * 0.3;
+                    blur = (Math.abs(z) / radius) * 5; 
+                    opacity = 0.6 + (1 - Math.abs(z)/radius) * 0.4;
                 }
 
-                // Вращение самой карточки, чтобы она смотрела на центр или на зрителя
-                // rotateY(-theta) компенсирует вращение карусели, карта всегда лицом к зрителю
-                // Но для вихря красивее, если они чуть повернуты.
-                const rotY = -(base + angle) + 90; // +90 чтобы лицом
+                const rotY = (base + angle);
 
                 card.style.transform = `translate3d(${x}px, ${y}px, ${z}px) rotateY(${rotY}deg) scale(${scale})`;
                 card.style.opacity = opacity;
                 
                 const cardInner = card.querySelector('.card');
                 cardInner.style.filter = `blur(${blur}px)`;
-                // Затемнение задних
-                cardInner.style.brightness = z > 0 ? 1 : 0.6;
+                cardInner.style.brightness = z > 0 ? 1 : 0.7;
             });
 
             animationFrame = requestAnimationFrame(renderCarousel);
@@ -536,7 +502,7 @@
                 introScene.style.display = 'none';
                 vortexScene.classList.add('active');
                 state = 'spinning';
-                currentVelocity = 15;
+                currentVelocity = 10;
                 renderCarousel();
             }, 600);
         }
@@ -550,17 +516,15 @@
                 if (c !== cardWrapper) {
                     c.style.transition = 'all 0.8s ease';
                     c.style.opacity = 0;
-                    c.style.transform = 'translate3d(0,0,-2000px) scale(0)';
+                    c.style.transform = 'translate3d(0,0,-1000px) scale(0)';
                 }
             });
 
-            // 2. Центрируем выбранную (подлетает к камере)
-            // Расчет масштаба, чтобы занимать 60% высоты
+            // 2. Центрируем выбранную
+            // Вычисляем масштаб для заполнения 60% высоты
             const vh = window.innerHeight;
             const targetHeight = vh * 0.60; 
-            const cardBaseH = parseFloat(getComputedStyle(cardWrapper).height);
-            // Так как cardBaseH рассчитывается через CSS calc и может быть неточным в JS до рендера,
-            // возьмем пропорцию из CSS переменных
+            
             const baseW = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--card-base-width'));
             const ratio = 1.5;
             const actualH = baseW * ratio;
@@ -568,9 +532,8 @@
             const scaleFactor = targetHeight / actualH;
 
             cardWrapper.style.transition = 'transform 1.2s cubic-bezier(0.2, 0.8, 0.2, 1)';
-            // Сбрасываем все смещения и ставим по центру, приближаем (translateZ)
-            // Важно: y=0, x=0
-            cardWrapper.style.transform = `translate3d(0, 0, 200px) rotateY(0deg) scale(${scaleFactor})`;
+            // Ставим ровно по центру экрана
+            cardWrapper.style.transform = `translate3d(0, 0, 100px) rotateY(0deg) scale(${scaleFactor})`;
             cardWrapper.style.zIndex = 100;
             
             const cardInner = cardWrapper.querySelector('.card');
@@ -593,15 +556,12 @@
 
         function spawnOrbitParticles() {
             particlesContainer.innerHTML = '';
-            // Создаем кольца частиц
             const count = 60;
             const colors = ['#42E3B4', '#04C9B0', '#FFF'];
             
-            // Радиус чуть больше карточки
-            const w = window.innerWidth;
+            // Радиус орбиты чуть больше карточки
             const h = window.innerHeight;
-            // Примерный радиус орбиты
-            const radiusBase = (h * 0.6) * 0.4; // 40% от высоты карточки
+            const radiusBase = (h * 0.6) * 0.4; 
 
             for(let i=0; i<count; i++) {
                 const p = document.createElement('div');
