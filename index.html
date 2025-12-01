@@ -19,7 +19,11 @@
             --accent: #42E3B4;
             
             --card-ratio: 1.6;
-            --card-base-width: 280px; /* Базовый размер для десктопа */
+            
+            /* Высота карточки = 60% от высоты экрана */
+            --card-height: 60vh;
+            /* Ширина считается от высоты */
+            --card-base-width: calc(var(--card-height) / var(--card-ratio)); 
         }
 
         body, html {
@@ -33,7 +37,7 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* --- НОВЫЙ ФОН (Mesh Gradient Animation) --- */
+        /* --- ФОН (Mesh Gradient Animation) --- */
         .ambient-bg {
             position: absolute;
             top: 0; left: 0;
@@ -51,7 +55,7 @@
             animation: orbFloat 20s infinite ease-in-out;
         }
 
-        /* Настраиваем цвета градиентов под стиль Cameron Knight но с нашей гаммой */
+        /* Настраиваем цвета градиентов */
         .orb-1 {
             width: 80vw; height: 80vw;
             background: radial-gradient(circle, #004d40 0%, transparent 70%);
@@ -93,7 +97,7 @@
             overflow: hidden;
         }
 
-        /* --- НОВАЯ КНОПКА (Avoloch Style) --- */
+        /* --- КНОПКА (Avoloch Style) --- */
         .stardust-btn {
             position: relative;
             background: transparent;
@@ -107,57 +111,35 @@
             text-transform: uppercase;
             letter-spacing: 3px;
             transition: transform 0.2s;
-            /* Скрываем частицы, вылетающие за пределы кнопки */
             overflow: hidden; 
             border-radius: 50px;
             box-shadow: 0 10px 40px -10px rgba(0, 229, 192, 0.5);
         }
         
-        /* Фон кнопки */
         .stardust-btn::before {
-            content: '';
-            position: absolute;
-            inset: 0;
+            content: ''; position: absolute; inset: 0;
             background: linear-gradient(90deg, #00695c, #004d40);
-            z-index: -2;
-            border-radius: 50px;
+            z-index: -2; border-radius: 50px;
         }
         
-        /* Глоу эффект */
         .stardust-btn::after {
-            content: '';
-            position: absolute;
-            inset: 0;
+            content: ''; position: absolute; inset: 0;
             background: linear-gradient(90deg, #04C9B0, #42E3B4);
-            opacity: 0.2;
-            z-index: -1;
-            filter: blur(10px);
+            opacity: 0.2; z-index: -1; filter: blur(10px);
             transition: opacity 0.3s;
         }
 
-        .stardust-btn:hover {
-            transform: scale(1.05);
-        }
-        .stardust-btn:hover::after {
-            opacity: 0.4;
-        }
+        .stardust-btn:hover { transform: scale(1.05); }
+        .stardust-btn:hover::after { opacity: 0.4; }
 
-        /* Канвас для частиц внутри кнопки */
         .btn-canvas {
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            pointer-events: none;
-            z-index: 0;
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 0;
         }
         
-        .btn-text {
-            position: relative;
-            z-index: 1;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
-        }
+        .btn-text { position: relative; z-index: 1; text-shadow: 0 2px 10px rgba(0,0,0,0.3); }
 
-        /* Кнопки действий (повторить/поделиться) */
+        /* Кнопки действий */
         .action-btn {
             background: rgba(255, 255, 255, 0.05);
             backdrop-filter: blur(10px);
@@ -207,34 +189,28 @@
         #scene-vortex {
             z-index: 15; opacity: 0; pointer-events: none;
             transform-style: preserve-3d;
-            /* Небольшой наклон всей сцены для объема */
-            transform: translateY(0) scale(0.8);
             transition: opacity 1s, transform 1s;
         }
-        #scene-vortex.active { 
-            opacity: 1; 
-            pointer-events: auto; 
-            transform: translateY(0) scale(1);
-        }
+        #scene-vortex.active { opacity: 1; pointer-events: auto; }
 
-        /* Точка вращения карусели */
         .carousel-pivot {
             position: absolute; top: 50%; left: 50%;
             transform-style: preserve-3d;
-            /* Наклон вихря по оси X, чтобы видеть "глубину" */
-            transform: rotateX(-5deg); 
+            /* Немного наклоняем, чтобы подчеркнуть Fisheye/объем, но без вихря */
+            transform: rotateX(-2deg);
         }
 
         /* --- КАРТОЧКА --- */
         .card-wrapper {
             position: absolute; top: 50%; left: 50%;
+            /* Использование переменных для точного размера */
             width: var(--card-base-width);
-            height: calc(var(--card-base-width) * var(--card-ratio));
+            height: var(--card-height);
             margin-left: calc(var(--card-base-width) * -0.5);
-            margin-top: calc(var(--card-base-width) * var(--card-ratio) * -0.5);
+            margin-top: calc(var(--card-height) * -0.5);
+            
             transform-style: preserve-3d;
             cursor: pointer;
-            /* Изначально невидимы для плавного появления */
         }
 
         .card {
@@ -243,7 +219,6 @@
             transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
             border-radius: 24px;
             box-shadow: 0 10px 40px rgba(0,0,0,0.8);
-            /* Убираем мерцание граней */
             will-change: transform; 
         }
 
@@ -285,89 +260,54 @@
         /* --- ЧАСТИЦЫ ФИНАЛА (Convergence) --- */
         #particles-container {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 60; /* Поверх карты */
-            pointer-events: none;
-            overflow: hidden;
+            z-index: 60; pointer-events: none; overflow: hidden;
         }
         
         .particle {
-            position: absolute;
-            background: white;
-            border-radius: 50%;
-            opacity: 0;
+            position: absolute; background: white; border-radius: 50%; opacity: 0;
         }
 
-        /* Анимация стягивания к центру */
         @keyframes converge {
-            0% { 
-                opacity: 0; 
-                transform: translate(var(--startX), var(--startY)) scale(0);
-            }
+            0% { opacity: 0; transform: translate(var(--startX), var(--startY)) scale(0); }
             20% { opacity: 0.8; transform: translate(var(--startX), var(--startY)) scale(1); }
-            100% { 
-                opacity: 0; 
-                transform: translate(var(--endX), var(--endY)) scale(0.1);
-            }
+            100% { opacity: 0; transform: translate(var(--endX), var(--endY)) scale(0.1); }
         }
         
-        /* Свечение за картой в финале */
         .final-glow {
-            position: absolute; top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
             width: 100vw; height: 100vh;
             background: radial-gradient(circle, rgba(66, 227, 180, 0.15) 0%, transparent 60%);
-            z-index: 5; opacity: 0; transition: opacity 1.5s;
-            pointer-events: none;
+            z-index: 5; opacity: 0; transition: opacity 1.5s; pointer-events: none;
         }
 
         /* --- UI ФИНАЛА --- */
         #final-ui {
-            position: absolute; bottom: 10%; z-index: 100;
-            display: none; 
-            flex-direction: row; 
-            gap: 20px;
+            position: absolute; bottom: 5%; z-index: 100;
+            display: none; flex-direction: row; gap: 20px;
             justify-content: center; width: 100%;
-            opacity: 0;
-            animation: fadeInUI 1s forwards 0.5s;
+            opacity: 0; animation: fadeInUI 1s forwards 0.5s;
         }
         @keyframes fadeInUI { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
         /* --- АДАПТИВ (Mobile) --- */
         @media (max-width: 768px) {
-            :root {
-                /* Уменьшаем размер карточек для мобильных */
-                --card-base-width: 160px; 
-            }
-            
-            #scene-vortex {
-                 /* На телефоне чуть дальше отодвигаем, чтобы влезло больше контекста */
-                 perspective: 400px;
-            }
-
-            .carousel-pivot {
-                 /* На телефоне карточки ближе к зрителю по Z */
-                 transform: translateZ(-50px) rotateX(-5deg);
-            }
-
             .h1-title { margin-bottom: 30px; font-size: 42px; }
             
-            /* Кнопки в колонку и по центру */
             #final-ui {
-                flex-direction: column;
-                align-items: center;
-                bottom: 8%;
-                gap: 15px;
+                flex-direction: column; align-items: center;
+                bottom: 5%; gap: 15px;
             }
             
             .action-btn {
-                width: 200px;
-                justify-content: center;
-                padding: 14px;
-                font-size: 14px;
+                width: 200px; justify-content: center;
+                padding: 14px; font-size: 14px;
             }
             
             .pred-text { font-size: 14px; }
             .pred-text-box { padding: 20px 15px 30px; }
+            
+            /* На мобильных чуть уменьшаем перспективу, чтобы "рыбий глаз" не был слишком диким на узком экране */
+            #app-container { perspective: 500px; }
         }
     </style>
 </head>
@@ -389,14 +329,13 @@
         <div id="scene-intro" class="scene">
             <h1 class="h1-title">Бизнес<br>Предсказание<br>2026</h1>
             
-            <!-- Новая кнопка -->
             <button class="stardust-btn" onclick="startGame()">
                 <canvas class="btn-canvas" id="btn-canvas-intro"></canvas>
                 <span class="btn-text">Получить знак</span>
             </button>
         </div>
 
-        <!-- СЦЕНА 2: ВИХРЬ -->
+        <!-- СЦЕНА 2: ГАЛЕРЕЯ -->
         <div id="scene-vortex" class="scene">
             <div class="carousel-pivot" id="carousel-root"></div>
             <div style="position: absolute; bottom: 12%; opacity: 0.5; font-size: 12px; text-transform: uppercase; letter-spacing: 2px;">Вращайте карты</div>
@@ -418,8 +357,8 @@
 
     <script>
         // --- ДАННЫЕ ---
-        // Утроим массив для создания эффекта плотного вихря
-        const basePredictions = [
+        // Возвращаемся к оригинальному количеству (12), чтобы было пространство (Space)
+        const predictions = [
             { text: "Вы не лошадь. Снимите ярмо, подковы и делегируйте свои задачи коллегам.", img: "images/1.webp" },
             { text: "Танцуйте танго, пейте вино. Счастливый начальник — это нормальная атмосфера.", img: "images/2.webp" },
             { text: "Let it be. Иногда у нас не получается строить бизнес, возможно время для наставничества.", img: "images/3.webp" },
@@ -434,9 +373,6 @@
             { text: "Празднуйте победы. Маленькие шаги ведут к большой цели.", img: "images/12.webp" }
         ];
         
-        // Создаем больше карточек (36 штук)
-        const predictions = [...basePredictions, ...basePredictions, ...basePredictions];
-
         const backImage = "images/back.webp";
 
         // --- ЭЛЕМЕНТЫ ---
@@ -448,19 +384,21 @@
         const finalGlow = document.getElementById('final-glow');
 
         let cards = [];
-        let angle = 0; // Текущий угол вращения
+        let angle = 0; 
         let isDragging = false;
         let startX = 0;
         let currentVelocity = 0;
         let animationFrame;
-        let state = 'intro'; // intro, spinning, selecting, result
+        let state = 'intro';
 
-        // --- ИНИЦИАЛИЗАЦИЯ ---
         function init() {
             createCards();
-            window.addEventListener('resize', handleResize);
-            handleResize();
             initButtonParticles('btn-canvas-intro');
+            
+            window.addEventListener('resize', () => {
+                // При ресайзе пересчитываем радиус или другие параметры если нужно
+                // Но CSS теперь делает основную работу по размеру
+            });
         }
 
         function createCards() {
@@ -505,7 +443,6 @@
             const ctx = canvas.getContext('2d');
             let w, h;
             const particles = [];
-            
             const resize = () => {
                 const rect = canvas.parentElement.getBoundingClientRect();
                 w = canvas.width = rect.width;
@@ -519,7 +456,7 @@
                 reset() {
                     this.x = Math.random() * w;
                     this.y = Math.random() * h;
-                    this.vx = (Math.random() - 0.5) * 0.5; // Медленное движение
+                    this.vx = (Math.random() - 0.5) * 0.5;
                     this.vy = (Math.random() - 0.5) * 0.5;
                     this.size = Math.random() * 1.5;
                     this.alpha = Math.random() * 0.5 + 0.1;
@@ -546,17 +483,7 @@
             loop();
         }
 
-        // --- ЛОГИКА ВИХРЯ (FISHEYE & VORTEX) ---
-        function handleResize() {
-            // Адаптивная ширина базы
-            if (window.innerWidth <= 768) {
-                // Мобильная
-                document.documentElement.style.setProperty('--card-base-width', '180px');
-            } else {
-                document.documentElement.style.setProperty('--card-base-width', '280px');
-            }
-        }
-
+        // --- ЛОГИКА ГАЛЕРЕИ (БЕЗ ВИХРЯ, НО С FISHEYE) ---
         function renderCarousel() {
             if (state === 'result') return;
 
@@ -568,46 +495,44 @@
                 if (Math.abs(currentVelocity) < 0.15) angle += 0.15; 
             }
 
-            // Настройка радиуса вихря
-            // На мобильном меньше, на десктопе больше
-            const radius = window.innerWidth < 768 ? 450 : 800;
+            // Настройка радиуса карусели
+            // Делаем радиус достаточно большим, чтобы между 12 картами было пространство
+            const radius = window.innerWidth < 768 ? 400 : 700;
             
             cards.forEach(card => {
                 const base = parseFloat(card.dataset.baseAngle);
-                // Текущий угол в радианах
                 const theta = (base + angle) * Math.PI / 180;
                 
-                // --- VORTEX LOGIC ---
-                // X и Z как в круге
+                // Классический круг по X/Z
                 const x = Math.sin(theta) * radius;
                 const z = Math.cos(theta) * radius;
                 
-                // Добавляем искажение по Y (вихрь/спираль)
-                // Чем дальше карта по Z (сзади), тем выше или ниже она
-                // Или просто волна
-                const y = Math.sin(theta * 2) * 100; // Волнообразное движение
+                // УБРАН ВИХРЬ (Y был с искажением, теперь 0)
+                const y = 0; 
 
-                // Вычисляем угол поворота самой карты, чтобы она смотрела в центр
-                // + добавляем небольшое хаотичное отклонение для "взрыва" или "вихря"
+                // Угол поворота карты (смотрит в центр)
                 const rotY = (base + angle);
                 
-                // --- FOCUS BLUR LOGIC ---
-                // Нормализуем Z для прозрачности и блюра
-                // z меняется от -radius до +radius. +radius это ближе к нам.
-                // Блюрим все, что не спереди
-                let distFactor = (z + radius) / (2 * radius); // 0 (далеко) to 1 (близко)
+                // --- ЛОГИКА FISHEYE И BLUR ---
+                // Используем нормализованную Z (-radius..+radius) для эффектов
+                // Карты сзади (z < 0) должны быть размыты и меньше
                 
-                // Резкое падение фокуса
+                // distFactor: 1 (спереди), 0 (сзади)
+                let distFactor = (z + radius) / (2 * radius); 
+                
                 let blur = 0;
                 let opacity = 1;
                 let scale = 1;
 
-                if (z < 100) { // Если карта не совсем спереди
-                   blur = (radius - z) / 20; // Чем дальше, тем сильнее блюр
+                if (z < 50) { // Если карта не на переднем плане
+                   // Плавное нарастание блюра назад
+                   blur = (radius - z) / 25; 
+                   // Прозрачность падает
                    opacity = 0.3 + distFactor * 0.7;
-                   scale = 0.8;
+                   // Масштаб сзади меньше (подчеркивает Fisheye)
+                   scale = 0.7;
                 } else {
-                    // Карты спереди
+                    // Передние карты
                     blur = 0;
                     opacity = 1;
                     scale = 1;
@@ -616,17 +541,17 @@
                 card.style.transform = `translate3d(${x}px, ${y}px, ${z}px) rotateY(${rotY}deg) scale(${scale})`;
                 card.style.opacity = opacity;
                 
-                // Применяем фильтр к внутренней части карты для производительности
+                // Применяем фильтр для размытия
                 const inner = card.querySelector('.card');
                 inner.style.filter = blur > 0 ? `blur(${blur}px)` : 'none';
-                // Затемняем задние карты
+                // Затемнение задних карт
                 inner.style.brightness = 0.5 + (distFactor * 0.5); 
             });
 
             animationFrame = requestAnimationFrame(renderCarousel);
         }
 
-        // --- УПРАВЛЕНИЕ (Touch/Mouse) ---
+        // --- УПРАВЛЕНИЕ ---
         document.addEventListener('mousedown', e => { if(state==='spinning'){ isDragging=true; startX=e.clientX; } });
         document.addEventListener('touchstart', e => { if(state==='spinning'){ isDragging=true; startX=e.touches[0].clientX; } }, {passive:false});
         
@@ -662,21 +587,19 @@
             state = 'selecting';
             cancelAnimationFrame(animationFrame);
             
-            // 1. Убираем все остальные карты (взрыв наружу или исчезновение)
+            // 1. Убираем остальные
             cards.forEach(c => {
                 if (c !== cardWrapper) {
-                    // Раскидываем их в пространстве и растворяем
                     const rndX = (Math.random() - 0.5) * 2000;
-                    const rndY = (Math.random() - 0.5) * 2000;
                     c.style.transition = 'all 0.8s ease';
-                    c.style.transform = `translate3d(${rndX}px, ${rndY}px, -1000px) scale(0)`;
+                    c.style.transform = `translate3d(${rndX}px, 0, -1000px) scale(0)`;
                     c.style.opacity = 0;
                 }
             });
 
-            // 2. Анимируем выбранную карту в центр
+            // 2. Анимируем выбранную
             cardWrapper.style.transition = 'all 1.2s cubic-bezier(0.19, 1, 0.22, 1)';
-            // Приближаем очень близко к камере
+            // Приближаем, но уже без вихревых искажений, просто по центру
             cardWrapper.style.transform = `translate3d(0, 0, 100px) rotateY(0deg) scale(1.1)`; 
             cardWrapper.style.zIndex = 100;
             
@@ -692,7 +615,7 @@
                 // Показ результата
                 setTimeout(() => {
                     cardWrapper.querySelector('.face-back').classList.add('visible');
-                    spawnConvergenceParticles(); // Запуск частиц
+                    spawnConvergenceParticles();
                     finalGlow.style.opacity = '1';
                     finalUi.style.display = 'flex';
                     state = 'result';
@@ -700,36 +623,26 @@
             }, 800);
         }
 
-        // --- НОВЫЕ ЧАСТИЦЫ: IMPLOSION (Стягивание) ---
+        // --- ЧАСТИЦЫ: СТЯГИВАНИЕ ---
         function spawnConvergenceParticles() {
             particlesContainer.innerHTML = '';
-            // Центр экрана
-            const cx = window.innerWidth / 2;
-            const cy = window.innerHeight / 2;
-            
-            const count = 60; // Количество частиц
-            
+            const count = 60;
             for(let i=0; i<count; i++) {
                 const p = document.createElement('div');
                 p.className = 'particle';
-                
-                // Размер
                 const size = Math.random() * 4 + 2;
                 p.style.width = size + 'px'; p.style.height = size + 'px';
                 
-                // Сине-зеленая гамма
-                const hue = 160 + Math.random() * 40; // от 160 (green) до 200 (blue)
+                const hue = 160 + Math.random() * 40;
                 p.style.background = `hsl(${hue}, 100%, 70%)`;
                 p.style.boxShadow = `0 0 10px hsl(${hue}, 100%, 50%)`;
 
-                // Начальная позиция (рандомно вокруг центра на расстоянии)
                 const angle = Math.random() * Math.PI * 2;
-                const dist = 300 + Math.random() * 300; // Далеко от центра
+                const dist = 300 + Math.random() * 300;
                 
                 const sx = Math.cos(angle) * dist + 'px';
                 const sy = Math.sin(angle) * dist + 'px';
                 
-                // Конечная позиция (центр, с небольшим разбросом)
                 const ex = (Math.random() - 0.5) * 50 + 'px';
                 const ey = (Math.random() - 0.5) * 50 + 'px';
 
@@ -738,31 +651,21 @@
                 p.style.setProperty('--endX', ex);
                 p.style.setProperty('--endY', ey);
                 
-                // Случайная скорость
                 const dur = 0.8 + Math.random() * 0.8;
                 p.style.animation = `converge ${dur}s ease-in forwards`;
                 
-                // Встраиваем прямо в контейнер, который по центру
-                // Чтобы координаты работали относительно центра экрана, 
-                // поместим их в контейнер с display flex center? 
-                // Нет, используем absolute left 50% top 50%
-                p.style.left = '50%';
-                p.style.top = '50%';
-                
+                p.style.left = '50%'; p.style.top = '50%';
                 particlesContainer.appendChild(p);
             }
         }
 
         function resetGame() {
-            // Сброс UI
             finalUi.style.display = 'none';
             finalUi.style.opacity = '0';
             particlesContainer.innerHTML = '';
             finalGlow.style.opacity = '0';
-            
             state = 'spinning';
 
-            // Возврат карты
             const activeCard = cards.find(c => c.style.zIndex == '100');
             if(activeCard) {
                 activeCard.style.zIndex = '';
@@ -772,7 +675,6 @@
                 activeCard.querySelector('.face-back').classList.remove('visible');
             }
 
-            // Возврат всех карт в строй
             cards.forEach(c => {
                 c.style.transition = 'transform 1s ease, opacity 1s ease';
                 c.style.opacity = 1;
