@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Бизнес Предсказание 2026</title>
+    <style>
+        /* --- Шрифты --- */
+        @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Oswald:wght@500;700&display=swap');
+
+        /* Основные цвета */
+        :root {
+            --color-bg-dark: #021813;
+            --color-btn-start: #00675A;
+            --color-btn-end: #00A691;
+            --color-svg-fill: #00DBA5;
+            --color-star-fill: #1FB996;
+
+             /* Размеры карточки (260x416 - уменьшенные для гармонии) */
+            --card-width: 260px;
+            --card-height: 416px;
+        }
+
+        body, html {
+            margin: 0; padding: 0;
+            width: 100%; height: 100%;
+            overflow: hidden;
+            background-color: var(--color-bg-dark);
+            font-family: 'Open Sans', sans-serif;
+            color: white;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        #app-container {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 1920px; height: 1080px;
+            background: var(--color-bg-dark); /* Чистый темный фон */
+            overflow: hidden;
+            border-radius: 20px;
+            box-shadow: 0 0 100px rgba(0,0,0,0.8);
+            backdrop-filter: blur(13.95px); -webkit-backdrop-filter: blur(13.95px);
+        }
+
+        /* --- Фоновые элементы (Динамические пятна) --- */
+        .bg-gradient-blob {
+            position: absolute;
+            filter: blur(90px);
+            opacity: 0.4;
+            animation: blobFloat 25s infinite ease-in-out alternate;
+            z-index: 1;
+            pointer-events: none;
+        }
+        
+        /* Изумрудный -> Голубой -> Зеленый */
+        .blob-1 {
+            top: 20%; left: 30%;
+            width: 900px; height: 900px;
+            background: radial-gradient(circle, #00DBA5 0%, transparent 70%);
+            animation-name: colorShift1, blobFloat;
+            animation-duration: 10s, 25s;
+            animation-iteration-count: infinite, infinite;
+        }
+
+        .blob-2 {
+            top: 50%; left: 60%;
+            width: 700px; height: 700px;
+            background: radial-gradient(circle, #1FB996 0%, transparent 70%);
+             animation-name: colorShift2, blobFloat;
+             animation-duration: 12s, 22s;
+             animation-iteration-count: infinite, infinite;
+             animation-delay: -5s;
+        }
+
+         @keyframes colorShift1 {
+            0% { background: radial-gradient(circle, #00DBA5 0%, transparent 70%); }
+            33% { background: radial-gradient(circle, #00A691 0%, transparent 70%); }
+            66% { background: radial-gradient(circle, #00c6ff 0%, transparent 70%); }
+            100% { background: radial-gradient(circle, #00DBA5 0%, transparent 70%); }
+        }
+         @keyframes colorShift2 {
+            0% { background: radial-gradient(circle, #1FB996 0%, transparent 70%); }
+            50% { background: radial-gradient(circle, #00DBA5 0%, transparent 70%); }
+            100% { background: radial-gradient(circle, #1FB996 0%, transparent 70%); }
+        }
+
+        @keyframes blobFloat {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(50px, -30px) scale(1.1); }
+        }
+
+        .bg-star-icon {
+            position: absolute;
+            opacity: 0.9;
+            z-index: 2;
+            pointer-events: none;
+            animation: starPulse 4s infinite ease-in-out;
+        }
+        @keyframes starPulse { 0%, 100% { opacity: 0.6; transform: scale(0.9); } 50% { opacity: 1; transform: scale(1.1); } }
+
+
+        /* --- СЦЕНА 1: ИНТРО --- */
+        #scene-intro {
+            position: absolute; width: 100%; height: 100%;
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            z-index: 10; transition: opacity 0.8s ease;
+        }
+
+        .h2-question {
+            font-family: 'Oswald', sans-serif;
+            font-weight: 700;
+            font-size: 170px;
+            line-height: 1.1;
+            text-align: center;
+            color: white;
+            text-transform: uppercase;
+        }
+        
+        .disclaimer-text {
+             position: absolute; bottom: 50px;
+             text-align: center; width: 100%;
+             font-family: 'Open Sans', sans-serif;
+             font-size: 16px; font-weight: 400;
+             color: rgba(255,255,255,0.7);
+        }
+
+        .btn-predict {
+            position: relative; margin-top: 60px;
+            padding: 20px 60px;
+            background: linear-gradient(65deg, var(--color-btn-start) 0%, var(--color-btn-end) 100%);
+            border-radius: 32px;
+            border: none; cursor: pointer;
+            color: white;
+            font-size: 31px; font-family: 'Oswald', sans-serif; font-weight: 600;
+            text-align: center;
+            transition: transform 0.2s, box-shadow 0.3s; z-index: 20;
+            box-shadow: 0 10px 30px rgba(0, 166, 145, 0.4);
+        }
+        .btn-predict:hover { box-shadow: 0 15px 40px rgba(0, 166, 145, 0.6); transform: scale(1.02); }
+        .btn-predict:active { transform: scale(0.98); }
+
+
+        /* --- СЦЕНА 2: ВИХРЬ --- */
+        #scene-vortex {
+            position: absolute; width: 100%; height: 100%;
+            perspective: 1500px;
+            display: none;
+            justify-content: center; align-items: center;
+            z-index: 5; transform-style: preserve-3d;
+            cursor: grab;
+            opacity: 0; transition: opacity 1s ease;
+        }
+        #scene-vortex:active { cursor: grabbing; }
+        #scene-vortex.visible { opacity: 1; }
+
+        #parallax-wrap {
+            position: absolute; width: 100%; height: 100%;
+            transform-style: preserve-3d; transition: transform 0.1s linear;
+        }
+
+        .carousel-root {
+            position: absolute; top: 50%; left: 50%;
+            transform-style: preserve-3d;
+        }
+
+        .card-container {
+            position: absolute; left: 50%; top: 50%;
+            width: var(--card-width); height: var(--card-height);
+            margin-left: calc(var(--card-width) * -0.5);
+            margin-top: calc(var(--card-height) * -0.5);
+            transform-style: preserve-3d;
+            cursor: pointer;
+        }
+
+        /* Карточка */
+        .card {
+            width: 100%; height: 100%; position: relative;
+            transform-style: preserve-3d; border-radius: 28px;
+            box-shadow: 0 15px 50px rgba(0,0,0,0.5);
+            transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s, filter 0.3s;
+        }
+        
+        .card-container.interactive:hover .card {
+            transform: scale(1.05);
+            box-shadow: 0 20px 60px rgba(0, 212, 160, 0.4);
+            filter: brightness(1.1);
+        }
+
+        .card.glowing {
+            box-shadow: 0 0 60px var(--color-svg-fill), 0 0 100px rgba(0, 219, 165, 0.5);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .card-face {
+            position: absolute; width: 100%; height: 100%;
+            backface-visibility: hidden; border-radius: 28px;
+            overflow: hidden; background: #D9D9D9;
+        }
+
+        /* Рубашка (back.webp) */
+        .card-front {
+            transform: rotateY(0deg);
+            display: flex; justify-content: center; align-items: center;
+            background-color: var(--color-bg-dark);
+        }
+        .card-front img {
+             width: 100%; height: 100%; object-fit: cover; border-radius: 28px;
+        }
+
+        /* Лицо (Картинка предсказания) */
+        .card-back {
+            transform: rotateY(180deg); background: #D9D9D9;
+            display: flex; justify-content: center; align-items: center;
+            flex-direction: column;
+        }
+        .card-back img.pred-image {
+            width: 100%; height: 100%; object-fit: cover;
+            position: absolute; top: 0; left: 0;
+            border-radius: 28px;
+            z-index: 1;
+        }
+        
+        /* Текст предсказания (внизу) */
+        .pred-text-container {
+            position: absolute; bottom: 15px; left: 15px; right: 15px;
+            min-height: 30%;
+            background: rgba(2, 24, 19, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            display: flex; align-items: center; justify-content: center;
+            padding: 15px; box-sizing: border-box;
+            z-index: 2;
+            opacity: 0; transition: opacity 0.5s ease 0.5s;
+        }
+        .pred-text-content {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 400;
+            font-size: 16px;
+            line-height: 1.3; color: white;
+            text-align: center;
+        }
+
+        /* --- UI ФИНАЛА --- */
+        #final-ui {
+            position: absolute; bottom: 12%; width: 100%;
+            display: none; flex-direction: row; justify-content: center; align-items: center;
+            gap: 170px; 
+            z-index: 100;
+        }
+
+        .ui-btn-primary {
+             width: 228px; height: 90px;
+             background: linear-gradient(65deg, var(--color-btn-start) 0%, var(--color-btn-end) 100%);
+             border-radius: 32px; border: none; cursor: pointer;
+             color: white; font-size: 31px; font-family: 'Oswald', sans-serif; font-weight: 600;
+             display: flex; justify-content: center; align-items: center;
+             box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+             transition: transform 0.2s;
+        }
+
+        .ui-btn-outline {
+             width: 244px; height: 90px;
+             background: transparent;
+             border: 5px solid var(--color-star-fill);
+             border-radius: 32px; cursor: pointer;
+             color: white; font-size: 31px; font-family: 'Oswald', sans-serif; font-weight: 600;
+             display: flex; justify-content: center; align-items: center;
+             transition: transform 0.2s;
+        }
+
+        .ui-btn-primary:hover, .ui-btn-outline:hover { transform: scale(1.05); }
+        .ui-btn-primary:active, .ui-btn-outline:active { transform: scale(0.98); }
+
+
+        /* --- Частицы --- */
+        #magic-particles {
+            position: absolute; top: 50%; left: 50%;
+            width: 0; height: 0; transform-style: preserve-3d;
+            z-index: 80; /* ЗА КАРТОЙ */
+            pointer-events: none;
+        }
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(4px);
+            opacity: 0;
+        }
+        @keyframes particlePulse {
+            0% { transform: translate3d(0,0,0) scale(0); opacity: 0; }
+            20% { opacity: 0.8; transform: translate3d(var(--tx), var(--ty), var(--tz)) scale(1.5); }
+            100% { transform: translate3d(var(--tx-end), var(--ty-end), var(--tz-end)) scale(0); opacity: 0; }
+        }
+
+
+        /* --- МОБИЛЬНАЯ АДАПТАЦИЯ --- */
+        @media (max-width: 1000px) and (orientation: portrait) {
+            :root {
+                --card-width: 320px;
+                --card-height: 512px;
+            }
+            .h2-question { font-size: 80px; }
+            .btn-predict { width: 80%; height: 70px; font-size: 24px; padding: 0; display: flex; justify-content: center; align-items: center;}
+            #final-ui { bottom: 5%; flex-direction: column; gap: 20px; }
+            .ui-btn-primary, .ui-btn-outline { width: 80%; height: 70px; font-size: 24px; }
+            .pred-text-content { font-size: 14px; }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div id="app-container">
+        <!-- Градиентные пятна -->
+        <div class="bg-gradient-blob blob-1"></div>
+        <div class="bg-gradient-blob blob-2"></div>
+        
+        <!-- Звезды -->
+        <div class="bg-star-icon" style="left: 75%; top: 25%;">
+            <svg width="51" height="51" viewBox="0 0 51 51" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M27.9053 1.48969C27.6818 1.04211 27.3381 0.665636 26.9126 0.402508C26.4871 0.13938 25.9967 0 25.4964 0C24.9961 0 24.5057 0.13938 24.0802 0.402508C23.6547 0.665636 23.311 1.04211 23.0875 1.48969L15.8858 15.8894L1.48969 23.0911C1.04211 23.3146 0.665638 23.6583 0.40251 24.0838C0.139382 24.5093 0 24.9997 0 25.5C0 26.0003 0.139382 26.4907 0.40251 26.9162C0.665638 27.3417 1.04211 27.6854 1.48969 27.9089L15.8894 35.1106L23.0911 49.5103C23.3146 49.9579 23.6583 50.3344 24.0838 50.5975C24.5093 50.8606 24.9997 51 25.5 51C26.0003 51 26.4907 50.8606 26.9162 50.5975C27.3417 50.3344 27.6854 49.9579 27.9089 49.5103L35.1106 35.1106L49.5103 27.9089C49.9579 27.6854 50.3344 27.3417 50.5975 26.9162C50.8606 26.4907 51 26.0003 51 25.5C51 24.9997 50.8606 24.5093 50.5975 24.0838C50.3344 23.6583 49.9579 23.3146 49.5103 23.0911L35.1106 15.8894L27.9053 1.48969Z" fill="#1FB996"/></svg>
+        </div>
+        <div class="bg-star-icon" style="left: 88%; top: 70%;">
+            <svg width="51" height="51" viewBox="0 0 51 51" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M27.9053 1.48969C27.6818 1.04211 27.3381 0.665636 26.9126 0.402508C26.4871 0.13938 25.9967 0 25.4964 0C24.9961 0 24.5057 0.13938 24.0802 0.402508C23.6547 0.665636 23.311 1.04211 23.0875 1.48969L15.8858 15.8894L1.48969 23.0911C1.04211 23.3146 0.665638 23.6583 0.40251 24.0838C0.139382 24.5093 0 24.9997 0 25.5C0 26.0003 0.139382 26.4907 0.40251 26.9162C0.665638 27.3417 1.04211 27.6854 1.48969 27.9089L15.8894 35.1106L23.0911 49.5103C23.3146 49.9579 23.6583 50.3344 24.0838 50.5975C24.5093 50.8606 24.9997 51 25.5 51C26.0003 51 26.4907 50.8606 26.9162 50.5975C27.3417 50.3344 27.6854 49.9579 27.9089 49.5103L35.1106 35.1106L49.5103 27.9089C49.9579 27.6854 50.3344 27.3417 50.5975 26.9162C50.8606 26.4907 51 26.0003 51 25.5C51 24.9997 50.8606 24.5093 50.5975 24.0838C50.3344 23.6583 49.9579 23.3146 49.5103 23.0911L35.1106 15.8894L27.9053 1.48969Z" fill="#1FB996"/></svg>
+        </div>
+        <div class="bg-star-icon" style="left: 8%; top: 51%;">
+           <svg width="106" height="106" viewBox="0 0 106 106" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M57.9993 3.09622C57.5348 2.16594 56.8203 1.38348 55.9359 0.836586C55.0516 0.289692 54.0323 0 52.9925 0C51.9527 0 50.9335 0.289692 50.0491 0.836586C49.1648 1.38348 48.4502 2.16594 47.9857 3.09622L33.0176 33.0251L3.09622 47.9932C2.16595 48.4577 1.38348 49.1722 0.836589 50.0566C0.289695 50.941 0 51.9602 0 53C0 54.0398 0.289695 55.059 0.836589 55.9434C1.38348 56.8278 2.16595 57.5423 3.09622 58.0068L33.0251 72.9749L47.9932 102.904C48.4577 103.834 49.1722 104.617 50.0566 105.163C50.9409 105.71 51.9602 106 53 106C54.0398 106 55.059 105.71 55.9434 105.163C56.8278 104.617 57.5423 103.834 58.0068 102.904L72.9749 72.9749L102.904 58.0068C103.834 57.5423 104.617 56.8278 105.163 55.9434C105.71 55.059 106 54.0398 106 53C106 51.9602 105.71 50.941 105.163 50.0566C104.617 49.1722 103.834 48.4577 102.904 47.9932L72.9749 33.0251L57.9993 3.09622Z" fill="#1FB996"/></svg>
+        </div>
+        
+        <div id="magic-particles"></div>
+
+        <!-- INTRO -->
+        <div id="scene-intro">
+            <div style="text-align: center;">
+                <div class="h2-question">Бизнес</div>
+                <div class="h2-question">предсказание!*</div>
+            </div>
+            <button class="btn-predict" onclick="startExperience()">Получить предсказание</button>
+            
+            <div class="disclaimer-text">
+                *Предсказание носит развлекательный характер, и не претендует на реальное предвидение событий. <br>Все зависит только от вас!
+            </div>
+        </div>
+
+        <!-- VORTEX -->
+        <div id="scene-vortex">
+            <div style="position:absolute; top:50px; color:rgba(255,255,255,0.7); font-family:'Open Sans'; font-size: 18px; pointer-events:none; text-align: center; width: 100%; z-index: 10;">
+                Вращайте и выберите карту
+            </div>
+            <div id="parallax-wrap">
+                <div class="carousel-root" id="carousel-root">
+                    <!-- Карточки -->
+                </div>
+            </div>
+        </div>
+
+        <!-- FINAL UI -->
+        <div id="final-ui">
+            <button class="ui-btn-primary" onclick="resetExperience()">Повторить</button>
+            <button class="ui-btn-outline" onclick="sharePrediction()">Поделиться</button>
+        </div>
+    </div>
+
+    <script>
+        // --- КОНФИГУРАЦИЯ ---
+        
+        // Все картинки (предсказания и рубашка) должны быть в формате .webp и лежать в папке images/
+        const predictionImages = Array.from({length: 12}, (_, i) => `images/${i + 1}.webp`);
+        const backCoverImageSrc = 'images/back.webp'; 
+
+        const predictionData = [
+            "Вы не лошадь. Снимите ярмо, подковы и делегируйте свои задачи коллегам.",
+            "Танцуйте танго, пейте вино. Счастливый начальник — это нормальная атмосфера в коллективе.",
+            "Let it be. Иногда у нас не получается строить бизнес, возможно пришло время для наставничества.",
+            "Медитация: вдох и выдох. Успокойте ум, чтобы увидеть решения ясно.",
+            "Рискуйте. Удача любит смелых, особенно в первом квартале 2026 года.",
+            "Автоматизируйте. Роботы не спят, пусть работают они, а вы творите.",
+            "Нетворкинг — ваша сила. Один звонок может решить проблему года.",
+            "Берегите ресурсы. Оптимизация расходов даст неожиданный рост.",
+            "Учитесь. Новые знания откроют голубой океан там, где была конкуренция.",
+            "Интуиция не врет. Слушайте внутренний голос, он громче отчетов.",
+            "Смените фокус. Иногда нужно отойти, чтобы увидеть картину целиком.",
+            "Празднуйте победы. Маленькие шаги ведут к большой цели."
+        ];
+
+        const app = document.getElementById('app-container');
+        const intro = document.getElementById('scene-intro');
+        const vortex = document.getElementById('scene-vortex');
+        const root = document.getElementById('carousel-root');
+        const parallaxWrap = document.getElementById('parallax-wrap');
+        const finalUi = document.getElementById('final-ui');
+        const magicContainer = document.getElementById('magic-particles');
+
+        let cards = [];
+        let currentAngle = 0;
+        let speed = 0; 
+        let state = 'intro';
+        let isDragging = false;
+        let startX = 0;
+        let lastX = 0;
+        let velocity = 0;
+
+        // --- RESIZE ---
+        function resize() {
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+            const isPortrait = height > width;
+            let scale;
+            
+            if (isPortrait) {
+                scale = Math.min(width / 1920 * 2.8, height / 1080 * 1.5);
+            } else {
+                scale = Math.min(width / 1920, height / 1080);
+            }
+            scale = Math.max(scale, 0.5); 
+            app.style.transform = `translate(-50%, -50%) scale(${scale})`;
+        }
+        window.addEventListener('resize', resize);
+        window.onload = resize;
+
+        // --- ВЗАИМОДЕЙСТВИЕ ---
+        function handleStart(x) {
+            if (state !== 'interactive') return;
+            isDragging = true;
+            startX = x;
+            lastX = x;
+            velocity = 0;
+            speed = 0; 
+        }
+
+        function handleMove(x) {
+            if (!isDragging) return;
+            const delta = x - lastX;
+            lastX = x;
+            velocity = delta * 0.3; 
+            currentAngle += velocity;
+        }
+
+        function handleEnd() { isDragging = false; }
+
+        vortex.addEventListener('mousedown', e => handleStart(e.clientX));
+        window.addEventListener('mousemove', e => handleMove(e.clientX));
+        window.addEventListener('mouseup', handleEnd);
+
+        vortex.addEventListener('touchstart', e => handleStart(e.touches[0].clientX), {passive: true});
+        window.addEventListener('touchmove', e => handleMove(e.touches[0].clientX), {passive: true});
+        window.addEventListener('touchend', handleEnd);
+
+        // --- ЧАСТИЦЫ ---
+        function spawnParticles() {
+            const colors = ['#1FB996', '#00DBA5', '#00A691', '#00675A'];
+            magicContainer.innerHTML = ''; 
+            
+            for(let i=0; i<50; i++) {
+                const p = document.createElement('div');
+                p.className = 'particle';
+                const theta = Math.random() * Math.PI * 2;
+                const r = 300 + Math.random() * 400;
+                const tx = r * Math.cos(theta);
+                const ty = r * Math.sin(theta);
+                
+                p.style.setProperty('--tx', '0px'); p.style.setProperty('--ty', '0px'); p.style.setProperty('--tz', '0px');
+                p.style.setProperty('--tx-end', `${tx}px`); p.style.setProperty('--ty-end', `${ty}px`); p.style.setProperty('--tz-end', '-200px'); 
+                
+                p.style.background = colors[Math.floor(Math.random() * colors.length)];
+                const size = 10 + Math.random() * 20;
+                p.style.width = size + 'px'; p.style.height = size + 'px';
+                p.style.filter = `blur(${5 + Math.random()*10}px)`;
+
+                p.style.animation = `particlePulse ${2 + Math.random() * 3}s ease-in-out infinite`;
+                p.style.animationDelay = `${Math.random() * 2}s`;
+                
+                magicContainer.appendChild(p);
+            }
+        }
+
+        // --- INIT CARDS ---
+        function initCards() {
+            root.innerHTML = '';
+            cards = [];
+            const count = 12; 
+            for(let i=0; i<count; i++) {
+                const el = document.createElement('div');
+                el.className = 'card-container interactive';
+                const text = predictionData[i % predictionData.length];
+                const imgName = predictionImages[i % predictionImages.length];
+                
+                el.innerHTML = `
+                    <div class="card">
+                        <!-- Front - это рубашка -->
+                        <div class="card-face card-front">
+                             <img src="${backCoverImageSrc}" alt="Рубашка" style="width: 100%; height: 100%; object-fit: cover; border-radius: 28px;" onerror="this.style.display='none'; this.parentNode.style.backgroundColor='#00675A';">
+                        </div>
+                        <!-- Back - это лицевая сторона с предсказанием -->
+                        <div class="card-face card-back">
+                            <!-- Индивидуальная картинка -->
+                            <img class="pred-image" src="${imgName}" alt="Предсказание" style="filter: blur(15px); transition: filter 0.8s ease;" onerror="this.style.display='none'; this.parentNode.style.backgroundColor='#00A691';">
+                            <div class="pred-text-container" style="opacity: 0; transition: opacity 0.5s ease 0.5s;">
+                                <div class="pred-text-content">${text}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                el.dataset.angle = (i/count) * 360;
+                el.dataset.index = i;
+                
+                el.addEventListener('click', (e) => {
+                    if (state === 'interactive' && !isDragging) {
+                        if (Math.abs(velocity) < 2) selectCard(i);
+                    }
+                });
+                root.appendChild(el);
+                cards.push(el);
+            }
+        }
+        initCards();
+
+        // --- ANIMATION ---
+        function update() {
+            if (state === 'selected' || state === 'returning') return requestAnimationFrame(update);
+
+            if (state === 'interactive') {
+                if (!isDragging) {
+                    velocity *= 0.95; 
+                    if (Math.abs(velocity) < 0.05) velocity = 0.05; 
+                    currentAngle += velocity;
+                }
+            } else if (state === 'intro-spin') {
+                if (speed < 3.0) speed += 0.05; 
+                currentAngle += speed;
+            }
+
+            const radius = 700; 
+            cards.forEach(card => {
+                const base = parseFloat(card.dataset.angle);
+                const deg = base + currentAngle;
+                const rad = deg * Math.PI / 180;
+                const x = Math.sin(rad) * radius;
+                const z = Math.cos(rad) * radius;
+                
+                let blur = 0, brightness = 1, opacity = 1;
+                if (z < 0) { 
+                    const depth = Math.abs(z) / radius;
+                    blur = depth * 15; 
+                    brightness = 1 - (depth * 0.5); 
+                    opacity = 1 - (depth * 0.2);
+                }
+                
+                card.style.transform = `translate3d(${x}px, 0, ${z}px) rotateY(${deg}deg)`;
+                
+                if (state !== 'selected') {
+                    const inner = card.querySelector('.card');
+                    inner.style.filter = `blur(${blur}px) brightness(${brightness})`;
+                    inner.style.opacity = opacity;
+                }
+            });
+            requestAnimationFrame(update);
+        }
+
+        function startExperience() {
+            intro.style.opacity = '0';
+            setTimeout(() => {
+                intro.style.display = 'none';
+                vortex.style.display = 'flex';
+                setTimeout(() => { vortex.classList.add('visible'); }, 50);
+                state = 'intro-spin';
+                update();
+                setTimeout(() => {
+                    state = 'interactive';
+                    velocity = speed;
+                }, 2000);
+            }, 800);
+        }
+
+        function selectCard(index) {
+            state = 'selected';
+            const targetCardContainer = cards[index];
+            const targetCard = targetCardContainer.querySelector('.card');
+            const targetImage = targetCard.querySelector('.pred-image');
+
+            cards.forEach((c, i) => {
+                if(i !== index) {
+                    c.style.transition = 'all 0.8s ease';
+                    c.style.opacity = '0';
+                    c.style.transform += ' scale(0) translateZ(-800px)';
+                }
+            });
+
+            targetCard.style.transition = 'all 0.6s ease-out';
+            targetCard.style.filter = 'blur(0) brightness(1)';
+            targetCard.style.opacity = '1';
+            parallaxWrap.style.transition = 'transform 0.6s ease-out';
+            parallaxWrap.style.transform = 'none';
+
+            setTimeout(() => {
+                targetCardContainer.style.transition = 'all 1s cubic-bezier(0.2, 0.8, 0.2, 1)';
+                // Уменьшил scale до 1.25 для гармоничного размера (около 60% высоты экрана)
+                targetCardContainer.style.transform = 'translate3d(0, -50px, 600px) rotateY(0deg) scale(1.25)';
+                targetCardContainer.style.zIndex = 100;
+                targetCardContainer.style.cursor = 'default';
+
+                setTimeout(() => {
+                    targetCard.style.transition = 'transform 0.8s cubic-bezier(0.4, 1.5, 0.6, 1), box-shadow 0.8s ease';
+                    targetCard.style.transform = 'rotateY(180deg)';
+                    targetCard.classList.add('glowing');
+                    
+                    targetImage.style.filter = 'blur(0) contrast(1.1)';
+
+                    spawnParticles();
+                    
+                    setTimeout(() => {
+                         targetCard.querySelector('.pred-text-container').style.opacity = '1';
+                         finalUi.style.display = 'flex';
+                    }, 600);
+
+                }, 1000); 
+            }, 100);
+        }
+
+        function resetExperience() {
+            finalUi.style.display = 'none';
+            magicContainer.innerHTML = ''; 
+            state = 'returning';
+
+            const openedCardContainer = cards.find(c => c.querySelector('.card.glowing'));
+            if(!openedCardContainer) { location.reload(); return; }
+            
+            const openedCard = openedCardContainer.querySelector('.card');
+            const openedImage = openedCard.querySelector('.pred-image');
+            
+            openedCard.querySelector('.pred-text-container').style.opacity = '0';
+
+            openedImage.style.filter = 'blur(15px)';
+
+            openedCard.classList.remove('glowing');
+            openedCard.style.transform = 'rotateY(0deg)';
+            
+            setTimeout(() => {
+                cards.forEach((c) => {
+                    c.style.transition = 'all 1s ease';
+                    c.style.opacity = '1';
+                    c.style.transform = ''; 
+                    c.classList.add('interactive');
+                });
+
+                state = 'interactive';
+                velocity = 0.5; 
+                update();
+                
+            }, 800);
+        }
+
+        function sharePrediction() { 
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Мое предсказание 2026',
+                    url: window.location.href
+                });
+            } else {
+                alert("Ссылка скопирована!"); 
+            }
+        }
+    </script>
+</body>
+</html>
