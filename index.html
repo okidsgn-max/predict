@@ -8,7 +8,7 @@
         /* --- Шрифты --- */
         @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Oswald:wght@500;700&display=swap');
 
-        /* Основные цвета и градиенты */
+        /* Основные цвета */
         :root {
             --color-bg-dark: #021813;
             --color-btn-start: #00675A;
@@ -16,7 +16,7 @@
             --color-svg-fill: #00DBA5;
             --color-star-fill: #1FB996;
 
-             /* Размеры карточки */
+             /* Размеры карточки (260x416 - уменьшенные для гармонии) */
             --card-width: 260px;
             --card-height: 416px;
         }
@@ -37,14 +37,14 @@
             top: 50%; left: 50%;
             transform: translate(-50%, -50%);
             width: 1920px; height: 1080px;
-            background: var(--color-bg-dark);
+            background: var(--color-bg-dark); /* Чистый темный фон */
             overflow: hidden;
             border-radius: 20px;
             box-shadow: 0 0 100px rgba(0,0,0,0.8);
             backdrop-filter: blur(13.95px); -webkit-backdrop-filter: blur(13.95px);
         }
 
-        /* --- Фоновые элементы --- */
+        /* --- Фоновые элементы (Динамические пятна) --- */
         .bg-gradient-blob {
             position: absolute;
             filter: blur(90px);
@@ -54,6 +54,7 @@
             pointer-events: none;
         }
         
+        /* Изумрудный -> Голубой -> Зеленый */
         .blob-1 {
             top: 20%; left: 30%;
             width: 900px; height: 900px;
@@ -209,7 +210,7 @@
              width: 100%; height: 100%; object-fit: cover; border-radius: 28px;
         }
 
-        /* Лицо (Картинка) */
+        /* Лицо (Картинка предсказания) */
         .card-back {
             transform: rotateY(180deg); background: #D9D9D9;
             display: flex; justify-content: center; align-items: center;
@@ -222,7 +223,7 @@
             z-index: 1;
         }
         
-        /* Текст предсказания */
+        /* Текст предсказания (внизу) */
         .pred-text-container {
             position: absolute; bottom: 15px; left: 15px; right: 15px;
             min-height: 30%;
@@ -278,7 +279,7 @@
         #magic-particles {
             position: absolute; top: 50%; left: 50%;
             width: 0; height: 0; transform-style: preserve-3d;
-            z-index: 80; 
+            z-index: 80; /* ЗА КАРТОЙ */
             pointer-events: none;
         }
         .particle {
@@ -312,6 +313,7 @@
 <body>
 
     <div id="app-container">
+        <!-- Градиентные пятна -->
         <div class="bg-gradient-blob blob-1"></div>
         <div class="bg-gradient-blob blob-2"></div>
         
@@ -363,24 +365,9 @@
     <script>
         // --- КОНФИГУРАЦИЯ ---
         
-        const predictionImages = [
-            'uploaded:1.jpg',
-            'uploaded:2.jpg',
-            'uploaded:3.jpg',
-            'uploaded:4.jpg',
-            'uploaded:5.jpg',
-            'uploaded:1.jpg', 
-            'uploaded:2.jpg', 
-            'uploaded:3.jpg',
-            'uploaded:4.jpg',
-            'uploaded:5.jpg',
-            'uploaded:1.jpg',
-            'uploaded:2.jpg'
-        ];
-
-        // Обложка карты - берем одну из картинок как пример рубашки, или загрузите 'back.webp'
-        // Пока используем 1.jpg как заглушку для рубашки, если нет отдельного файла
-        const backCoverImageSrc = 'uploaded:1.jpg'; 
+        // Все картинки (предсказания и рубашка) должны быть в формате .webp и лежать в папке images/
+        const predictionImages = Array.from({length: 12}, (_, i) => `images/${i + 1}.webp`);
+        const backCoverImageSrc = 'images/back.webp'; 
 
         const predictionData = [
             "Вы не лошадь. Снимите ярмо, подковы и делегируйте свои задачи коллегам.",
@@ -503,13 +490,12 @@
                     <div class="card">
                         <!-- Front - это рубашка -->
                         <div class="card-face card-front">
-                             <!-- Используем единую картинку рубашки для всех -->
-                            <img src="${backCoverImageSrc}" alt="Рубашка" style="width: 100%; height: 100%; object-fit: cover; border-radius: 28px;">
+                             <img src="${backCoverImageSrc}" alt="Рубашка" style="width: 100%; height: 100%; object-fit: cover; border-radius: 28px;" onerror="this.style.display='none'; this.parentNode.style.backgroundColor='#00675A';">
                         </div>
                         <!-- Back - это лицевая сторона с предсказанием -->
                         <div class="card-face card-back">
                             <!-- Индивидуальная картинка -->
-                            <img class="pred-image" src="${imgName}" alt="Предсказание" style="filter: blur(15px); transition: filter 0.8s ease;">
+                            <img class="pred-image" src="${imgName}" alt="Предсказание" style="filter: blur(15px); transition: filter 0.8s ease;" onerror="this.style.display='none'; this.parentNode.style.backgroundColor='#00A691';">
                             <div class="pred-text-container" style="opacity: 0; transition: opacity 0.5s ease 0.5s;">
                                 <div class="pred-text-content">${text}</div>
                             </div>
@@ -609,7 +595,8 @@
 
             setTimeout(() => {
                 targetCardContainer.style.transition = 'all 1s cubic-bezier(0.2, 0.8, 0.2, 1)';
-                targetCardContainer.style.transform = 'translate3d(0, -50px, 600px) rotateY(0deg) scale(1.1)';
+                // Уменьшил scale до 1.25 для гармоничного размера (около 60% высоты экрана)
+                targetCardContainer.style.transform = 'translate3d(0, -50px, 600px) rotateY(0deg) scale(1.25)';
                 targetCardContainer.style.zIndex = 100;
                 targetCardContainer.style.cursor = 'default';
 
