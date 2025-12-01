@@ -5,20 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Бизнес Предсказание 2026</title>
     
+    <!-- Подключаем шрифт Manrope -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
 
     <style>
         /* --- НАСТРОЙКИ --- */
         :root {
-            --color-bg: #021813;
-            --primary: #008E7A;
-            --secondary: #04C9B0;
+            --color-bg: #01110e;
+            --primary: #00E5C0;
+            --secondary: #008E7A;
             --accent: #42E3B4;
             
-            --card-ratio: 1.5; 
-            --card-base-width: 220px; /* Уменьшили базу для десктопа */
+            --card-ratio: 1.6;
+            --card-base-width: 280px; /* Базовый размер для десктопа */
         }
 
         body, html {
@@ -32,27 +33,52 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* --- ФОН (Deep Space Gradient) --- */
-        .aurora-bg {
-            position: absolute; inset: 0;
-            background: radial-gradient(circle at 50% 120%, #004d40 0%, #021813 40%, #000000 100%);
-            z-index: 0; overflow: hidden;
-        }
-        
-        .aurora-glow {
-            position: absolute; top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            width: 120vmax; height: 120vmax;
-            background: radial-gradient(circle, rgba(0, 142, 122, 0.15) 0%, transparent 60%);
-            pointer-events: none;
+        /* --- НОВЫЙ ФОН (Mesh Gradient Animation) --- */
+        .ambient-bg {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 0;
+            background: linear-gradient(135deg, #021813, #002b24);
+            overflow: hidden;
         }
 
-        /* Шум для текстуры */
-        .noise-overlay {
-            position: absolute; inset: 0;
-            opacity: 0.05;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-            pointer-events: none; z-index: 1;
+        .gradient-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.6;
+            animation: orbFloat 20s infinite ease-in-out;
+        }
+
+        /* Настраиваем цвета градиентов под стиль Cameron Knight но с нашей гаммой */
+        .orb-1 {
+            width: 80vw; height: 80vw;
+            background: radial-gradient(circle, #004d40 0%, transparent 70%);
+            top: -20%; left: -20%;
+            animation-duration: 25s;
+        }
+        .orb-2 {
+            width: 60vw; height: 60vw;
+            background: radial-gradient(circle, #008E7A 0%, transparent 70%);
+            bottom: -10%; right: -10%;
+            animation-duration: 30s;
+            animation-delay: -5s;
+        }
+        .orb-3 {
+            width: 40vw; height: 40vw;
+            background: radial-gradient(circle, #04C9B0 0%, transparent 70%);
+            top: 40%; left: 40%;
+            opacity: 0.3;
+            animation-duration: 20s;
+            animation-delay: -10s;
+        }
+
+        @keyframes orbFloat {
+            0% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(30px, -50px) scale(1.1); }
+            66% { transform: translate(-20px, 20px) scale(0.9); }
+            100% { transform: translate(0, 0) scale(1); }
         }
 
         /* --- КОНТЕЙНЕР --- */
@@ -62,110 +88,141 @@
             z-index: 10;
             display: flex; flex-direction: column;
             align-items: center; justify-content: center;
-            perspective: 1000px; 
+            /* Сильная перспектива для эффекта Fisheye */
+            perspective: 600px; 
             overflow: hidden;
         }
 
-        /* --- КНОПКА (Avoloch Style - Clean) --- */
-        .galaxy-btn {
+        /* --- НОВАЯ КНОПКА (Avoloch Style) --- */
+        .stardust-btn {
             position: relative;
-            padding: 20px 40px;
-            border-radius: 60px;
+            background: transparent;
             border: none;
             cursor: pointer;
-            
-            /* Цвета */
-            background: linear-gradient(180deg, #005c4f 0%, #003d33 100%);
-            color: #d4fffa;
-            
-            /* Тени для объема (вдавленность и свечение) */
-            box-shadow: 
-                0px 10px 20px rgba(0,0,0,0.4),
-                inset 0px 2px 0px rgba(255,255,255,0.1),
-                inset 0px -4px 10px rgba(0,0,0,0.3),
-                0 0 20px rgba(4, 201, 176, 0.3); /* Внешнее свечение */
-
+            padding: 20px 50px;
+            color: white;
             font-family: 'Manrope', sans-serif;
-            font-weight: 600;
             font-size: 18px;
+            font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 2px;
-            transition: all 0.3s ease;
-            
-            display: flex; align-items: center; justify-content: center; gap: 12px;
-            z-index: 50;
-        }
-
-        .galaxy-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 
-                0px 15px 30px rgba(0,0,0,0.5),
-                inset 0px 2px 0px rgba(255,255,255,0.2),
-                inset 0px -4px 10px rgba(0,0,0,0.3),
-                0 0 40px rgba(4, 201, 176, 0.6);
-            color: #fff;
+            letter-spacing: 3px;
+            transition: transform 0.2s;
+            /* Скрываем частицы, вылетающие за пределы кнопки */
+            overflow: hidden; 
+            border-radius: 50px;
+            box-shadow: 0 10px 40px -10px rgba(0, 229, 192, 0.5);
         }
         
-        .galaxy-btn:active {
-            transform: translateY(1px);
-            box-shadow: inset 0px 4px 10px rgba(0,0,0,0.5);
+        /* Фон кнопки */
+        .stardust-btn::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, #00695c, #004d40);
+            z-index: -2;
+            border-radius: 50px;
+        }
+        
+        /* Глоу эффект */
+        .stardust-btn::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, #04C9B0, #42E3B4);
+            opacity: 0.2;
+            z-index: -1;
+            filter: blur(10px);
+            transition: opacity 0.3s;
         }
 
-        /* Звездочки внутри кнопки */
-        .btn-stars {
-            position: absolute; inset: 0; border-radius: 60px; overflow: hidden; pointer-events: none;
+        .stardust-btn:hover {
+            transform: scale(1.05);
         }
-        .star-dot {
-            position: absolute; background: white; border-radius: 50%;
-            animation: twinkle 3s infinite ease-in-out;
-            opacity: 0.6;
+        .stardust-btn:hover::after {
+            opacity: 0.4;
         }
-        @keyframes twinkle { 0%, 100% { opacity: 0.2; transform: scale(0.5); } 50% { opacity: 0.9; transform: scale(1.2); } }
 
-        .btn-icon svg { width: 20px; height: 20px; fill: currentColor; }
+        /* Канвас для частиц внутри кнопки */
+        .btn-canvas {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .btn-text {
+            position: relative;
+            z-index: 1;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
 
-        .outline-btn {
-            background: transparent;
-            box-shadow: inset 0 0 0 2px rgba(4, 201, 176, 0.5);
-            color: #04C9B0;
+        /* Кнопки действий (повторить/поделиться) */
+        .action-btn {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #fff;
+            padding: 16px 32px;
+            border-radius: 30px;
+            font-family: 'Manrope', sans-serif;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex; align-items: center; gap: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
-        .outline-btn:hover {
-            background: rgba(4, 201, 176, 0.1);
-            box-shadow: inset 0 0 0 2px #04C9B0, 0 0 20px rgba(4, 201, 176, 0.3);
-            color: white;
+        .action-btn:hover {
+            background: rgba(4, 201, 176, 0.2);
+            border-color: #04C9B0;
+            box-shadow: 0 0 20px rgba(4, 201, 176, 0.3);
         }
+        .action-btn svg { width: 18px; height: 18px; fill: currentColor; }
+
 
         /* --- СЦЕНЫ --- */
         .h1-title {
-            font-weight: 700;
-            font-size: clamp(32px, 5vw, 70px);
-            text-align: center; line-height: 1.1; text-transform: uppercase;
-            margin-bottom: 40px;
+            font-weight: 800;
+            font-size: clamp(36px, 7vw, 90px);
+            text-align: center;
+            line-height: 1.0;
+            text-transform: uppercase;
+            margin-bottom: 50px;
             background: linear-gradient(to bottom, #ffffff, #80cbc4);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            text-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            filter: drop-shadow(0 0 30px rgba(4, 201, 176, 0.4));
         }
 
         .scene {
             position: absolute; width: 100%; height: 100%;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            transition: opacity 0.8s ease;
+            transition: opacity 0.8s ease, transform 0.8s ease;
         }
         #scene-intro { z-index: 20; }
-        .hidden { opacity: 0; pointer-events: none; }
+        .hidden { opacity: 0; pointer-events: none; transform: scale(1.1); }
         
         #scene-vortex {
             z-index: 15; opacity: 0; pointer-events: none;
             transform-style: preserve-3d;
-            /* Убрали наклон для плоской карусели */
-            transform: rotateX(0deg); 
+            /* Небольшой наклон всей сцены для объема */
+            transform: translateY(0) scale(0.8);
+            transition: opacity 1s, transform 1s;
         }
-        #scene-vortex.active { opacity: 1; pointer-events: auto; }
+        #scene-vortex.active { 
+            opacity: 1; 
+            pointer-events: auto; 
+            transform: translateY(0) scale(1);
+        }
 
+        /* Точка вращения карусели */
         .carousel-pivot {
             position: absolute; top: 50%; left: 50%;
             transform-style: preserve-3d;
+            /* Наклон вихря по оси X, чтобы видеть "глубину" */
+            transform: rotateX(-5deg); 
         }
 
         /* --- КАРТОЧКА --- */
@@ -177,166 +234,195 @@
             margin-top: calc(var(--card-base-width) * var(--card-ratio) * -0.5);
             transform-style: preserve-3d;
             cursor: pointer;
-            backface-visibility: hidden; 
+            /* Изначально невидимы для плавного появления */
         }
 
         .card {
             width: 100%; height: 100%; position: relative;
             transform-style: preserve-3d;
-            transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+            border-radius: 24px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+            /* Убираем мерцание граней */
+            will-change: transform; 
         }
 
         .card-face {
             position: absolute; width: 100%; height: 100%;
             backface-visibility: hidden;
-            border-radius: 20px; overflow: hidden;
+            border-radius: 24px; overflow: hidden;
             background: #021813;
-            border: 1px solid rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.15);
         }
+        .card-face::after {
+            content: ''; position: absolute; inset: 0;
+            background: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.5) 100%);
+            pointer-events: none;
+        }
+        
         .card-face img { width: 100%; height: 100%; object-fit: cover; display: block; }
         .face-front { transform: rotateY(0deg); }
         .face-back { transform: rotateY(180deg); }
 
+        /* Текст предсказания */
         .pred-text-box {
             position: absolute; bottom: 0; left: 0; width: 100%;
-            background: linear-gradient(to top, #021813 10%, rgba(2,24,19, 0.9) 80%, transparent);
-            padding: 40px 15px 25px;
+            background: rgba(1, 22, 18, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 30px 20px 40px;
             box-sizing: border-box;
             color: white; text-align: center;
-            transform: translateY(20px); opacity: 0;
-            transition: all 0.5s ease 0.4s;
+            transform: translateY(20%); opacity: 0;
+            transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
         .face-back.visible .pred-text-box { transform: translateY(0); opacity: 1; }
-        .pred-text { font-size: 15px; line-height: 1.4; font-weight: 500; text-shadow: 0 2px 4px black;}
+        
+        .pred-text { 
+            font-size: 16px; line-height: 1.5; font-weight: 500; 
+            color: #e0f2f1;
+        }
 
-        /* --- ЧАСТИЦЫ --- */
+        /* --- ЧАСТИЦЫ ФИНАЛА (Convergence) --- */
         #particles-container {
-            position: absolute; top: 50%; left: 50%;
-            width: 0; height: 0; z-index: 10;
-            transform-style: preserve-3d; pointer-events: none;
-        }
-        .particle {
-            position: absolute; background: var(--accent);
-            border-radius: 50%; opacity: 0;
-            box-shadow: 0 0 15px var(--accent);
-        }
-
-        @keyframes orbitFloat {
-            0% { transform: translate(-50%, -50%) rotate(0deg) translateX(var(--radius)) rotate(0deg) scale(0.5); opacity: 0; }
-            20% { opacity: 0.8; transform: translate(-50%, -50%) rotate(100deg) translateX(var(--radius)) rotate(-100deg) scale(1); }
-            80% { opacity: 0.5; }
-            100% { transform: translate(-50%, -50%) rotate(360deg) translateX(var(--radius)) rotate(-360deg) scale(0); opacity: 0; }
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 60; /* Поверх карты */
+            pointer-events: none;
+            overflow: hidden;
         }
         
-        .halo-glow {
+        .particle {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            opacity: 0;
+        }
+
+        /* Анимация стягивания к центру */
+        @keyframes converge {
+            0% { 
+                opacity: 0; 
+                transform: translate(var(--startX), var(--startY)) scale(0);
+            }
+            20% { opacity: 0.8; transform: translate(var(--startX), var(--startY)) scale(1); }
+            100% { 
+                opacity: 0; 
+                transform: translate(var(--endX), var(--endY)) scale(0.1);
+            }
+        }
+        
+        /* Свечение за картой в финале */
+        .final-glow {
             position: absolute; top: 50%; left: 50%;
             transform: translate(-50%, -50%);
-            width: 300px; height: 500px;
-            background: radial-gradient(ellipse at center, rgba(4, 201, 176, 0.4) 0%, transparent 70%);
-            filter: blur(50px); opacity: 0; transition: opacity 1s;
+            width: 100vw; height: 100vh;
+            background: radial-gradient(circle, rgba(66, 227, 180, 0.15) 0%, transparent 60%);
+            z-index: 5; opacity: 0; transition: opacity 1.5s;
+            pointer-events: none;
         }
 
         /* --- UI ФИНАЛА --- */
         #final-ui {
             position: absolute; bottom: 10%; z-index: 100;
-            display: none; flex-direction: row; gap: 20px;
+            display: none; 
+            flex-direction: row; 
+            gap: 20px;
             justify-content: center; width: 100%;
-            align-items: center;
+            opacity: 0;
+            animation: fadeInUI 1s forwards 0.5s;
         }
+        @keyframes fadeInUI { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* --- АДАПТИВ --- */
+        /* --- АДАПТИВ (Mobile) --- */
         @media (max-width: 768px) {
             :root {
-                --card-base-width: 140px; /* Сильно уменьшаем карточку для мобильных */
+                /* Уменьшаем размер карточек для мобильных */
+                --card-base-width: 160px; 
+            }
+            
+            #scene-vortex {
+                 /* На телефоне чуть дальше отодвигаем, чтобы влезло больше контекста */
+                 perspective: 400px;
             }
 
+            .carousel-pivot {
+                 /* На телефоне карточки ближе к зрителю по Z */
+                 transform: translateZ(-50px) rotateX(-5deg);
+            }
+
+            .h1-title { margin-bottom: 30px; font-size: 42px; }
+            
+            /* Кнопки в колонку и по центру */
             #final-ui {
                 flex-direction: column;
+                align-items: center;
                 bottom: 8%;
                 gap: 15px;
             }
             
-            .galaxy-btn {
-                width: auto; min-width: 200px;
-                padding: 16px 30px; font-size: 16px;
+            .action-btn {
+                width: 200px;
+                justify-content: center;
+                padding: 14px;
+                font-size: 14px;
             }
-
-            /* Уменьшаем текст заголовка */
-            .h1-title { font-size: 42px; margin-bottom: 30px; }
+            
+            .pred-text { font-size: 14px; }
+            .pred-text-box { padding: 20px 15px 30px; }
         }
-
-        @media (min-width: 769px) {
-             /* На десктопе карточка чуть больше, но все равно компактная для "60% высоты" */
-             :root { --card-base-width: 180px; }
-        }
-        
-        @media (min-height: 900px) {
-             /* Если экран высокий, можно чуть крупнее */
-             :root { --card-base-width: 220px; }
-        }
-
     </style>
 </head>
 <body>
 
     <!-- ФОН -->
-    <div class="aurora-bg">
-        <div class="aurora-glow"></div>
-        <div class="noise-overlay"></div>
+    <div class="ambient-bg">
+        <div class="gradient-orb orb-1"></div>
+        <div class="gradient-orb orb-2"></div>
+        <div class="gradient-orb orb-3"></div>
     </div>
 
     <div id="app-container">
         
-        <div class="halo-glow" id="halo-glow"></div>
+        <div class="final-glow" id="final-glow"></div>
         <div id="particles-container"></div>
 
         <!-- СЦЕНА 1: ИНТРО -->
         <div id="scene-intro" class="scene">
             <h1 class="h1-title">Бизнес<br>Предсказание<br>2026</h1>
-            <button class="galaxy-btn" onclick="startGame()">
-                <div class="btn-stars"></div>
-                <div class="btn-content">
-                    <span class="btn-icon">
-                        <svg viewBox="0 0 24 24"><path d="M12 2l2.4 7.2h7.6l-6 4.8 2.4 7.2-6-4.8-6 4.8 2.4-7.2-6-4.8h7.6z"/></svg>
-                    </span>
-                    <span>Получить знак</span>
-                </div>
+            
+            <!-- Новая кнопка -->
+            <button class="stardust-btn" onclick="startGame()">
+                <canvas class="btn-canvas" id="btn-canvas-intro"></canvas>
+                <span class="btn-text">Получить знак</span>
             </button>
         </div>
 
         <!-- СЦЕНА 2: ВИХРЬ -->
         <div id="scene-vortex" class="scene">
             <div class="carousel-pivot" id="carousel-root"></div>
-            <div style="position: absolute; bottom: 8%; opacity: 0.6; font-size: 13px; text-transform: uppercase; letter-spacing: 2px;">Вращайте карты</div>
+            <div style="position: absolute; bottom: 12%; opacity: 0.5; font-size: 12px; text-transform: uppercase; letter-spacing: 2px;">Вращайте карты</div>
         </div>
 
         <!-- UI ФИНАЛА -->
         <div id="final-ui">
-            <button class="galaxy-btn" onclick="resetGame()">
-                <div class="btn-stars"></div>
-                <div class="btn-content">
-                    <span class="btn-icon"><svg viewBox="0 0 24 24"><path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/></svg></span>
-                    <span>Повторить</span>
-                </div>
+            <button class="action-btn" onclick="resetGame()">
+                <svg viewBox="0 0 24 24"><path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/></svg>
+                Повторить
             </button>
-            <button class="galaxy-btn outline-btn" onclick="shareResult()">
-                <div class="btn-content">
-                    <span class="btn-icon"><svg viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"/></svg></span>
-                    <span>Поделиться</span>
-                </div>
+            <button class="action-btn" onclick="shareResult()">
+                <svg viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"/></svg>
+                Поделиться
             </button>
         </div>
 
     </div>
 
     <script>
-        // Исходные данные (12 шт)
-        const rawData = [
+        // --- ДАННЫЕ ---
+        // Утроим массив для создания эффекта плотного вихря
+        const basePredictions = [
             { text: "Вы не лошадь. Снимите ярмо, подковы и делегируйте свои задачи коллегам.", img: "images/1.webp" },
-            { text: "Танцуйте танго, пейте вино. Счастливый начальник — это нормальная атмосфера в коллективе.", img: "images/2.webp" },
-            { text: "Let it be. Иногда у нас не получается строить бизнес, возможно пришло время для наставничества.", img: "images/3.webp" },
+            { text: "Танцуйте танго, пейте вино. Счастливый начальник — это нормальная атмосфера.", img: "images/2.webp" },
+            { text: "Let it be. Иногда у нас не получается строить бизнес, возможно время для наставничества.", img: "images/3.webp" },
             { text: "Медитация: вдох и выдох. Успокойте ум, чтобы увидеть решения ясно.", img: "images/4.webp" },
             { text: "Рискуйте. Удача любит смелых, особенно в первом квартале 2026 года.", img: "images/5.webp" },
             { text: "Автоматизируйте. Роботы не спят, пусть работают они, а вы творите.", img: "images/6.webp" },
@@ -347,137 +433,200 @@
             { text: "Смените фокус. Иногда нужно отойти, чтобы увидеть картину целиком.", img: "images/11.webp" },
             { text: "Празднуйте победы. Маленькие шаги ведут к большой цели.", img: "images/12.webp" }
         ];
-
-        // Используем 12 карточек в кольце, этого достаточно для экрана
-        const predictions = [...rawData];
+        
+        // Создаем больше карточек (36 штук)
+        const predictions = [...basePredictions, ...basePredictions, ...basePredictions];
 
         const backImage = "images/back.webp";
 
+        // --- ЭЛЕМЕНТЫ ---
         const introScene = document.getElementById('scene-intro');
         const vortexScene = document.getElementById('scene-vortex');
         const carouselRoot = document.getElementById('carousel-root');
         const finalUi = document.getElementById('final-ui');
         const particlesContainer = document.getElementById('particles-container');
-        const haloGlow = document.getElementById('halo-glow');
+        const finalGlow = document.getElementById('final-glow');
 
         let cards = [];
-        let angle = 0;
+        let angle = 0; // Текущий угол вращения
         let isDragging = false;
         let startX = 0;
         let currentVelocity = 0;
         let animationFrame;
-        let state = 'intro';
+        let state = 'intro'; // intro, spinning, selecting, result
 
+        // --- ИНИЦИАЛИЗАЦИЯ ---
         function init() {
-            // Звезды в кнопках
-            document.querySelectorAll('.btn-stars').forEach(el => {
-                for(let i=0; i<15; i++){
-                    let s = document.createElement('div');
-                    s.className = 'star-dot';
-                    s.style.left = Math.random()*100 + '%';
-                    s.style.top = Math.random()*100 + '%';
-                    let scale = Math.random()*2 + 1;
-                    s.style.width = scale + 'px';
-                    s.style.height = scale + 'px';
-                    s.style.animationDelay = Math.random()*3 + 's';
-                    el.appendChild(s);
-                }
-            });
+            createCards();
+            window.addEventListener('resize', handleResize);
+            handleResize();
+            initButtonParticles('btn-canvas-intro');
+        }
 
-            // Создаем карты
-            const count = predictions.length;
-            const step = 360 / count;
-
+        function createCards() {
+            carouselRoot.innerHTML = '';
+            cards = [];
+            const step = 360 / predictions.length;
+            
             predictions.forEach((item, index) => {
                 const wrapper = document.createElement('div');
                 wrapper.className = 'card-wrapper';
                 wrapper.innerHTML = `
                     <div class="card">
                         <div class="card-face face-front">
-                            <img src="${backImage}" onerror="this.src='https://placehold.co/300x480/004d40/white?text=COVER'" alt="Cover">
+                            <img src="${backImage}" onerror="this.src='https://placehold.co/300x480/004d40/80cbc4?text=◆'" alt="Cover">
                         </div>
                         <div class="card-face face-back">
-                            <img src="${item.img}" onerror="this.src='https://placehold.co/300x480/00695c/white?text=IMAGE+${index%12 + 1}'" alt="Prediction">
+                            <img src="${item.img}" onerror="this.src='https://placehold.co/300x480/002b24/42E3B4?text=${index+1}'" alt="Pred">
                             <div class="pred-text-box"><div class="pred-text">${item.text}</div></div>
                         </div>
                     </div>
                 `;
                 
+                // Сохраняем начальный угол
                 wrapper.dataset.baseAngle = index * step;
                 wrapper.dataset.index = index;
-
+                
                 wrapper.addEventListener('click', () => {
-                    if (state === 'spinning' && Math.abs(currentVelocity) < 1.5) selectCard(wrapper);
+                    // Клик работает только если вращение медленное
+                    if (state === 'spinning' && Math.abs(currentVelocity) < 1.5) {
+                        selectCard(wrapper);
+                    }
                 });
+
                 carouselRoot.appendChild(wrapper);
                 cards.push(wrapper);
             });
-
-            renderCarousel();
-            window.addEventListener('resize', handleResize);
-            handleResize();
         }
 
+        // --- ЛОГИКА АНИМАЦИИ ГЛАВНОЙ КНОПКИ (Частицы) ---
+        function initButtonParticles(canvasId) {
+            const canvas = document.getElementById(canvasId);
+            const ctx = canvas.getContext('2d');
+            let w, h;
+            const particles = [];
+            
+            const resize = () => {
+                const rect = canvas.parentElement.getBoundingClientRect();
+                w = canvas.width = rect.width;
+                h = canvas.height = rect.height;
+            };
+            window.addEventListener('resize', resize);
+            resize();
+
+            class P {
+                constructor() { this.reset(); }
+                reset() {
+                    this.x = Math.random() * w;
+                    this.y = Math.random() * h;
+                    this.vx = (Math.random() - 0.5) * 0.5; // Медленное движение
+                    this.vy = (Math.random() - 0.5) * 0.5;
+                    this.size = Math.random() * 1.5;
+                    this.alpha = Math.random() * 0.5 + 0.1;
+                }
+                update() {
+                    this.x += this.vx; this.y += this.vy;
+                    if(this.x<0||this.x>w||this.y<0||this.y>h) this.reset();
+                    this.alpha += (Math.random()-0.5)*0.05;
+                    if(this.alpha<0) this.alpha=0; if(this.alpha>1) this.alpha=1;
+                }
+                draw() {
+                    ctx.fillStyle = `rgba(255,255,255,${this.alpha})`;
+                    ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI*2); ctx.fill();
+                }
+            }
+
+            for(let i=0; i<30; i++) particles.push(new P());
+
+            function loop() {
+                ctx.clearRect(0,0,w,h);
+                particles.forEach(p => { p.update(); p.draw(); });
+                requestAnimationFrame(loop);
+            }
+            loop();
+        }
+
+        // --- ЛОГИКА ВИХРЯ (FISHEYE & VORTEX) ---
         function handleResize() {
-            // Размеры задаются через CSS переменные в медиа-запросах
+            // Адаптивная ширина базы
+            if (window.innerWidth <= 768) {
+                // Мобильная
+                document.documentElement.style.setProperty('--card-base-width', '180px');
+            } else {
+                document.documentElement.style.setProperty('--card-base-width', '280px');
+            }
         }
 
         function renderCarousel() {
             if (state === 'result') return;
+
+            // Инерция
             if (!isDragging && state === 'spinning') {
-                currentVelocity *= 0.96; // Инерция
+                currentVelocity *= 0.96; // Плавное затухание
                 angle += currentVelocity;
-                if (Math.abs(currentVelocity) < 0.05) angle += 0.05; 
+                // Минимальное постоянное вращение
+                if (Math.abs(currentVelocity) < 0.15) angle += 0.15; 
             }
 
-            // Радиус кольца. Подбираем так, чтобы все помещалось.
-            // При 12 картах и ширине карты ~200px, периметр ~2400+. R = P/2PI ~= 380px.
-            // На мобильных R должен быть меньше.
-            let radius = window.innerWidth < 768 ? 200 : 380;
+            // Настройка радиуса вихря
+            // На мобильном меньше, на десктопе больше
+            const radius = window.innerWidth < 768 ? 450 : 800;
             
             cards.forEach(card => {
                 const base = parseFloat(card.dataset.baseAngle);
-                
                 // Текущий угол в радианах
                 const theta = (base + angle) * Math.PI / 180;
                 
+                // --- VORTEX LOGIC ---
+                // X и Z как в круге
                 const x = Math.sin(theta) * radius;
-                const z = Math.cos(theta) * radius; // Z на нас положителен, если cos(0)
+                const z = Math.cos(theta) * radius;
                 
-                // Плоское кольцо, Y = 0
-                let y = 0;
+                // Добавляем искажение по Y (вихрь/спираль)
+                // Чем дальше карта по Z (сзади), тем выше или ниже она
+                // Или просто волна
+                const y = Math.sin(theta * 2) * 100; // Волнообразное движение
 
-                // Эффект глубины и масштаба для "линзы" (передние крупнее)
-                let scale = 1;
+                // Вычисляем угол поворота самой карты, чтобы она смотрела в центр
+                // + добавляем небольшое хаотичное отклонение для "взрыва" или "вихря"
+                const rotY = (base + angle);
+                
+                // --- FOCUS BLUR LOGIC ---
+                // Нормализуем Z для прозрачности и блюра
+                // z меняется от -radius до +radius. +radius это ближе к нам.
+                // Блюрим все, что не спереди
+                let distFactor = (z + radius) / (2 * radius); // 0 (далеко) to 1 (близко)
+                
+                // Резкое падение фокуса
                 let blur = 0;
                 let opacity = 1;
+                let scale = 1;
 
-                if (z > 0) {
-                    // Передний план
-                    scale = 1 + (z / radius) * 0.15; // Небольшое увеличение в центре
+                if (z < 100) { // Если карта не совсем спереди
+                   blur = (radius - z) / 20; // Чем дальше, тем сильнее блюр
+                   opacity = 0.3 + distFactor * 0.7;
+                   scale = 0.8;
+                } else {
+                    // Карты спереди
                     blur = 0;
                     opacity = 1;
-                } else {
-                    // Задний план
-                    scale = 1 - (Math.abs(z) / radius) * 0.3;
-                    blur = (Math.abs(z) / radius) * 5; 
-                    opacity = 0.6 + (1 - Math.abs(z)/radius) * 0.4;
+                    scale = 1;
                 }
-
-                const rotY = (base + angle);
 
                 card.style.transform = `translate3d(${x}px, ${y}px, ${z}px) rotateY(${rotY}deg) scale(${scale})`;
                 card.style.opacity = opacity;
                 
-                const cardInner = card.querySelector('.card');
-                cardInner.style.filter = `blur(${blur}px)`;
-                cardInner.style.brightness = z > 0 ? 1 : 0.7;
+                // Применяем фильтр к внутренней части карты для производительности
+                const inner = card.querySelector('.card');
+                inner.style.filter = blur > 0 ? `blur(${blur}px)` : 'none';
+                // Затемняем задние карты
+                inner.style.brightness = 0.5 + (distFactor * 0.5); 
             });
 
             animationFrame = requestAnimationFrame(renderCarousel);
         }
 
-        // --- УПРАВЛЕНИЕ ---
+        // --- УПРАВЛЕНИЕ (Touch/Mouse) ---
         document.addEventListener('mousedown', e => { if(state==='spinning'){ isDragging=true; startX=e.clientX; } });
         document.addEventListener('touchstart', e => { if(state==='spinning'){ isDragging=true; startX=e.touches[0].clientX; } }, {passive:false});
         
@@ -486,6 +635,7 @@
             const dx = e.clientX - startX; startX = e.clientX;
             currentVelocity = dx * 0.3; angle += currentVelocity;
         });
+        
         document.addEventListener('touchmove', e => {
             if (!isDragging) return;
             const dx = e.touches[0].clientX - startX; startX = e.touches[0].clientX;
@@ -495,14 +645,15 @@
         document.addEventListener('mouseup', () => isDragging = false);
         document.addEventListener('touchend', () => isDragging = false);
 
-        // --- ЛОГИКА ---
+        // --- ИГРОВОЙ ПРОЦЕСС ---
         function startGame() {
             introScene.classList.add('hidden');
             setTimeout(() => {
                 introScene.style.display = 'none';
                 vortexScene.classList.add('active');
                 state = 'spinning';
-                currentVelocity = 10;
+                // Начальный импульс
+                currentVelocity = 25; 
                 renderCarousel();
             }, 600);
         }
@@ -511,105 +662,134 @@
             state = 'selecting';
             cancelAnimationFrame(animationFrame);
             
-            // 1. Убираем остальные
+            // 1. Убираем все остальные карты (взрыв наружу или исчезновение)
             cards.forEach(c => {
                 if (c !== cardWrapper) {
+                    // Раскидываем их в пространстве и растворяем
+                    const rndX = (Math.random() - 0.5) * 2000;
+                    const rndY = (Math.random() - 0.5) * 2000;
                     c.style.transition = 'all 0.8s ease';
+                    c.style.transform = `translate3d(${rndX}px, ${rndY}px, -1000px) scale(0)`;
                     c.style.opacity = 0;
-                    c.style.transform = 'translate3d(0,0,-1000px) scale(0)';
                 }
             });
 
-            // 2. Центрируем выбранную
-            // Вычисляем масштаб для заполнения 60% высоты
-            const vh = window.innerHeight;
-            const targetHeight = vh * 0.60; 
-            
-            const baseW = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--card-base-width'));
-            const ratio = 1.5;
-            const actualH = baseW * ratio;
-            
-            const scaleFactor = targetHeight / actualH;
-
-            cardWrapper.style.transition = 'transform 1.2s cubic-bezier(0.2, 0.8, 0.2, 1)';
-            // Ставим ровно по центру экрана
-            cardWrapper.style.transform = `translate3d(0, 0, 100px) rotateY(0deg) scale(${scaleFactor})`;
+            // 2. Анимируем выбранную карту в центр
+            cardWrapper.style.transition = 'all 1.2s cubic-bezier(0.19, 1, 0.22, 1)';
+            // Приближаем очень близко к камере
+            cardWrapper.style.transform = `translate3d(0, 0, 100px) rotateY(0deg) scale(1.1)`; 
             cardWrapper.style.zIndex = 100;
             
-            const cardInner = cardWrapper.querySelector('.card');
-            cardInner.style.filter = 'blur(0)';
-            cardInner.style.brightness = '1';
+            const inner = cardWrapper.querySelector('.card');
+            inner.style.filter = 'none';
+            inner.style.brightness = '1';
+            inner.style.boxShadow = '0 0 50px rgba(66, 227, 180, 0.5)';
 
             // 3. Переворот
             setTimeout(() => {
-                cardInner.style.transform = 'rotateY(180deg)';
+                inner.style.transform = 'rotateY(180deg)';
                 
+                // Показ результата
                 setTimeout(() => {
                     cardWrapper.querySelector('.face-back').classList.add('visible');
-                    spawnOrbitParticles();
-                    haloGlow.style.opacity = '1';
+                    spawnConvergenceParticles(); // Запуск частиц
+                    finalGlow.style.opacity = '1';
                     finalUi.style.display = 'flex';
                     state = 'result';
-                }, 600);
+                }, 500);
             }, 800);
         }
 
-        function spawnOrbitParticles() {
+        // --- НОВЫЕ ЧАСТИЦЫ: IMPLOSION (Стягивание) ---
+        function spawnConvergenceParticles() {
             particlesContainer.innerHTML = '';
-            const count = 60;
-            const colors = ['#42E3B4', '#04C9B0', '#FFF'];
+            // Центр экрана
+            const cx = window.innerWidth / 2;
+            const cy = window.innerHeight / 2;
             
-            // Радиус орбиты чуть больше карточки
-            const h = window.innerHeight;
-            const radiusBase = (h * 0.6) * 0.4; 
-
+            const count = 60; // Количество частиц
+            
             for(let i=0; i<count; i++) {
                 const p = document.createElement('div');
                 p.className = 'particle';
-                const s = Math.random()*5 + 2;
-                p.style.width = s + 'px'; p.style.height = s + 'px';
-                p.style.background = colors[Math.floor(Math.random()*colors.length)];
                 
-                p.style.animation = `orbitFloat ${3 + Math.random()*4}s linear infinite`;
-                p.style.animationDelay = `-${Math.random() * 5}s`;
+                // Размер
+                const size = Math.random() * 4 + 2;
+                p.style.width = size + 'px'; p.style.height = size + 'px';
                 
-                const r = radiusBase + (Math.random() * 80 - 40);
-                p.style.setProperty('--radius', r + 'px');
+                // Сине-зеленая гамма
+                const hue = 160 + Math.random() * 40; // от 160 (green) до 200 (blue)
+                p.style.background = `hsl(${hue}, 100%, 70%)`;
+                p.style.boxShadow = `0 0 10px hsl(${hue}, 100%, 50%)`;
+
+                // Начальная позиция (рандомно вокруг центра на расстоянии)
+                const angle = Math.random() * Math.PI * 2;
+                const dist = 300 + Math.random() * 300; // Далеко от центра
+                
+                const sx = Math.cos(angle) * dist + 'px';
+                const sy = Math.sin(angle) * dist + 'px';
+                
+                // Конечная позиция (центр, с небольшим разбросом)
+                const ex = (Math.random() - 0.5) * 50 + 'px';
+                const ey = (Math.random() - 0.5) * 50 + 'px';
+
+                p.style.setProperty('--startX', sx);
+                p.style.setProperty('--startY', sy);
+                p.style.setProperty('--endX', ex);
+                p.style.setProperty('--endY', ey);
+                
+                // Случайная скорость
+                const dur = 0.8 + Math.random() * 0.8;
+                p.style.animation = `converge ${dur}s ease-in forwards`;
+                
+                // Встраиваем прямо в контейнер, который по центру
+                // Чтобы координаты работали относительно центра экрана, 
+                // поместим их в контейнер с display flex center? 
+                // Нет, используем absolute left 50% top 50%
+                p.style.left = '50%';
+                p.style.top = '50%';
                 
                 particlesContainer.appendChild(p);
             }
         }
 
         function resetGame() {
+            // Сброс UI
             finalUi.style.display = 'none';
+            finalUi.style.opacity = '0';
             particlesContainer.innerHTML = '';
-            haloGlow.style.opacity = '0';
+            finalGlow.style.opacity = '0';
+            
             state = 'spinning';
 
+            // Возврат карты
             const activeCard = cards.find(c => c.style.zIndex == '100');
             if(activeCard) {
                 activeCard.style.zIndex = '';
                 const inner = activeCard.querySelector('.card');
                 inner.style.transform = 'rotateY(0deg)';
+                inner.style.boxShadow = '';
                 activeCard.querySelector('.face-back').classList.remove('visible');
             }
 
-            // Возврат
+            // Возврат всех карт в строй
             cards.forEach(c => {
                 c.style.transition = 'transform 1s ease, opacity 1s ease';
+                c.style.opacity = 1;
             });
-            
+
             currentVelocity = 10;
             renderCarousel();
         }
 
         function shareResult() {
+            const data = { title: 'Мое предсказание 2026', text: 'Посмотри, что ждет тебя в бизнесе!', url: window.location.href };
             if (navigator.share) {
-                navigator.share({ title: 'Бизнес Предсказание 2026', url: window.location.href });
+                navigator.share(data).catch(console.error);
             } else {
-                const d = document.createElement('input'); d.value = window.location.href;
-                document.body.appendChild(d); d.select(); document.execCommand('copy');
-                document.body.removeChild(d); alert('Ссылка скопирована!');
+                navigator.clipboard.writeText(window.location.href).then(() => {
+                    alert('Ссылка скопирована!');
+                });
             }
         }
 
