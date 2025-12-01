@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Бизнес Предсказание 2026</title>
     
-    <!-- Подключаем шрифт Manrope -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700&display=swap" rel="stylesheet">
@@ -14,12 +13,12 @@
         /* --- НАСТРОЙКИ --- */
         :root {
             --color-bg: #021813;
-            --grad-start: #008E7A;
-            --grad-end: #04C9B0;
-            --particle-color: #42E3B4;
+            --primary: #008E7A;
+            --secondary: #04C9B0;
+            --accent: #42E3B4;
             
-            --card-ratio: 1.6;
-            --card-base-width: 300px;
+            --card-ratio: 1.5; 
+            --card-base-width: 220px; /* Уменьшили базу для десктопа */
         }
 
         body, html {
@@ -33,131 +32,120 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* --- ФОН (Aurora Gradient) --- */
+        /* --- ФОН (Deep Space Gradient) --- */
         .aurora-bg {
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: #000c0a;
-            z-index: 0;
-            overflow: hidden;
-        }
-        .aurora-blob {
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(80px);
-            opacity: 0.6;
-            animation: floatBlob 20s infinite ease-in-out alternate;
-        }
-        .blob-1 { top: -10%; left: -10%; width: 50vw; height: 50vw; background: #004d40; animation-delay: 0s; }
-        .blob-2 { bottom: -10%; right: -10%; width: 60vw; height: 60vw; background: #00695c; animation-delay: -5s; }
-        .blob-3 { top: 40%; left: 40%; width: 40vw; height: 40vw; background: #00897b; opacity: 0.4; animation-delay: -10s; }
-        .aurora-overlay {
             position: absolute; inset: 0;
-            background: radial-gradient(circle at 50% 50%, transparent 0%, #021813 90%);
-            z-index: 1;
+            background: radial-gradient(circle at 50% 120%, #004d40 0%, #021813 40%, #000000 100%);
+            z-index: 0; overflow: hidden;
         }
-        @keyframes floatBlob {
-            0% { transform: translate(0, 0) scale(1); }
-            50% { transform: translate(30px, -30px) scale(1.1); }
-            100% { transform: translate(-20px, 20px) scale(0.95); }
+        
+        .aurora-glow {
+            position: absolute; top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 120vmax; height: 120vmax;
+            background: radial-gradient(circle, rgba(0, 142, 122, 0.15) 0%, transparent 60%);
+            pointer-events: none;
         }
 
-        /* --- КОНТЕЙНЕР --- */
+        /* Шум для текстуры */
+        .noise-overlay {
+            position: absolute; inset: 0;
+            opacity: 0.05;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            pointer-events: none; z-index: 1;
+        }
+
+        /* --- КОНТЕЙНЕР (Fish-eye Perspective) --- */
         #app-container {
             position: relative;
             width: 100%; height: 100%;
             z-index: 10;
             display: flex; flex-direction: column;
             align-items: center; justify-content: center;
-            perspective: 1200px;
+            /* Сильная перспектива для эффекта линзы */
+            perspective: 800px; 
+            overflow: hidden;
         }
 
-        /* --- КНОПКА (GALAXY STYLE) --- */
-        /* Стилизация под пример Avoloch, но с нашей гаммой и шрифтом */
+        /* --- КНОПКА (Avoloch Style - Clean) --- */
         .galaxy-btn {
             position: relative;
-            padding: 24px 48px;
+            padding: 20px 40px;
             border-radius: 60px;
-            background: radial-gradient(circle at 50% 50%, #004d40 0%, #021813 100%);
             border: none;
-            color: white;
+            cursor: pointer;
+            
+            /* Цвета */
+            background: linear-gradient(180deg, #005c4f 0%, #003d33 100%);
+            color: #d4fffa;
+            
+            /* Тени для объема (вдавленность и свечение) */
+            box-shadow: 
+                0px 10px 20px rgba(0,0,0,0.4),
+                inset 0px 2px 0px rgba(255,255,255,0.1),
+                inset 0px -4px 10px rgba(0,0,0,0.3),
+                0 0 20px rgba(4, 201, 176, 0.3); /* Внешнее свечение */
+
             font-family: 'Manrope', sans-serif;
             font-weight: 600;
             font-size: 18px;
             text-transform: uppercase;
             letter-spacing: 2px;
-            cursor: pointer;
-            overflow: hidden;
-            transition: transform 0.2s, box-shadow 0.3s;
-            display: flex; align-items: center; justify-content: center; gap: 10px;
-            box-shadow: 0 0 20px rgba(0, 219, 165, 0.2);
-        }
-
-        /* Градиентная обводка через псевдоэлемент */
-        .galaxy-btn::before {
-            content: "";
-            position: absolute;
-            inset: -2px;
-            border-radius: 65px;
-            background: linear-gradient(90deg, #008E7A, #04C9B0, #00DBA5, #008E7A);
-            background-size: 300% 300%;
-            z-index: -1;
-            animation: borderFlow 4s linear infinite;
-        }
-
-        /* Внутренний фон, чтобы перекрыть обводку внутри */
-        .galaxy-btn::after {
-            content: "";
-            position: absolute;
-            inset: 2px;
-            border-radius: 60px;
-            background: #021813;
-            z-index: -1;
-        }
-
-        @keyframes borderFlow {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+            transition: all 0.3s ease;
+            
+            display: flex; align-items: center; justify-content: center; gap: 12px;
+            z-index: 50;
         }
 
         .galaxy-btn:hover {
-            transform: scale(1.03);
-            box-shadow: 0 0 30px rgba(0, 219, 165, 0.5);
+            transform: translateY(-2px);
+            box-shadow: 
+                0px 15px 30px rgba(0,0,0,0.5),
+                inset 0px 2px 0px rgba(255,255,255,0.2),
+                inset 0px -4px 10px rgba(0,0,0,0.3),
+                0 0 40px rgba(4, 201, 176, 0.6);
+            color: #fff;
         }
-        .galaxy-btn:active { transform: scale(0.97); }
         
+        .galaxy-btn:active {
+            transform: translateY(1px);
+            box-shadow: inset 0px 4px 10px rgba(0,0,0,0.5);
+        }
+
         /* Звездочки внутри кнопки */
         .btn-stars {
-            position: absolute; inset: 0; pointer-events: none; z-index: 0;
-            opacity: 0.5;
+            position: absolute; inset: 0; border-radius: 60px; overflow: hidden; pointer-events: none;
         }
         .star-dot {
             position: absolute; background: white; border-radius: 50%;
-            animation: twinkle 2s infinite ease-in-out;
+            animation: twinkle 3s infinite ease-in-out;
+            opacity: 0.6;
         }
-        @keyframes twinkle { 0%, 100% { opacity: 0.3; transform: scale(0.8); } 50% { opacity: 1; transform: scale(1.2); } }
+        @keyframes twinkle { 0%, 100% { opacity: 0.2; transform: scale(0.5); } 50% { opacity: 0.9; transform: scale(1.2); } }
 
-        .btn-content { position: relative; z-index: 1; display: flex; align-items: center; gap: 10px; }
-        .btn-icon svg { width: 20px; height: 20px; fill: #04C9B0; filter: drop-shadow(0 0 5px #04C9B0); }
+        .btn-icon svg { width: 20px; height: 20px; fill: currentColor; }
 
         .outline-btn {
             background: transparent;
-            border: 2px solid #04C9B0;
+            box-shadow: inset 0 0 0 2px rgba(4, 201, 176, 0.5);
+            color: #04C9B0;
         }
-        .outline-btn::before, .outline-btn::after { display: none; }
-        .outline-btn:hover { background: rgba(4, 201, 176, 0.1); }
+        .outline-btn:hover {
+            background: rgba(4, 201, 176, 0.1);
+            box-shadow: inset 0 0 0 2px #04C9B0, 0 0 20px rgba(4, 201, 176, 0.3);
+            color: white;
+        }
 
         /* --- СЦЕНЫ --- */
         .h1-title {
             font-weight: 700;
-            font-size: clamp(32px, 6vw, 80px);
-            text-align: center;
-            line-height: 1.1;
-            text-transform: uppercase;
+            font-size: clamp(32px, 5vw, 70px);
+            text-align: center; line-height: 1.1; text-transform: uppercase;
             margin-bottom: 40px;
-            text-shadow: 0 0 20px rgba(4, 201, 176, 0.3);
+            background: linear-gradient(to bottom, #ffffff, #80cbc4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
 
         .scene {
@@ -171,6 +159,8 @@
         #scene-vortex {
             z-index: 15; opacity: 0; pointer-events: none;
             transform-style: preserve-3d;
+            /* Дополнительный наклон всей сцены для объема */
+            transform: rotateX(5deg); 
         }
         #scene-vortex.active { opacity: 1; pointer-events: auto; }
 
@@ -188,22 +178,24 @@
             margin-top: calc(var(--card-base-width) * var(--card-ratio) * -0.5);
             transform-style: preserve-3d;
             cursor: pointer;
+            /* Улучшаем рендеринг */
+            backface-visibility: hidden; 
         }
 
         .card {
             width: 100%; height: 100%; position: relative;
             transform-style: preserve-3d;
-            transition: transform 0.6s cubic-bezier(0.4, 0.0, 0.2, 1);
-            border-radius: 28px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+            transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
 
         .card-face {
             position: absolute; width: 100%; height: 100%;
             backface-visibility: hidden;
-            border-radius: 28px; overflow: hidden;
+            border-radius: 20px; overflow: hidden;
             background: #021813;
-            border: 1px solid rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.08);
         }
         .card-face img { width: 100%; height: 100%; object-fit: cover; display: block; }
         .face-front { transform: rotateY(0deg); }
@@ -211,88 +203,80 @@
 
         .pred-text-box {
             position: absolute; bottom: 0; left: 0; width: 100%;
-            background: linear-gradient(to top, rgba(2,24,19, 0.98), rgba(2,24,19, 0.6) 80%, transparent);
-            padding: 50px 20px 30px;
+            background: linear-gradient(to top, #021813 10%, rgba(2,24,19, 0.9) 80%, transparent);
+            padding: 40px 15px 25px;
             box-sizing: border-box;
             color: white; text-align: center;
-            transform: translateY(10px); opacity: 0;
-            transition: all 0.5s ease 0.3s;
+            transform: translateY(20px); opacity: 0;
+            transition: all 0.5s ease 0.4s;
         }
         .face-back.visible .pred-text-box { transform: translateY(0); opacity: 1; }
-        .pred-text { font-size: 16px; line-height: 1.4; font-weight: 500; }
+        .pred-text { font-size: 15px; line-height: 1.4; font-weight: 500; text-shadow: 0 2px 4px black;}
 
-        /* --- ЧАСТИЦЫ (ОРБИТА) --- */
+        /* --- ЧАСТИЦЫ --- */
         #particles-container {
             position: absolute; top: 50%; left: 50%;
-            width: 0; height: 0;
-            z-index: 10; /* За картой */
-            transform-style: preserve-3d;
-            pointer-events: none;
+            width: 0; height: 0; z-index: 10;
+            transform-style: preserve-3d; pointer-events: none;
         }
         .particle {
-            position: absolute;
-            background: var(--particle-color);
-            border-radius: 50%;
-            opacity: 0;
-            box-shadow: 0 0 10px var(--particle-color);
+            position: absolute; background: var(--accent);
+            border-radius: 50%; opacity: 0;
+            box-shadow: 0 0 15px var(--accent);
         }
 
         @keyframes orbitFloat {
             0% { transform: translate(-50%, -50%) rotate(0deg) translateX(var(--radius)) rotate(0deg) scale(0.5); opacity: 0; }
             20% { opacity: 0.8; transform: translate(-50%, -50%) rotate(100deg) translateX(var(--radius)) rotate(-100deg) scale(1); }
-            80% { opacity: 0.6; }
+            80% { opacity: 0.5; }
             100% { transform: translate(-50%, -50%) rotate(360deg) translateX(var(--radius)) rotate(-360deg) scale(0); opacity: 0; }
         }
         
-        /* Статичное свечение за картой */
         .halo-glow {
             position: absolute; top: 50%; left: 50%;
             transform: translate(-50%, -50%);
             width: 300px; height: 500px;
-            background: radial-gradient(ellipse at center, rgba(4, 201, 176, 0.3) 0%, transparent 70%);
-            filter: blur(40px);
-            opacity: 0;
-            transition: opacity 1s;
+            background: radial-gradient(ellipse at center, rgba(4, 201, 176, 0.4) 0%, transparent 70%);
+            filter: blur(50px); opacity: 0; transition: opacity 1s;
         }
 
         /* --- UI ФИНАЛА --- */
         #final-ui {
-            position: absolute; bottom: 8%; z-index: 100;
-            display: none; flex-direction: row; gap: 30px;
+            position: absolute; bottom: 10%; z-index: 100;
+            display: none; flex-direction: row; gap: 20px;
             justify-content: center; width: 100%;
+            align-items: center;
         }
 
-        /* --- АДАПТИВ ДЛЯ ТЕЛЕФОНОВ --- */
+        /* --- АДАПТИВ --- */
         @media (max-width: 768px) {
-            /* Кнопки становятся меньше и в колонку */
+            :root {
+                --card-base-width: 140px; /* Сильно уменьшаем карточку для мобильных */
+            }
+
             #final-ui {
                 flex-direction: column;
-                bottom: 5%;
+                bottom: 8%;
                 gap: 15px;
             }
+            
             .galaxy-btn {
-                width: 80%; /* Широкие кнопки для удобства */
-                max-width: 300px;
-                padding: 18px 24px;
-                font-size: 16px;
+                width: auto; min-width: 200px;
+                padding: 16px 30px; font-size: 16px;
             }
-            
-            /* Размер карточки строго 60% высоты экрана */
-            :root {
-                --card-base-width: 36vh; /* (60vh / 1.6 ratio) */
-            }
-            
-            .pred-text { font-size: 14px; }
-            .pred-text-box { padding-bottom: 20px; }
-            
-            /* Интро */
-            .h1-title { font-size: 40px; margin-bottom: 30px; }
+
+            /* Уменьшаем текст заголовка */
+            .h1-title { font-size: 42px; margin-bottom: 30px; }
         }
 
-        /* Очень узкие экраны */
-        @media (max-width: 380px) {
-            .h1-title { font-size: 32px; }
-            .galaxy-btn { font-size: 14px; padding: 15px; }
+        @media (min-width: 769px) {
+             /* На десктопе карточка чуть больше, но все равно компактная для "60% высоты" */
+             :root { --card-base-width: 180px; }
+        }
+        
+        @media (min-height: 900px) {
+             /* Если экран высокий, можно чуть крупнее */
+             :root { --card-base-width: 220px; }
         }
 
     </style>
@@ -301,23 +285,20 @@
 
     <!-- ФОН -->
     <div class="aurora-bg">
-        <div class="aurora-overlay"></div>
-        <div class="aurora-blob blob-1"></div>
-        <div class="aurora-blob blob-2"></div>
-        <div class="aurora-blob blob-3"></div>
+        <div class="aurora-glow"></div>
+        <div class="noise-overlay"></div>
     </div>
 
     <div id="app-container">
         
         <div class="halo-glow" id="halo-glow"></div>
-        <!-- ЧАСТИЦЫ (За картой) -->
         <div id="particles-container"></div>
 
         <!-- СЦЕНА 1: ИНТРО -->
         <div id="scene-intro" class="scene">
             <h1 class="h1-title">Бизнес<br>Предсказание<br>2026</h1>
             <button class="galaxy-btn" onclick="startGame()">
-                <div class="btn-stars"></div> <!-- Звезды генерируются JS -->
+                <div class="btn-stars"></div>
                 <div class="btn-content">
                     <span class="btn-icon">
                         <svg viewBox="0 0 24 24"><path d="M12 2l2.4 7.2h7.6l-6 4.8 2.4 7.2-6-4.8-6 4.8 2.4-7.2-6-4.8h7.6z"/></svg>
@@ -327,10 +308,10 @@
             </button>
         </div>
 
-        <!-- СЦЕНА 2: ВРАЩЕНИЕ -->
+        <!-- СЦЕНА 2: ВИХРЬ -->
         <div id="scene-vortex" class="scene">
             <div class="carousel-pivot" id="carousel-root"></div>
-            <div style="position: absolute; bottom: 10%; opacity: 0.7; font-size: 14px; text-transform: uppercase; letter-spacing: 1px;">Вращайте карту</div>
+            <div style="position: absolute; bottom: 8%; opacity: 0.6; font-size: 13px; text-transform: uppercase; letter-spacing: 2px;">Вращайте спираль</div>
         </div>
 
         <!-- UI ФИНАЛА -->
@@ -353,7 +334,8 @@
     </div>
 
     <script>
-        const predictions = [
+        // Исходные данные (12 шт)
+        const rawData = [
             { text: "Вы не лошадь. Снимите ярмо, подковы и делегируйте свои задачи коллегам.", img: "images/1.webp" },
             { text: "Танцуйте танго, пейте вино. Счастливый начальник — это нормальная атмосфера в коллективе.", img: "images/2.webp" },
             { text: "Let it be. Иногда у нас не получается строить бизнес, возможно пришло время для наставничества.", img: "images/3.webp" },
@@ -367,6 +349,9 @@
             { text: "Смените фокус. Иногда нужно отойти, чтобы увидеть картину целиком.", img: "images/11.webp" },
             { text: "Празднуйте победы. Маленькие шаги ведут к большой цели.", img: "images/12.webp" }
         ];
+
+        // Удваиваем данные для плотности спирали (24 шт)
+        const predictions = [...rawData, ...rawData];
 
         const backImage = "images/back.webp";
 
@@ -386,22 +371,25 @@
         let state = 'intro';
 
         function init() {
-            // Добавляем звезды в кнопки
+            // Звезды в кнопках
             document.querySelectorAll('.btn-stars').forEach(el => {
-                for(let i=0; i<10; i++){
+                for(let i=0; i<15; i++){
                     let s = document.createElement('div');
                     s.className = 'star-dot';
                     s.style.left = Math.random()*100 + '%';
                     s.style.top = Math.random()*100 + '%';
-                    s.style.width = Math.random()*2 + 1 + 'px';
-                    s.style.height = s.style.width;
-                    s.style.animationDelay = Math.random()*2 + 's';
+                    let scale = Math.random()*2 + 1;
+                    s.style.width = scale + 'px';
+                    s.style.height = scale + 'px';
+                    s.style.animationDelay = Math.random()*3 + 's';
                     el.appendChild(s);
                 }
             });
 
             // Создаем карты
-            const step = 360 / predictions.length;
+            const count = predictions.length;
+            const step = 360 / count;
+
             predictions.forEach((item, index) => {
                 const wrapper = document.createElement('div');
                 wrapper.className = 'card-wrapper';
@@ -411,15 +399,22 @@
                             <img src="${backImage}" onerror="this.src='https://placehold.co/300x480/004d40/white?text=COVER'" alt="Cover">
                         </div>
                         <div class="card-face face-back">
-                            <img src="${item.img}" onerror="this.src='https://placehold.co/300x480/00695c/white?text=IMAGE+${index+1}'" alt="Prediction">
+                            <img src="${item.img}" onerror="this.src='https://placehold.co/300x480/00695c/white?text=IMAGE+${index%12 + 1}'" alt="Prediction">
                             <div class="pred-text-box"><div class="pred-text">${item.text}</div></div>
                         </div>
                     </div>
                 `;
+                
                 wrapper.dataset.baseAngle = index * step;
                 wrapper.dataset.index = index;
+                
+                // Для спирали: смещение по вертикали
+                // Индексы от 0 до 23. Сделаем так, чтобы 0 и 23 были "выше/ниже", а в центре сходились.
+                // Или просто linear spiral:
+                wrapper.dataset.yOffset = (index - count/2) * 25; // Растягиваем по вертикали
+
                 wrapper.addEventListener('click', () => {
-                    if (state === 'spinning' && Math.abs(currentVelocity) < 1) selectCard(wrapper);
+                    if (state === 'spinning' && Math.abs(currentVelocity) < 1.5) selectCard(wrapper);
                 });
                 carouselRoot.appendChild(wrapper);
                 cards.push(wrapper);
@@ -431,122 +426,194 @@
         }
 
         function handleResize() {
-            // На мобильных высота карточки 60% высоты экрана
-            // На десктопе ширина зависит от ширины экрана
-            let w;
-            if (window.innerWidth <= 768) {
-                // Мобильная логика: высота = 60vh, ширина = высота / 1.6
-                w = (window.innerHeight * 0.60) / 1.6;
-            } else {
-                w = Math.min(window.innerWidth * 0.6, 300);
-            }
-            document.documentElement.style.setProperty('--card-base-width', w + 'px');
+            // Размеры задаются через CSS переменные в медиа-запросах,
+            // но радиус орбиты можно подкорректировать тут
         }
 
         function renderCarousel() {
             if (state === 'result') return;
             if (!isDragging && state === 'spinning') {
-                currentVelocity *= 0.95;
+                currentVelocity *= 0.96; // Чуть больше инерции
                 angle += currentVelocity;
-                if (Math.abs(currentVelocity) < 0.1) angle += 0.1; 
+                if (Math.abs(currentVelocity) < 0.05) angle += 0.05; 
             }
-            const radius = window.innerWidth < 600 ? 400 : 700;
+
+            // Радиус вихря. Меньше - плотнее.
+            let radius = window.innerWidth < 768 ? 280 : 450;
+            
+            // Основной наклон вихря для эффекта объема
+            const tiltX = 10; // Наклон вперед/назад
+
             cards.forEach(card => {
                 const base = parseFloat(card.dataset.baseAngle);
+                const yOffset = parseFloat(card.dataset.yOffset);
+                
+                // Текущий угол в радианах
                 const theta = (base + angle) * Math.PI / 180;
-                const x = Math.sin(theta) * radius;
-                const z = Math.cos(theta) * radius;
-                const rot = (base + angle);
-                let opacity = z < 0 ? 0.3 + (1 + z/radius) * 0.7 : 1;
-                card.style.transform = `translate3d(${x}px, 0, ${z}px) rotateY(${rot}deg)`;
+                
+                // Расчет координат (Спираль)
+                // x и z - круг
+                // y - зависит от индекса, но мы хотим чтобы "активная" зона (перед зрителем) была в центре по Y
+                
+                // Нормализуем угол, чтобы найти "расстояние" до переднего плана (270 градусов или PI*1.5 обычно низ, 90 верх, 0 право, 180 лево. 
+                // В CSS 3D обычно 0 - это Z+ (на нас) или X+? translateZ смещает на нас. 
+                // Math.sin/cos: cos(0)=1 (право), sin(0)=0. cos(90)=0, sin(90)=1 (вглубь/назад). 
+                // Сделаем Z на нас это sin(theta).
+                
+                const x = Math.cos(theta) * radius;
+                const z = Math.sin(theta) * radius; 
+                
+                // Спираль должна закручиваться. Добавим смещение по Y, зависящее от угла поворота (чтобы спираль крутилась)
+                // Или просто фиксированная спираль, которая вращается целиком?
+                // Фиксированная спираль вращается вокруг Y.
+                
+                // Простая модель: фиксированное смещение yOffset
+                let y = yOffset;
+
+                // Fish-eye искажение
+                // Чем ближе Z к нам (положительное), тем больше масштаб
+                // Но CSS perspective делает это сам, если мы не будем сильно скейлить вручную.
+                // Чтобы усилить эффект "линзы", мы можем "выпучивать" центральные элементы.
+                
+                // Дистанция до "переднего плана" (z = radius)
+                // z меняется от -radius до +radius.
+                
+                let scale = 1;
+                let blur = 0;
+                let opacity = 1;
+
+                if (z > 0) {
+                    // Передний план
+                    scale = 1 + (z / radius) * 0.2; // Небольшое увеличение
+                    blur = 0;
+                    opacity = 1;
+                } else {
+                    // Задний план
+                    scale = 1 - (Math.abs(z) / radius) * 0.4;
+                    blur = (Math.abs(z) / radius) * 10; // Сильный блюр сзади
+                    opacity = 0.5 + (1 - Math.abs(z)/radius) * 0.5;
+                }
+
+                // Вращение самой карточки, чтобы она смотрела на центр или на зрителя
+                // rotateY(-theta) компенсирует вращение карусели, карта всегда лицом к зрителю
+                // Но для вихря красивее, если они чуть повернуты.
+                const rotY = -(base + angle) + 90; // +90 чтобы лицом
+
+                card.style.transform = `translate3d(${x}px, ${y}px, ${z}px) rotateY(${rotY}deg) scale(${scale})`;
                 card.style.opacity = opacity;
-                card.querySelector('.card').style.filter = z < 0 ? `blur(${Math.abs(z)/100}px)` : 'none';
+                
+                const cardInner = card.querySelector('.card');
+                cardInner.style.filter = `blur(${blur}px)`;
+                // Затемнение задних
+                cardInner.style.brightness = z > 0 ? 1 : 0.6;
             });
+
             animationFrame = requestAnimationFrame(renderCarousel);
         }
 
-        // Touch Logic
+        // --- УПРАВЛЕНИЕ ---
         document.addEventListener('mousedown', e => { if(state==='spinning'){ isDragging=true; startX=e.clientX; } });
         document.addEventListener('touchstart', e => { if(state==='spinning'){ isDragging=true; startX=e.touches[0].clientX; } }, {passive:false});
+        
         document.addEventListener('mousemove', e => {
             if (!isDragging) return;
             const dx = e.clientX - startX; startX = e.clientX;
-            currentVelocity = dx * 0.2; angle += currentVelocity;
+            currentVelocity = dx * 0.3; angle += currentVelocity;
         });
         document.addEventListener('touchmove', e => {
             if (!isDragging) return;
             const dx = e.touches[0].clientX - startX; startX = e.touches[0].clientX;
-            currentVelocity = dx * 0.2; angle += currentVelocity;
+            currentVelocity = dx * 0.3; angle += currentVelocity;
         }, {passive:false});
+        
         document.addEventListener('mouseup', () => isDragging = false);
         document.addEventListener('touchend', () => isDragging = false);
 
+        // --- ЛОГИКА ---
         function startGame() {
             introScene.classList.add('hidden');
             setTimeout(() => {
                 introScene.style.display = 'none';
                 vortexScene.classList.add('active');
                 state = 'spinning';
-                currentVelocity = 20;
+                currentVelocity = 15;
                 renderCarousel();
-            }, 500);
+            }, 600);
         }
 
         function selectCard(cardWrapper) {
             state = 'selecting';
             cancelAnimationFrame(animationFrame);
             
-            // Скрыть остальные
+            // 1. Убираем остальные
             cards.forEach(c => {
                 if (c !== cardWrapper) {
+                    c.style.transition = 'all 0.8s ease';
                     c.style.opacity = 0;
-                    c.style.transform = 'translate3d(0,0,-1000px) scale(0)';
+                    c.style.transform = 'translate3d(0,0,-2000px) scale(0)';
                 }
             });
 
-            // Расчет позиции финальной карты
-            // Мы не меняем размер через scale в анимации, так как он задан в CSS переменной для адаптива
-            cardWrapper.style.transition = 'transform 1s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
-            cardWrapper.style.transform = `translate3d(0, 0, 0) rotateY(0deg) scale(1)`; 
-            cardWrapper.style.zIndex = 50;
-            cardWrapper.querySelector('.card').style.filter = 'none';
+            // 2. Центрируем выбранную (подлетает к камере)
+            // Расчет масштаба, чтобы занимать 60% высоты
+            const vh = window.innerHeight;
+            const targetHeight = vh * 0.60; 
+            const cardBaseH = parseFloat(getComputedStyle(cardWrapper).height);
+            // Так как cardBaseH рассчитывается через CSS calc и может быть неточным в JS до рендера,
+            // возьмем пропорцию из CSS переменных
+            const baseW = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--card-base-width'));
+            const ratio = 1.5;
+            const actualH = baseW * ratio;
+            
+            const scaleFactor = targetHeight / actualH;
 
+            cardWrapper.style.transition = 'transform 1.2s cubic-bezier(0.2, 0.8, 0.2, 1)';
+            // Сбрасываем все смещения и ставим по центру, приближаем (translateZ)
+            // Важно: y=0, x=0
+            cardWrapper.style.transform = `translate3d(0, 0, 200px) rotateY(0deg) scale(${scaleFactor})`;
+            cardWrapper.style.zIndex = 100;
+            
+            const cardInner = cardWrapper.querySelector('.card');
+            cardInner.style.filter = 'blur(0)';
+            cardInner.style.brightness = '1';
+
+            // 3. Переворот
             setTimeout(() => {
-                cardWrapper.querySelector('.card').style.transform = 'rotateY(180deg)';
+                cardInner.style.transform = 'rotateY(180deg)';
+                
                 setTimeout(() => {
                     cardWrapper.querySelector('.face-back').classList.add('visible');
                     spawnOrbitParticles();
                     haloGlow.style.opacity = '1';
                     finalUi.style.display = 'flex';
                     state = 'result';
-                }, 500);
+                }, 600);
             }, 800);
         }
 
-        // --- ЧАСТИЦЫ: ОРБИТА ВОКРУГ КАРТЫ ---
         function spawnOrbitParticles() {
             particlesContainer.innerHTML = '';
-            const count = 50;
-            const colors = ['#42E3B4', '#04C9B0', '#008E7A', '#FFFFFF'];
+            // Создаем кольца частиц
+            const count = 60;
+            const colors = ['#42E3B4', '#04C9B0', '#FFF'];
             
-            // Радиус орбиты чуть больше ширины карты
-            const cardW = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--card-base-width'));
-            const orbitRadius = cardW * 0.8; 
+            // Радиус чуть больше карточки
+            const w = window.innerWidth;
+            const h = window.innerHeight;
+            // Примерный радиус орбиты
+            const radiusBase = (h * 0.6) * 0.4; // 40% от высоты карточки
 
             for(let i=0; i<count; i++) {
                 const p = document.createElement('div');
                 p.className = 'particle';
-                const size = Math.random() * 6 + 2;
-                p.style.width = size + 'px'; p.style.height = size + 'px';
+                const s = Math.random()*5 + 2;
+                p.style.width = s + 'px'; p.style.height = s + 'px';
                 p.style.background = colors[Math.floor(Math.random()*colors.length)];
                 
-                // Рандомная задержка и длительность
-                p.style.animation = `orbitFloat ${4 + Math.random()*4}s linear infinite`;
+                p.style.animation = `orbitFloat ${3 + Math.random()*4}s linear infinite`;
                 p.style.animationDelay = `-${Math.random() * 5}s`;
                 
-                // Передаем радиус в переменную, чтобы частица знала насколько отлетать
-                // Добавляем вариативность радиусу
-                const r = orbitRadius + (Math.random() * 100 - 50);
+                const r = radiusBase + (Math.random() * 80 - 40);
                 p.style.setProperty('--radius', r + 'px');
                 
                 particlesContainer.appendChild(p);
@@ -559,20 +626,26 @@
             haloGlow.style.opacity = '0';
             state = 'spinning';
 
-            const activeCard = cards.find(c => c.style.zIndex == '50');
+            const activeCard = cards.find(c => c.style.zIndex == '100');
             if(activeCard) {
                 activeCard.style.zIndex = '';
-                activeCard.querySelector('.card').style.transform = 'rotateY(0deg)';
+                const inner = activeCard.querySelector('.card');
+                inner.style.transform = 'rotateY(0deg)';
                 activeCard.querySelector('.face-back').classList.remove('visible');
             }
-            cards.forEach(c => c.style.transition = 'transform 1s ease, opacity 1s ease');
-            currentVelocity = 5;
+
+            // Возврат
+            cards.forEach(c => {
+                c.style.transition = 'transform 1s ease, opacity 1s ease';
+            });
+            
+            currentVelocity = 10;
             renderCarousel();
         }
 
         function shareResult() {
             if (navigator.share) {
-                navigator.share({ title: 'Бизнес 2026', url: window.location.href });
+                navigator.share({ title: 'Бизнес Предсказание 2026', url: window.location.href });
             } else {
                 const d = document.createElement('input'); d.value = window.location.href;
                 document.body.appendChild(d); d.select(); document.execCommand('copy');
