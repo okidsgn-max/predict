@@ -20,7 +20,7 @@
             
             --card-ratio: 1.6;
             
-            /* ГЛАВНОЕ ТРЕБОВАНИЕ: Высота карточки = 60% от высоты экрана */
+            /* Десктоп: 60% высоты */
             --card-height: 60vh;
             --card-base-width: calc(var(--card-height) / var(--card-ratio)); 
         }
@@ -68,7 +68,6 @@
             z-index: 10;
             display: flex; flex-direction: column;
             align-items: center; justify-content: center;
-            /* Перспектива 1000px дает хороший баланс искажения */
             perspective: 1000px; 
             overflow: hidden;
         }
@@ -221,7 +220,6 @@
             z-index: 5; pointer-events: none; overflow: hidden;
         }
         
-        /* Частицы исходят из центра (Emanating) */
         .particle {
             position: absolute; background: white; border-radius: 50%; opacity: 0;
         }
@@ -249,6 +247,11 @@
 
         /* --- АДАПТИВ (Mobile) --- */
         @media (max-width: 768px) {
+            :root {
+                /* МОБИЛЬНАЯ ВЕРСИЯ: Высота карточки = 50% */
+                --card-height: 50vh; 
+            }
+
             .h1-title { margin-bottom: 30px; font-size: 42px; }
             
             #final-ui { flex-direction: column; align-items: center; bottom: 5%; gap: 15px; }
@@ -256,10 +259,8 @@
             .pred-text { font-size: 14px; }
             .pred-text-box { padding: 20px 15px 30px; }
             
-            /* На мобильных перспектива чуть меньше */
             #app-container { perspective: 800px; }
             
-            /* Кнопка вращения чуть выше */
             .controls-container { bottom: 10%; }
         }
     </style>
@@ -444,7 +445,10 @@
                 if (Math.abs(currentVelocity) < 0.1) angle += 0.1; 
             }
 
-            const radius = window.innerWidth < 768 ? 300 : 550;
+            // УВЕЛИЧЕН РАДИУС ДЛЯ ИЗБЕЖАНИЯ НАКЛАДЫВАНИЯ
+            // Мобильные: было 300, стало 450 (при ширине карты ~200-250px)
+            // Десктоп: было 550, стало 850 (при ширине карты ~350-400px)
+            const radius = window.innerWidth < 768 ? 450 : 850;
             
             cards.forEach(card => {
                 const base = parseFloat(card.dataset.baseAngle);
@@ -454,17 +458,9 @@
                 const z = (Math.cos(theta) * radius) - radius;
                 const rotY = (base + angle);
                 
-                // Z меняется от 0 (центр) до -2*radius (самая дальняя точка)
-                // Определяем, является ли карта одной из 5 передних (+/- 2 от центра)
-                // Карточки расположены через 30 градусов.
-                // 60 градусов (2 шага) => cos(60) = 0.5
-                // Пороговое Z для +/- 60 градусов: 
-                // z_threshold = (0.5 * r) - r = -0.5 * r
-                // Берем с запасом -0.6*radius, чтобы включить карточки "на грани"
                 const isInteractive = z > (-0.6 * radius);
                 card.dataset.interactive = isInteractive;
 
-                // Основные параметры
                 let distFactor = (z + 2 * radius) / (2 * radius);
                 let blur = 0;
                 if (z < -100) blur = Math.abs(z) / 40; 
@@ -473,16 +469,13 @@
                 let brightness = 0.5 + (distFactor * 0.5);
                 let boxShadow = '0 10px 40px rgba(0,0,0,0.8)';
 
-                // Стили для курсора
                 card.style.cursor = isInteractive ? 'pointer' : 'default';
 
-                // --- ЛОГИКА ПОДСВЕТКИ (HOVER) ---
-                // Применяем только если карта интерактивна и на нее наведен курсор
                 if (isInteractive && card.isHovered) {
-                    scale = 1.05; // Увеличение
-                    brightness = 1.3; // Яркость
-                    blur = 0; // Убрать блюр
-                    boxShadow = '0 0 30px rgba(66, 227, 180, 0.6)'; // Свечение
+                    scale = 1.05; 
+                    brightness = 1.3; 
+                    blur = 0; 
+                    boxShadow = '0 0 30px rgba(66, 227, 180, 0.6)'; 
                     opacity = 1;
                 }
 
@@ -546,7 +539,7 @@
                 }
             });
 
-            // Анимация выбранной
+            // Анимация вращения выбранной карты (2 оборота + переворот)
             cardWrapper.style.transition = 'all 1.2s cubic-bezier(0.19, 1, 0.22, 1)';
             cardWrapper.style.transform = `translate3d(0, 0, 100px) rotateY(0deg)`; 
             cardWrapper.style.zIndex = 100;
@@ -556,9 +549,14 @@
             inner.style.filter = 'none';
             inner.style.brightness = '1';
             inner.style.boxShadow = '0 0 50px rgba(66, 227, 180, 0.5)';
+            
+            // Ставим долгую анимацию для спина
+            inner.style.transition = 'transform 2s cubic-bezier(0.25, 1, 0.5, 1)';
 
             setTimeout(() => {
-                inner.style.transform = 'rotateY(180deg)';
+                // 180 (переворот) + 720 (2 полных оборота) = 900 градусов
+                inner.style.transform = 'rotateY(900deg)';
+                
                 setTimeout(() => {
                     cardWrapper.querySelector('.face-back').classList.add('visible');
                     
@@ -569,8 +567,8 @@
                     finalGlow.style.opacity = '1';
                     finalUi.style.display = 'flex';
                     state = 'result';
-                }, 500);
-            }, 800);
+                }, 1800); // Ждем почти до конца вращения
+            }, 100);
         }
 
         // --- ЧАСТИЦЫ: ИСХОДЯЩИЙ ПОТОК (Emanating) ---
@@ -622,6 +620,9 @@
                 activeCard.style.zIndex = '';
                 activeCard.style.animation = ''; 
                 const inner = activeCard.querySelector('.card');
+                
+                // Сброс без анимации или с обратной раскруткой
+                inner.style.transition = 'transform 1s ease';
                 inner.style.transform = 'rotateY(0deg)';
                 inner.style.boxShadow = '';
                 activeCard.querySelector('.face-back').classList.remove('visible');
