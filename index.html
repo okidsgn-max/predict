@@ -454,10 +454,10 @@
                 if (Math.abs(currentVelocity) < 0.1 && !isAnyHovered) angle += 0.1; 
             }
 
-            // УМЕНЬШЕН РАДИУС В 2 РАЗА
-            // Мобильные: было 450, стало 250
-            // Десктоп: было 850, стало 450
-            const radius = window.innerWidth < 768 ? 250 : 450;
+            // УВЕЛИЧЕН РАДИУС ДЛЯ КОМФОРТНОГО ПРОСТРАНСТВА
+            // Мобильные: было 250, стало 320
+            // Десктоп: было 450, стало 600
+            const radius = window.innerWidth < 768 ? 320 : 600;
             
             cards.forEach(card => {
                 const base = parseFloat(card.dataset.baseAngle);
@@ -548,8 +548,8 @@
                 }
             });
 
-            // Анимация вращения выбранной карты (1 оборот + переворот = 540 градусов)
-            cardWrapper.style.transition = 'all 1.2s cubic-bezier(0.19, 1, 0.22, 1)';
+            // Анимация вращения выбранной карты (1 оборот на 180 градусов - просто перевернуть)
+            cardWrapper.style.transition = 'all 1.0s cubic-bezier(0.19, 1, 0.22, 1)';
             cardWrapper.style.transform = `translate3d(0, 0, 100px) rotateY(0deg)`; 
             cardWrapper.style.zIndex = 100;
             cardWrapper.style.cursor = 'default';
@@ -559,12 +559,11 @@
             inner.style.brightness = '1';
             inner.style.boxShadow = '0 0 50px rgba(66, 227, 180, 0.5)';
             
-            // Ставим плавную анимацию для спина
-            inner.style.transition = 'transform 1.5s cubic-bezier(0.4, 0.0, 0.2, 1)';
+            // Простой и быстрый переворот
+            inner.style.transition = 'transform 0.8s ease';
 
             setTimeout(() => {
-                // 180 (переворот) + 360 (1 полный оборот) = 540 градусов
-                inner.style.transform = 'rotateY(540deg)';
+                inner.style.transform = 'rotateY(180deg)';
                 
                 setTimeout(() => {
                     cardWrapper.querySelector('.face-back').classList.add('visible');
@@ -576,7 +575,7 @@
                     finalGlow.style.opacity = '1';
                     finalUi.style.display = 'flex';
                     state = 'result';
-                }, 1400); // Ждем завершения вращения
+                }, 800); 
             }, 100);
         }
 
