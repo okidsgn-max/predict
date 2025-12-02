@@ -9,6 +9,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <!-- Шрифт Montserrat для стиля из примера -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
 
     <style>
         /* --- НАСТРОЙКИ --- */
@@ -30,10 +32,11 @@
             width: 100%; height: 100%;
             overflow: hidden;
             background-color: var(--color-bg);
-            font-family: 'Manrope', sans-serif;
+            font-family: 'Montserrat', 'Manrope', sans-serif; /* Обновили шрифт под пример */
             color: white;
             user-select: none;
             -webkit-tap-highlight-color: transparent;
+            touch-action: none;
         }
 
         /* --- ФОН --- */
@@ -61,6 +64,14 @@
             100% { transform: translate(0, 0) scale(1); }
         }
 
+        /* Новый Canvas для фоновых блестяшек */
+        #bg-stars {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 1; /* Поверх градиентов, но под контейнером приложения */
+            pointer-events: none;
+        }
+
         /* --- КОНТЕЙНЕР --- */
         #app-container {
             position: relative;
@@ -76,7 +87,7 @@
         .stardust-btn {
             position: relative; background: transparent; border: none; cursor: pointer;
             padding: 20px 50px; color: white;
-            font-family: 'Manrope', sans-serif; font-size: 18px; font-weight: 700;
+            font-family: 'Montserrat', sans-serif; font-size: 18px; font-weight: 600;
             text-transform: uppercase; letter-spacing: 3px;
             transition: transform 0.2s; overflow: hidden; border-radius: 50px;
             box-shadow: 0 10px 40px -10px rgba(0, 229, 192, 0.5);
@@ -93,31 +104,31 @@
         .spin-btn {
             margin-top: 40px;
             padding: 12px 30px;
-            font-size: 14px;
+            font-size: 12px; /* Чуть меньше как в примере */
             border-radius: 30px;
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(5px);
-            border: 1px solid rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.3);
             color: #fff; text-transform: uppercase; letter-spacing: 2px;
             cursor: pointer; pointer-events: auto;
             display: flex; align-items: center; gap: 8px;
             transition: background 0.3s, transform 0.2s;
         }
-        .spin-btn:hover { background: rgba(255, 255, 255, 0.2); transform: scale(1.05); }
+        .spin-btn:hover { background: rgba(255, 255, 255, 0.25); transform: scale(1.05); }
         .spin-btn svg { width: 16px; height: 16px; fill: currentColor; }
 
         /* Кнопки действий */
         .action-btn {
-            background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1); color: #fff;
-            padding: 16px 32px; border-radius: 30px;
-            font-family: 'Manrope', sans-serif; font-size: 16px; font-weight: 600;
+            background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2); color: #fff;
+            padding: 12px 24px; border-radius: 5px; /* Более строгие углы из примера */
+            font-family: 'Montserrat', sans-serif; font-size: 12px; font-weight: 600;
             cursor: pointer; transition: all 0.3s ease;
             display: flex; align-items: center; gap: 8px;
             text-transform: uppercase; letter-spacing: 1px;
         }
-        .action-btn:hover { background: rgba(4, 201, 176, 0.2); border-color: #04C9B0; box-shadow: 0 0 20px rgba(4, 201, 176, 0.3); }
-        .action-btn svg { width: 18px; height: 18px; fill: currentColor; }
+        .action-btn:hover { background: rgba(4, 201, 176, 0.2); border-color: #04C9B0; box-shadow: 0 0 15px rgba(4, 201, 176, 0.2); }
+        .action-btn svg { width: 16px; height: 16px; fill: currentColor; }
 
 
         /* --- СЦЕНЫ --- */
@@ -165,11 +176,9 @@
             margin-left: calc(var(--card-base-width) * -0.5);
             margin-top: calc(var(--card-height) * -0.5);
             transform-style: preserve-3d;
-            /* cursor устанавливается динамически в JS */
             will-change: transform;
         }
         
-        /* Анимация парения для результата */
         @keyframes floatResult {
             0%, 100% { transform: translate3d(0, 0, 100px) translateY(0); }
             50% { transform: translate3d(0, 0, 100px) translateY(-20px); }
@@ -181,7 +190,6 @@
             transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
             border-radius: 24px;
             box-shadow: 0 10px 40px rgba(0,0,0,0.8);
-            /* Переходы для ховера */
             transition: transform 0.6s, filter 0.3s, brightness 0.3s, box-shadow 0.3s; 
         }
 
@@ -202,19 +210,24 @@
         .face-front { transform: rotateY(0deg); }
         .face-back { transform: rotateY(180deg); }
 
+        /* ПЛАВНЫЙ ТЕКСТ */
         .pred-text-box {
             position: absolute; bottom: 0; left: 0; width: 100%;
             background: rgba(1, 22, 18, 0.95);
             backdrop-filter: blur(10px);
             padding: 30px 20px 40px; box-sizing: border-box;
             color: white; text-align: center;
-            transform: translateY(20%); opacity: 0;
-            transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+            
+            /* Настройки для плавного появления */
+            transform: translateY(20px); /* Небольшой сдвиг */
+            opacity: 0;
+            /* Очень плавный переход 1.5 сек */
+            transition: opacity 1.5s ease-out, transform 1.5s ease-out;
         }
         .face-back.visible .pred-text-box { transform: translateY(0); opacity: 1; }
-        .pred-text { font-size: 16px; line-height: 1.5; font-weight: 500; color: #e0f2f1; }
+        .pred-text { font-size: 16px; line-height: 1.6; font-weight: 500; color: #e0f2f1; }
 
-        /* --- ЧАСТИЦЫ --- */
+        /* --- ЧАСТИЦЫ ФИНАЛА (Взрыв) --- */
         #particles-container {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             z-index: 5; pointer-events: none; overflow: hidden;
@@ -238,41 +251,37 @@
 
         /* --- UI ФИНАЛА --- */
         #final-ui {
-            position: absolute; bottom: 5%; z-index: 100;
-            display: none; flex-direction: row; gap: 20px;
+            position: absolute; bottom: 65px; /* Как в примере buttons bottom: 65px */
+            z-index: 100;
+            display: none; flex-direction: row; gap: 15px;
             justify-content: center; width: 100%;
-            opacity: 0; animation: fadeInUI 1s forwards 0.5s;
+            opacity: 0; animation: fadeInUI 1.5s forwards 0.5s; /* Медленнее появление */
         }
         @keyframes fadeInUI { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
         /* --- АДАПТИВ (Mobile) --- */
         @media (max-width: 768px) {
-            :root {
-                /* МОБИЛЬНАЯ ВЕРСИЯ: Высота карточки = 50% */
-                --card-height: 50vh; 
-            }
-
+            :root { --card-height: 50vh; }
             .h1-title { margin-bottom: 30px; font-size: 42px; }
-            
             #final-ui { flex-direction: column; align-items: center; bottom: 5%; gap: 15px; }
-            .action-btn { width: 200px; justify-content: center; padding: 14px; font-size: 14px; }
+            .action-btn { width: 200px; justify-content: center; padding: 10px; }
             .pred-text { font-size: 14px; }
             .pred-text-box { padding: 20px 15px 30px; }
-            
             #app-container { perspective: 800px; }
-            
             .controls-container { bottom: 10%; }
         }
     </style>
 </head>
 <body>
 
-    <!-- ФОН -->
+    <!-- ФОН (Градиенты + Звезды) -->
     <div class="ambient-bg">
         <div class="gradient-orb orb-1"></div>
         <div class="gradient-orb orb-2"></div>
         <div class="gradient-orb orb-3"></div>
     </div>
+    <!-- Новый слой для фоновых частиц (блестяшек) -->
+    <canvas id="bg-stars"></canvas>
 
     <div id="app-container">
         
@@ -282,7 +291,6 @@
         <!-- СЦЕНА 1: ИНТРО -->
         <div id="scene-intro" class="scene">
             <h1 class="h1-title">Бизнес<br>Предсказание<br>2026</h1>
-            
             <button class="stardust-btn" onclick="startGame()">
                 <canvas class="btn-canvas" id="btn-canvas-intro"></canvas>
                 <span class="btn-text">Получить знак</span>
@@ -355,6 +363,7 @@
         function init() {
             createCards();
             initButtonParticles('btn-canvas-intro');
+            initBackgroundSparkles('bg-stars'); // Запуск фоновых звезд
         }
 
         function createCards() {
@@ -377,26 +386,80 @@
                     </div>
                 `;
                 
-                // Добавляем флаг наведения
                 wrapper.isHovered = false;
                 wrapper.onmouseenter = () => { wrapper.isHovered = true; };
                 wrapper.onmouseleave = () => { wrapper.isHovered = false; };
-
                 wrapper.dataset.baseAngle = index * step;
                 wrapper.addEventListener('click', () => {
-                    // Разрешаем клик только если скорость низкая и карточка "интерактивная" (вычисляется в renderCarousel)
                     if (state === 'spinning' && Math.abs(currentVelocity) < 1.5) {
-                        if (wrapper.dataset.interactive === 'true') {
-                            selectCard(wrapper);
-                        }
+                        if (wrapper.dataset.interactive === 'true') selectCard(wrapper);
                     }
                 });
-
                 carouselRoot.appendChild(wrapper);
                 cards.push(wrapper);
             });
         }
 
+        // --- НОВЫЙ ФОН: БЛЕСТЯШКИ ---
+        function initBackgroundSparkles(canvasId) {
+            const canvas = document.getElementById(canvasId);
+            const ctx = canvas.getContext('2d');
+            let w, h;
+            const sparkles = [];
+
+            const resize = () => {
+                w = canvas.width = window.innerWidth;
+                h = canvas.height = window.innerHeight;
+            };
+            window.addEventListener('resize', resize);
+            resize();
+
+            class Sparkle {
+                constructor() {
+                    this.init(true);
+                }
+                init(randomY = false) {
+                    this.x = Math.random() * w;
+                    this.y = randomY ? Math.random() * h : h + 10;
+                    this.size = Math.random() * 2 + 0.5; // Маленькие точки
+                    this.speedY = Math.random() * 0.5 + 0.1; // Медленно вверх
+                    this.alpha = Math.random();
+                    this.fadeSpeed = Math.random() * 0.02 + 0.005;
+                    this.fadingOut = Math.random() > 0.5;
+                }
+                update() {
+                    this.y -= this.speedY;
+                    if (this.y < -10) this.init();
+
+                    // Мерцание
+                    if (this.fadingOut) {
+                        this.alpha -= this.fadeSpeed;
+                        if (this.alpha <= 0) { this.alpha = 0; this.fadingOut = false; }
+                    } else {
+                        this.alpha += this.fadeSpeed;
+                        if (this.alpha >= 1) { this.alpha = 1; this.fadingOut = true; }
+                    }
+                }
+                draw() {
+                    ctx.fillStyle = `rgba(255, 255, 255, ${this.alpha * 0.7})`; // Полупрозрачные белые
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+
+            // Создаем 150 частиц
+            for (let i = 0; i < 150; i++) sparkles.push(new Sparkle());
+
+            function animate() {
+                ctx.clearRect(0, 0, w, h);
+                sparkles.forEach(s => { s.update(); s.draw(); });
+                requestAnimationFrame(animate);
+            }
+            animate();
+        }
+
+        // --- ЧАСТИЦЫ В КНОПКЕ ---
         function initButtonParticles(canvasId) {
             const canvas = document.getElementById(canvasId);
             const ctx = canvas.getContext('2d');
@@ -435,28 +498,21 @@
             loop();
         }
 
-        // --- ЛОГИКА ГАЛЕРЕИ (ПЕРСПЕКТИВА + ХОВЕР) ---
+        // --- ЛОГИКА ГАЛЕРЕИ ---
         function renderCarousel() {
             if (state === 'result') return;
 
-            // Логика торможения
             if (!isDragging && state === 'spinning') {
-                // Если курсор наведен на какую-либо карточку, тормозим сильнее
                 const isAnyHovered = cards.some(c => c.isHovered);
-                
                 if (isAnyHovered) {
-                    currentVelocity *= 0.85; // Сильное торможение (умные тормоза)
+                    currentVelocity *= 0.85; 
                 } else {
-                    currentVelocity *= 0.96; // Обычное затухание
+                    currentVelocity *= 0.96; 
                 }
-                
                 angle += currentVelocity;
                 if (Math.abs(currentVelocity) < 0.1 && !isAnyHovered) angle += 0.1; 
             }
 
-            // УВЕЛИЧЕН РАДИУС ДЛЯ КОМФОРТНОГО ПРОСТРАНСТВА
-            // Мобильные: было 250, стало 320
-            // Десктоп: было 450, стало 600
             const radius = window.innerWidth < 768 ? 320 : 600;
             
             cards.forEach(card => {
@@ -481,11 +537,8 @@
                 card.style.cursor = isInteractive ? 'pointer' : 'default';
 
                 if (isInteractive && card.isHovered) {
-                    scale = 1.05; 
-                    brightness = 1.3; 
-                    blur = 0; 
-                    boxShadow = '0 0 30px rgba(66, 227, 180, 0.6)'; 
-                    opacity = 1;
+                    scale = 1.05; brightness = 1.3; blur = 0; 
+                    boxShadow = '0 0 30px rgba(66, 227, 180, 0.6)'; opacity = 1;
                 }
 
                 card.style.transform = `translate3d(${x}px, 0, ${z}px) rotateY(${rotY}deg) scale(${scale})`;
@@ -500,7 +553,6 @@
             animationFrame = requestAnimationFrame(renderCarousel);
         }
 
-        // Кнопка вращения
         function spinCards() {
             if(state !== 'spinning') return;
             currentVelocity += (Math.random() > 0.5 ? 1 : -1) * (15 + Math.random() * 10);
@@ -539,7 +591,6 @@
             cancelAnimationFrame(animationFrame);
             controlsContainer.style.display = 'none'; 
             
-            // Прячем остальные
             cards.forEach(c => {
                 if (c !== cardWrapper) {
                     c.style.transition = 'all 0.8s ease';
@@ -548,7 +599,6 @@
                 }
             });
 
-            // Анимация вращения выбранной карты (1 оборот на 180 градусов - просто перевернуть)
             cardWrapper.style.transition = 'all 1.0s cubic-bezier(0.19, 1, 0.22, 1)';
             cardWrapper.style.transform = `translate3d(0, 0, 100px) rotateY(0deg)`; 
             cardWrapper.style.zIndex = 100;
@@ -558,19 +608,13 @@
             inner.style.filter = 'none';
             inner.style.brightness = '1';
             inner.style.boxShadow = '0 0 50px rgba(66, 227, 180, 0.5)';
-            
-            // Простой и быстрый переворот
             inner.style.transition = 'transform 0.8s ease';
 
             setTimeout(() => {
                 inner.style.transform = 'rotateY(180deg)';
-                
                 setTimeout(() => {
                     cardWrapper.querySelector('.face-back').classList.add('visible');
-                    
-                    // Включаем парение
                     cardWrapper.style.animation = 'floatResult 4s ease-in-out infinite';
-                    
                     startEmanatingParticles(); 
                     finalGlow.style.opacity = '1';
                     finalUi.style.display = 'flex';
@@ -579,57 +623,44 @@
             }, 100);
         }
 
-        // --- ЧАСТИЦЫ: ИСХОДЯЩИЙ ПОТОК (Emanating) ---
+        // --- ФИНАЛЬНЫЕ ЧАСТИЦЫ ---
         function startEmanatingParticles() {
             if(particleInterval) clearInterval(particleInterval);
-            
             const spawn = () => {
                 if(state !== 'result') return;
                 const p = document.createElement('div');
                 p.className = 'particle';
                 const size = Math.random() * 6 + 2;
                 p.style.width = size + 'px'; p.style.height = size + 'px';
-                
                 const hue = Math.random() > 0.5 ? 160 : 180;
                 p.style.background = `hsl(${hue}, 100%, 70%)`;
                 p.style.boxShadow = `0 0 10px hsl(${hue}, 100%, 60%)`;
-                
                 p.style.left = '50%'; p.style.top = '50%';
                 
                 const angle = Math.random() * Math.PI * 2;
                 const dist = 300 + Math.random() * 200;
                 const tx = Math.cos(angle) * dist + 'px';
                 const ty = Math.sin(angle) * dist + 'px';
-                
-                p.style.setProperty('--tx', tx);
-                p.style.setProperty('--ty', ty);
+                p.style.setProperty('--tx', tx); p.style.setProperty('--ty', ty);
                 
                 p.style.animation = `emanate ${2 + Math.random()}s ease-out forwards`;
                 particlesContainer.appendChild(p);
-                
                 setTimeout(() => { if(p.parentNode) p.parentNode.removeChild(p); }, 3000);
             };
-
             particleInterval = setInterval(spawn, 50);
         }
 
         function resetGame() {
-            finalUi.style.display = 'none';
-            finalUi.style.opacity = '0';
-            particlesContainer.innerHTML = '';
-            finalGlow.style.opacity = '0';
+            finalUi.style.display = 'none'; finalUi.style.opacity = '0';
+            particlesContainer.innerHTML = ''; finalGlow.style.opacity = '0';
             controlsContainer.style.display = 'flex';
-            
             if(particleInterval) clearInterval(particleInterval);
             state = 'spinning';
 
             const activeCard = cards.find(c => c.style.zIndex == '100');
             if(activeCard) {
-                activeCard.style.zIndex = '';
-                activeCard.style.animation = ''; 
+                activeCard.style.zIndex = ''; activeCard.style.animation = ''; 
                 const inner = activeCard.querySelector('.card');
-                
-                // Сброс без анимации или с обратной раскруткой
                 inner.style.transition = 'transform 1s ease';
                 inner.style.transform = 'rotateY(0deg)';
                 inner.style.boxShadow = '';
@@ -640,7 +671,6 @@
                 c.style.transition = 'transform 1s ease, opacity 1s ease';
                 c.style.opacity = 1;
             });
-
             currentVelocity = 10;
             renderCarousel();
         }
@@ -650,9 +680,7 @@
             if (navigator.share) {
                 navigator.share(data).catch(console.error);
             } else {
-                navigator.clipboard.writeText(window.location.href).then(() => {
-                    alert('Ссылка скопирована!');
-                });
+                navigator.clipboard.writeText(window.location.href).then(() => { alert('Ссылка скопирована!'); });
             }
         }
 
