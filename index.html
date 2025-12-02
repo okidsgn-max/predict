@@ -439,16 +439,25 @@
         function renderCarousel() {
             if (state === 'result') return;
 
+            // Логика торможения
             if (!isDragging && state === 'spinning') {
-                currentVelocity *= 0.96; 
+                // Если курсор наведен на какую-либо карточку, тормозим сильнее
+                const isAnyHovered = cards.some(c => c.isHovered);
+                
+                if (isAnyHovered) {
+                    currentVelocity *= 0.85; // Сильное торможение (умные тормоза)
+                } else {
+                    currentVelocity *= 0.96; // Обычное затухание
+                }
+                
                 angle += currentVelocity;
-                if (Math.abs(currentVelocity) < 0.1) angle += 0.1; 
+                if (Math.abs(currentVelocity) < 0.1 && !isAnyHovered) angle += 0.1; 
             }
 
-            // УВЕЛИЧЕН РАДИУС ДЛЯ ИЗБЕЖАНИЯ НАКЛАДЫВАНИЯ
-            // Мобильные: было 300, стало 450 (при ширине карты ~200-250px)
-            // Десктоп: было 550, стало 850 (при ширине карты ~350-400px)
-            const radius = window.innerWidth < 768 ? 450 : 850;
+            // УМЕНЬШЕН РАДИУС В 2 РАЗА
+            // Мобильные: было 450, стало 250
+            // Десктоп: было 850, стало 450
+            const radius = window.innerWidth < 768 ? 250 : 450;
             
             cards.forEach(card => {
                 const base = parseFloat(card.dataset.baseAngle);
@@ -539,7 +548,7 @@
                 }
             });
 
-            // Анимация вращения выбранной карты (2 оборота + переворот)
+            // Анимация вращения выбранной карты (1 оборот + переворот = 540 градусов)
             cardWrapper.style.transition = 'all 1.2s cubic-bezier(0.19, 1, 0.22, 1)';
             cardWrapper.style.transform = `translate3d(0, 0, 100px) rotateY(0deg)`; 
             cardWrapper.style.zIndex = 100;
@@ -550,12 +559,12 @@
             inner.style.brightness = '1';
             inner.style.boxShadow = '0 0 50px rgba(66, 227, 180, 0.5)';
             
-            // Ставим долгую анимацию для спина
-            inner.style.transition = 'transform 2s cubic-bezier(0.25, 1, 0.5, 1)';
+            // Ставим плавную анимацию для спина
+            inner.style.transition = 'transform 1.5s cubic-bezier(0.4, 0.0, 0.2, 1)';
 
             setTimeout(() => {
-                // 180 (переворот) + 720 (2 полных оборота) = 900 градусов
-                inner.style.transform = 'rotateY(900deg)';
+                // 180 (переворот) + 360 (1 полный оборот) = 540 градусов
+                inner.style.transform = 'rotateY(540deg)';
                 
                 setTimeout(() => {
                     cardWrapper.querySelector('.face-back').classList.add('visible');
@@ -567,7 +576,7 @@
                     finalGlow.style.opacity = '1';
                     finalUi.style.display = 'flex';
                     state = 'result';
-                }, 1800); // Ждем почти до конца вращения
+                }, 1400); // Ждем завершения вращения
             }, 100);
         }
 
