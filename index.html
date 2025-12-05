@@ -5,12 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Бизнес Предсказание 2026</title>
     
-    <!-- Подключаем шрифт Manrope -->
+    <!-- Подключаем шрифты -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
-    <!-- Шрифт Montserrat для стиля из примера -->
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Manrope:wght@400;600&family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
 
     <style>
         /* --- НАСТРОЙКИ --- */
@@ -21,10 +19,10 @@
             --accent: #42E3B4;
             
             --card-ratio: 1.6;
-            
-            /* Десктоп: 60% высоты */
-            --card-height: 60vh;
+            --card-height: 55vh;
             --card-base-width: calc(var(--card-height) / var(--card-ratio)); 
+            
+            --btn-radius: 60px;
         }
 
         body, html {
@@ -32,7 +30,7 @@
             width: 100%; height: 100%;
             overflow: hidden;
             background-color: var(--color-bg);
-            font-family: 'Montserrat', 'Manrope', sans-serif; /* Обновили шрифт под пример */
+            font-family: 'SB Sans Display', 'Manrope', 'Montserrat', sans-serif;
             color: white;
             user-select: none;
             -webkit-tap-highlight-color: transparent;
@@ -64,12 +62,13 @@
             100% { transform: translate(0, 0) scale(1); }
         }
 
-        /* Новый Canvas для фоновых блестяшек */
-        #bg-stars {
+        /* Canvas для блестяшек в маске */
+        #mask-sparkles {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 1; /* Поверх градиентов, но под контейнером приложения */
+            z-index: 1; 
             pointer-events: none;
+            mix-blend-mode: screen; 
         }
 
         /* --- КОНТЕЙНЕР --- */
@@ -84,71 +83,131 @@
         }
 
         /* --- КНОПКИ --- */
-        .stardust-btn {
-            position: relative; background: transparent; border: none; cursor: pointer;
-            padding: 20px 50px; color: white;
-            font-family: 'Montserrat', sans-serif; font-size: 18px; font-weight: 600;
-            text-transform: uppercase; letter-spacing: 3px;
-            transition: transform 0.2s; overflow: hidden; border-radius: 50px;
-            box-shadow: 0 10px 40px -10px rgba(0, 229, 192, 0.5);
-        }
-        .stardust-btn::before { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, #00695c, #004d40); z-index: -2; border-radius: 50px; }
-        .stardust-btn::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, #04C9B0, #42E3B4); opacity: 0.2; z-index: -1; filter: blur(10px); transition: opacity 0.3s; }
-        .stardust-btn:hover { transform: scale(1.05); }
-        .stardust-btn:hover::after { opacity: 0.4; }
-
-        .btn-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
-        .btn-text { position: relative; z-index: 1; text-shadow: 0 2px 10px rgba(0,0,0,0.3); }
-
-        /* Кнопка "Вращать" */
-        .spin-btn {
-            margin-top: 40px;
-            padding: 12px 30px;
-            font-size: 12px; /* Чуть меньше как в примере */
-            border-radius: 30px;
+        .common-btn {
+            position: relative;
             background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(255,255,255,0.3);
-            color: #fff; text-transform: uppercase; letter-spacing: 2px;
-            cursor: pointer; pointer-events: auto;
-            display: flex; align-items: center; gap: 8px;
-            transition: background 0.3s, transform 0.2s;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 16px 32px;
+            border-radius: var(--btn-radius);
+            font-family: 'Montserrat', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
-        .spin-btn:hover { background: rgba(255, 255, 255, 0.25); transform: scale(1.05); }
-        .spin-btn svg { width: 16px; height: 16px; fill: currentColor; }
-
-        /* Кнопки действий */
-        .action-btn {
-            background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2); color: #fff;
-            padding: 12px 24px; border-radius: 5px; /* Более строгие углы из примера */
-            font-family: 'Montserrat', sans-serif; font-size: 12px; font-weight: 600;
-            cursor: pointer; transition: all 0.3s ease;
-            display: flex; align-items: center; gap: 8px;
-            text-transform: uppercase; letter-spacing: 1px;
+        
+        .common-btn:hover {
+            background: rgba(4, 201, 176, 0.2);
+            border-color: #04C9B0;
+            box-shadow: 0 0 20px rgba(4, 201, 176, 0.4);
+            transform: scale(1.02);
         }
-        .action-btn:hover { background: rgba(4, 201, 176, 0.2); border-color: #04C9B0; box-shadow: 0 0 15px rgba(4, 201, 176, 0.2); }
-        .action-btn svg { width: 16px; height: 16px; fill: currentColor; }
 
+        .btn-intro {
+            padding: 24px 60px; /* Кнопка побольше */
+            font-size: 18px;
+            background: linear-gradient(90deg, rgba(0,77,64,0.8), rgba(0,142,122,0.8));
+            border: 1px solid #42E3B4;
+            margin-top: 80px; 
+        }
+
+        .stars-btn {
+            width: 60px; height: 60px; /* Чуть больше */
+            background: url('stars.png') no-repeat center center;
+            background-size: contain;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            animation: pulseStar 3s infinite;
+            margin-left: 30px;
+        }
+        
+        .stars-btn:hover {
+            transform: scale(1.1) rotate(15deg);
+            filter: drop-shadow(0 0 15px rgba(66, 227, 180, 0.8));
+        }
+
+        @keyframes pulseStar {
+            0%, 100% { filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.3)); }
+            50% { filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.8)); transform: scale(1.05); }
+        }
 
         /* --- СЦЕНЫ --- */
-        .h1-title {
-            font-weight: 800; font-size: clamp(36px, 7vw, 90px);
-            text-align: center; line-height: 1.0; text-transform: uppercase;
-            margin-bottom: 50px;
-            background: linear-gradient(to bottom, #ffffff, #80cbc4);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0 0 30px rgba(4, 201, 176, 0.4));
-        }
-
         .scene {
             position: absolute; width: 100%; height: 100%;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             transition: opacity 0.8s ease, transform 0.8s ease;
         }
-        #scene-intro { z-index: 20; }
+        #scene-intro { z-index: 20; width: 100%; }
         .hidden { opacity: 0; pointer-events: none; transform: scale(1.1); }
         
+        /* ЗАГОЛОВОК (ОБНОВЛЕННАЯ ВЕРСТКА ПОД 1920) */
+        .intro-wrapper {
+            position: relative;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            width: 100%; height: 100%;
+            width: 90%; 
+            max-width: 1800px;
+        }
+
+        .title-block {
+            display: flex; flex-direction: column;
+            width: 100%; 
+            margin-bottom: 30px;
+        }
+
+        .title-row-left {
+            align-self: flex-start;
+            text-align: left;
+            margin-bottom: 20px;
+        }
+        
+        .title-row-right {
+            align-self: flex-end;
+            text-align: right;
+            display: flex; align-items: center;
+            margin-top: 20px;
+        }
+
+        .h1-title {
+            font-family: 'Playfair Display', serif;
+            font-weight: 600;
+            font-size: clamp(60px, 9vw, 160px); 
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            text-shadow: 0 4px 30px rgba(0,0,0,0.6);
+            margin: 0;
+            line-height: 1.0;
+        }
+
+        /* SVG ФОН */
+        .svg-year-container {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%; height: 100%;
+            z-index: -1; 
+            pointer-events: none;
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        .svg-year-img {
+            width: 75%; /* Чуть больше */
+            max-width: 1200px;
+            height: auto;
+            opacity: 0.5;
+            filter: drop-shadow(0 0 40px rgba(66, 227, 180, 0.2));
+        }
+
+        /* ГАЛЕРЕЯ */
         #scene-vortex {
             z-index: 15; opacity: 0; pointer-events: none;
             transform-style: preserve-3d;
@@ -156,27 +215,40 @@
         }
         #scene-vortex.active { opacity: 1; pointer-events: auto; }
         
-        /* Контейнер управления под галереей */
         .controls-container {
             position: absolute; bottom: 8%;
             display: flex; flex-direction: column; align-items: center; gap: 10px;
-            opacity: 0.7; transition: opacity 0.3s;
+            opacity: 0.8; transition: opacity 0.3s;
         }
-        .controls-container:hover { opacity: 1; }
 
         .carousel-pivot {
             position: absolute; top: 50%; left: 50%;
+            /* Pivot сам по себе 0x0, чтобы вращаться вокруг центра */
+            width: 0; height: 0;
             transform-style: preserve-3d;
+            transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); 
         }
 
         /* --- КАРТОЧКА --- */
         .card-wrapper {
             position: absolute; top: 50%; left: 50%;
             width: var(--card-base-width); height: var(--card-height);
+            /* ВОССТАНОВЛЕНА ЦЕНТРОВКА ОТСТУПАМИ */
             margin-left: calc(var(--card-base-width) * -0.5);
             margin-top: calc(var(--card-height) * -0.5);
             transform-style: preserve-3d;
             will-change: transform;
+            pointer-events: auto; 
+        }
+
+        /* УВЕЛИЧЕННАЯ ЗОНА КЛИКА (Невидимая рамка вокруг) */
+        .card-wrapper::before {
+            content: '';
+            position: absolute;
+            top: -60px; left: -60px; right: -60px; bottom: -60px;
+            z-index: -1;
+            /* Раскомментировать для отладки */
+            /* background: rgba(255,0,0,0.1); */
         }
         
         @keyframes floatResult {
@@ -187,10 +259,15 @@
         .card {
             width: 100%; height: 100%; position: relative;
             transform-style: preserve-3d;
-            transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+            transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.3s ease, filter 0.3s ease;
             border-radius: 24px;
             box-shadow: 0 10px 40px rgba(0,0,0,0.8);
-            transition: transform 0.6s, filter 0.3s, brightness 0.3s, box-shadow 0.3s; 
+        }
+
+        /* Эффект подсветки при наведении */
+        .card.hovered {
+            box-shadow: 0 0 30px rgba(66, 227, 180, 0.8), 0 0 10px rgba(255, 255, 255, 0.5);
+            border: 1px solid rgba(66, 227, 180, 0.8);
         }
 
         .card-face {
@@ -200,48 +277,105 @@
             background: #021813;
             border: 1px solid rgba(255,255,255,0.15);
         }
-        .card-face::after {
+        
+        .card-face.face-back::after {
             content: ''; position: absolute; inset: 0;
-            background: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.5) 100%);
+            background: linear-gradient(to bottom, transparent 40%, rgba(0,20,16,0.6) 70%, rgba(0,10,8,0.95) 100%);
             pointer-events: none;
+            z-index: 1;
         }
         
         .card-face img { width: 100%; height: 100%; object-fit: cover; display: block; }
         .face-front { transform: rotateY(0deg); }
         .face-back { transform: rotateY(180deg); }
 
-        /* ПЛАВНЫЙ ТЕКСТ */
-        .pred-text-box {
+        /* ТЕКСТ В КАРТОЧКЕ */
+        .pred-content {
             position: absolute; bottom: 0; left: 0; width: 100%;
-            background: rgba(1, 22, 18, 0.95);
-            backdrop-filter: blur(10px);
-            padding: 30px 20px 40px; box-sizing: border-box;
-            color: white; text-align: center;
-            
-            /* Настройки для плавного появления */
-            transform: translateY(20px); /* Небольшой сдвиг */
-            opacity: 0;
-            /* Очень плавный переход 1.5 сек */
+            padding: 24px; 
+            box-sizing: border-box;
+            color: white; text-align: left; z-index: 2;
+            transform: translateY(20px); opacity: 0;
             transition: opacity 1.5s ease-out, transform 1.5s ease-out;
         }
-        .face-back.visible .pred-text-box { transform: translateY(0); opacity: 1; }
-        .pred-text { font-size: 16px; line-height: 1.6; font-weight: 500; color: #e0f2f1; }
+        .face-back.visible .pred-content { transform: translateY(0); opacity: 1; }
 
-        /* --- ЧАСТИЦЫ ФИНАЛА (Взрыв) --- */
+        .pred-title {
+            font-family: 'SB Sans Display', 'Manrope', sans-serif;
+            font-size: 14px; 
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: white;
+            line-height: 1.3;
+            text-transform: uppercase;
+        }
+
+        .pred-text { 
+            font-family: 'SB Sans Display', 'Manrope', sans-serif;
+            font-size: 11px;
+            line-height: 1.4; font-weight: 400; color: #e0f2f1; opacity: 0.9;
+        }
+
+        /* --- ПОПАП (Инструкция) --- */
+        #popup-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(1, 17, 14, 0.7);
+            backdrop-filter: blur(20px);
+            z-index: 1000;
+            display: none;
+            align-items: center; justify-content: center;
+            opacity: 0; transition: opacity 0.5s;
+        }
+        #popup-overlay.open { opacity: 1; }
+        
+        .popup-content {
+            background: rgba(0, 43, 36, 0.95);
+            border: 1px solid rgba(66, 227, 180, 0.4);
+            border-radius: 24px;
+            padding: 50px 40px;
+            max-width: 90%; width: 450px;
+            text-align: center; /* Центрирование текста */
+            position: relative;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.7);
+            display: flex; flex-direction: column; align-items: center; /* Центрирование флексом */
+            justify-content: center;
+            transform: scale(0.9); transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        #popup-overlay.open .popup-content { transform: scale(1); }
+
+        .popup-text {
+            font-family: 'Manrope', sans-serif;
+            font-size: 18px; line-height: 1.6; color: #fff;
+            margin-bottom: 30px; text-align: center;
+        }
+        .popup-close {
+            position: absolute; top: 20px; right: 20px;
+            background: transparent; border: none; color: rgba(255,255,255,0.4);
+            font-size: 28px; cursor: pointer; transition: color 0.3s;
+            width: 40px; height: 40px; line-height: 40px;
+        }
+        .popup-close:hover { color: white; }
+
+        /* --- UI ФИНАЛА --- */
+        #final-ui {
+            position: absolute; bottom: 65px; z-index: 100;
+            display: none; flex-direction: row; gap: 15px;
+            justify-content: center; width: 100%;
+            opacity: 0; animation: fadeInUI 1.5s forwards 0.5s; 
+        }
+        @keyframes fadeInUI { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- PARTICLES --- */
         #particles-container {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             z-index: 5; pointer-events: none; overflow: hidden;
         }
-        
-        .particle {
-            position: absolute; background: white; border-radius: 50%; opacity: 0;
-        }
+        .particle { position: absolute; background: white; border-radius: 50%; opacity: 0; }
         @keyframes emanate {
             0% { opacity: 0; transform: translate(-50%, -50%) scale(0.2); }
             20% { opacity: 0.8; }
             100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(1.5); }
         }
-        
         .final-glow {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
             width: 120vw; height: 120vh;
@@ -249,52 +383,99 @@
             z-index: 4; opacity: 0; transition: opacity 1.5s; pointer-events: none;
         }
 
-        /* --- UI ФИНАЛА --- */
-        #final-ui {
-            position: absolute; bottom: 65px; /* Как в примере buttons bottom: 65px */
+        /* --- ДИСКЛЕЙМЕР (внизу) --- */
+        .disclaimer {
+            position: absolute; 
+            bottom: 20px; /* Отступ снизу */
+            left: 0; width: 100%;
+            text-align: center;
+            font-family: 'SB Sans Display', 'Manrope', sans-serif; /* Тот же шрифт что и в карточках */
+            font-size: 11px; /* Мелкий */
+            color: rgba(255, 255, 255, 0.4);
             z-index: 100;
-            display: none; flex-direction: row; gap: 15px;
-            justify-content: center; width: 100%;
-            opacity: 0; animation: fadeInUI 1.5s forwards 0.5s; /* Медленнее появление */
+            pointer-events: none;
+            padding: 0 20px; box-sizing: border-box;
+            letter-spacing: 0.5px;
         }
-        @keyframes fadeInUI { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* --- АДАПТИВ (Mobile) --- */
+        /* --- АДАПТИВ (Laptop & Mobile) --- */
+        /* Средний экран (Laptop 1366) */
+        @media (max-width: 1440px) {
+            .h1-title { font-size: 90px; }
+            .intro-wrapper { width: 95%; }
+        }
+
+        /* Мобильные (до 768px) */
         @media (max-width: 768px) {
             :root { --card-height: 50vh; }
-            .h1-title { margin-bottom: 30px; font-size: 42px; }
-            #final-ui { flex-direction: column; align-items: center; bottom: 5%; gap: 15px; }
-            .action-btn { width: 200px; justify-content: center; padding: 10px; }
-            .pred-text { font-size: 14px; }
-            .pred-text-box { padding: 20px 15px 30px; }
-            #app-container { perspective: 800px; }
-            .controls-container { bottom: 10%; }
+            .intro-wrapper { width: 100%; }
+            .title-block { width: 100%; align-items: center; margin-bottom: 20px; }
+            .title-row-left, .title-row-right { align-self: center; text-align: center; justify-content: center; margin: 5px 0; }
+            .h1-title { font-size: 42px; line-height: 1.1; }
+            .stars-btn { margin-left: 0; margin-top: 15px; }
+            .title-row-right { flex-direction: column; }
+            .svg-year-img { width: 100%; opacity: 0.3; }
+            #final-ui { flex-direction: column; align-items: center; bottom: 10%; gap: 15px; }
+            .common-btn { width: 240px; padding: 14px; font-size: 13px; }
+            .disclaimer { font-size: 9px; bottom: 10px; line-height: 1.2; }
+            .btn-intro { margin-top: 40px; padding: 16px 40px; font-size: 16px; }
+            /* На мобилке попап поменьше */
+            .popup-content { padding: 30px 20px; width: 90%; }
         }
     </style>
 </head>
 <body>
 
-    <!-- ФОН (Градиенты + Звезды) -->
+    <!-- ФОН -->
     <div class="ambient-bg">
         <div class="gradient-orb orb-1"></div>
         <div class="gradient-orb orb-2"></div>
         <div class="gradient-orb orb-3"></div>
     </div>
-    <!-- Новый слой для фоновых частиц (блестяшек) -->
-    <canvas id="bg-stars"></canvas>
+    
+    <!-- Canvas для маски блестяшек (Stars Mask) -->
+    <canvas id="mask-sparkles"></canvas>
 
     <div id="app-container">
         
         <div class="final-glow" id="final-glow"></div>
         <div id="particles-container"></div>
 
+        <!-- ПОПАП ИНСТРУКЦИЯ -->
+        <div id="popup-overlay">
+            <div class="popup-content">
+                <button class="popup-close" onclick="togglePopup(false)">×</button>
+                <div class="popup-text">
+                    Перед тем, как тянуть карту…<br><br>
+                    Сделайте глубокий вдох. Представьте, как ваш бизнес цветёт в следующем году. Как он выглядит? Что в нём нового? Что работает идеально?<br><br>
+                    А теперь тяните карту. Подсознание уже всё шепнуло.
+                </div>
+                <button class="common-btn" onclick="togglePopup(false)">Понятно</button>
+            </div>
+        </div>
+
         <!-- СЦЕНА 1: ИНТРО -->
         <div id="scene-intro" class="scene">
-            <h1 class="h1-title">Бизнес<br>Предсказание<br>2026</h1>
-            <button class="stardust-btn" onclick="startGame()">
-                <canvas class="btn-canvas" id="btn-canvas-intro"></canvas>
-                <span class="btn-text">Получить знак</span>
-            </button>
+            <div class="intro-wrapper">
+                <div class="svg-year-container">
+                    <img src="2026.svg" alt="2026" class="svg-year-img" onerror="this.style.display='none'">
+                </div>
+                
+                <div class="title-block">
+                    <div class="title-row-left">
+                        <h1 class="h1-title">Бизнес</h1>
+                    </div>
+                    <div class="title-row-right">
+                        <h1 class="h1-title">Предсказание</h1>
+                        <!-- Кнопка со звездой -->
+                        <button class="stars-btn" onclick="togglePopup(true)" title="Инструкция"></button>
+                    </div>
+                </div>
+
+                <button class="common-btn btn-intro" onclick="startGame()">
+                    Получить знак
+                </button>
+            </div>
         </div>
 
         <!-- СЦЕНА 2: ГАЛЕРЕЯ -->
@@ -302,8 +483,8 @@
             <div class="carousel-pivot" id="carousel-root"></div>
             
             <div class="controls-container">
-                <button class="spin-btn" onclick="spinCards()">
-                    <svg viewBox="0 0 24 24"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/></svg>
+                <button class="common-btn" onclick="spinCards()">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/></svg>
                     Вращать
                 </button>
             </div>
@@ -311,14 +492,18 @@
 
         <!-- UI ФИНАЛА -->
         <div id="final-ui">
-            <button class="action-btn" onclick="resetGame()">
-                <svg viewBox="0 0 24 24"><path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/></svg>
+            <button class="common-btn" onclick="resetGame()">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/></svg>
                 Повторить
             </button>
-            <button class="action-btn" onclick="shareResult()">
-                <svg viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"/></svg>
+            <button class="common-btn" onclick="shareResult()">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"/></svg>
                 Поделиться
             </button>
+        </div>
+        
+        <div class="disclaimer">
+            *Предсказание носит развлекательный характер, и не претендует на реальное предвидение событий. Все зависит только от Вас!
         </div>
 
     </div>
@@ -326,18 +511,46 @@
     <script>
         // --- ДАННЫЕ ---
         const predictions = [
-            { text: "Вы не лошадь. Снимите ярмо, подковы и делегируйте свои задачи коллегам.", img: "images/1.webp" },
-            { text: "Танцуйте танго, пейте вино. Счастливый начальник — это нормальная атмосфера.", img: "images/2.webp" },
-            { text: "Let it be. Иногда у нас не получается строить бизнес, возможно время для наставничества.", img: "images/3.webp" },
-            { text: "Медитация: вдох и выдох. Успокойте ум, чтобы увидеть решения ясно.", img: "images/4.webp" },
-            { text: "Рискуйте. Удача любит смелых, особенно в первом квартале 2026 года.", img: "images/5.webp" },
-            { text: "Автоматизируйте. Роботы не спят, пусть работают они, а вы творите.", img: "images/6.webp" },
-            { text: "Нетворкинг — ваша сила. Один звонок может решить проблему года.", img: "images/7.webp" },
-            { text: "Берегите ресурсы. Оптимизация расходов даст неожиданный рост.", img: "images/8.webp" },
-            { text: "Учитесь. Новые знания откроют голубой океан там, где была конкуренция.", img: "images/9.webp" },
-            { text: "Интуиция не врет. Слушайте внутренний голос, он громче отчетов.", img: "images/10.webp" },
-            { text: "Смените фокус. Иногда нужно отойти, чтобы увидеть картину целиком.", img: "images/11.webp" },
-            { text: "Празднуйте победы. Маленькие шаги ведут к большой цели.", img: "images/12.webp" }
+            { 
+                title: "Новые инструменты в симфонии продаж",
+                text: "Найти новый канал продаж. Ваш бизнес играет мелодию, но пока только на одном инструменте! Пора подключать новые и открывать ещё один канал продаж: пусть звон монет звучит в стерео.",
+                img: "images/1.webp" 
+            },
+            { 
+                title: "Дайте им ноты!",
+                text: "Повысить экспертизу сотрудников. Сейчас ваша команда — как джазовый оркестр, где каждый играет душевно, но не всегда в унисон. Предоставьте им обучение, и у вас появится ансамбль, который виртуозно импровизирует.",
+                img: "images/2.webp" 
+            },
+            { 
+                title: "Выйдите на новую сцену",
+                text: "Выйти на новую нишу. Где-то есть клуб, в котором публика ждёт именно ваш жанр музыки. Найдите эту сцену и станьте её хедлайнером.",
+                img: "images/3.webp" 
+            },
+            { 
+                title: "Новые тексты и новые хиты",
+                text: "Переосмыслить рекламные сообщения. Ваши рекламные тексты звучат, как демоверсия: идея есть, но сердечко не цепляет. Освежите лирику, и клиенты будут напевать ваш оффер весь день.",
+                img: "images/4.webp" 
+            },
+            { 
+                title: "Запишите ремейк!",
+                text: "Переосмыслить программу лояльности. Сейчас программа лояльности напоминает оперу на языке, которого никто не знает. Упростите, сделайте ритмичнее, и клиенты будут возвращаться туда, как на любимый концерт.",
+                img: "images/5.webp" 
+            },
+            { 
+                title: "Заземлитесь и послушайте шум дождя",
+                text: "Расслабиться. Всё под контролем, ничего менять не надо. Оркестр играет, дирижёр уверенно машет, а вы ищете, где звук пропал. Успокойтесь, у вас всё работает, как надо.",
+                img: "images/6.webp" 
+            },
+            { 
+                title: "Когда бэк-вокал превращается в солистов",
+                text: "Мотивировать сотрудников. Команда чувствует себя, как бэк-вокал, которому забыли включить микрофоны. Добавьте им признания и энергии, и они запоют так, что продажи взлетят.",
+                img: "images/7.webp" 
+            },
+            { 
+                title: "Персональный плейлист для каждого клиента",
+                text: "Продумать персонализированные предложения. Создайте предложения, которые звучат, как персональный трек: будто вы DJ и знаете вкус каждого слушателя.",
+                img: "images/8.webp" 
+            }
         ];
         
         const backImage = "images/back.webp";
@@ -350,6 +563,7 @@
         const particlesContainer = document.getElementById('particles-container');
         const finalGlow = document.getElementById('final-glow');
         const controlsContainer = document.querySelector('.controls-container');
+        const popupOverlay = document.getElementById('popup-overlay');
 
         let cards = [];
         let angle = 0; 
@@ -362,8 +576,16 @@
 
         function init() {
             createCards();
-            initButtonParticles('btn-canvas-intro');
-            initBackgroundSparkles('bg-stars'); // Запуск фоновых звезд
+            initSparklesMask(); // Запуск блестяшек в маске
+        }
+
+        // --- ПОПАП ---
+        function togglePopup(show) {
+            popupOverlay.style.display = show ? 'flex' : 'none';
+            setTimeout(() => {
+                if(show) popupOverlay.classList.add('open');
+                else popupOverlay.classList.remove('open');
+            }, 10);
         }
 
         function createCards() {
@@ -381,7 +603,10 @@
                         </div>
                         <div class="card-face face-back">
                             <img src="${item.img}" onerror="this.src='https://placehold.co/300x480/002b24/42E3B4?text=${index+1}'" alt="Pred">
-                            <div class="pred-text-box"><div class="pred-text">${item.text}</div></div>
+                            <div class="pred-content">
+                                <div class="pred-title">${item.title}</div>
+                                <div class="pred-text">${item.text}</div>
+                            </div>
                         </div>
                     </div>
                 `;
@@ -400,103 +625,115 @@
             });
         }
 
-        // --- НОВЫЙ ФОН: БЛЕСТЯШКИ ---
-        function initBackgroundSparkles(canvasId) {
-            const canvas = document.getElementById(canvasId);
+        // --- MASKED SPARKLES LOGIC (Блестяшки в маске) ---
+        function initSparklesMask() {
+            const canvas = document.getElementById('mask-sparkles');
             const ctx = canvas.getContext('2d');
             let w, h;
-            const sparkles = [];
+            
+            // Если бы был stars.svg, мы бы загрузили его как Image
+            // Для примера создадим маску программно (облако звезд)
+            const maskCanvas = document.createElement('canvas');
+            const maskCtx = maskCanvas.getContext('2d');
+
+            const particles = [];
+            const numParticles = 200; // Количество блестяшек
 
             const resize = () => {
                 w = canvas.width = window.innerWidth;
                 h = canvas.height = window.innerHeight;
+                maskCanvas.width = w;
+                maskCanvas.height = h;
+                createMask(); // Перерисовываем маску при ресайзе
             };
-            window.addEventListener('resize', resize);
-            resize();
+            
+            // Создаем форму маски (замена stars.svg)
+            function createMask() {
+                maskCtx.clearRect(0,0,w,h);
+                // Эмуляция stars.svg - рисуем большую фигуру
+                // В реальном проекте здесь будет: maskCtx.drawImage(starsSvgImage, ...)
+                
+                maskCtx.fillStyle = '#fff';
+                maskCtx.beginPath();
+                // Рисуем эллиптическое облако в центре как пример маски
+                maskCtx.ellipse(w/2, h/2, w*0.6, h*0.6, 0, 0, Math.PI*2);
+                maskCtx.fill();
+                
+                // Добавим текста "2026" в маску тоже, чтобы блестело внутри него
+                maskCtx.font = "bold 20vw 'Playfair Display'";
+                maskCtx.textAlign = "center";
+                maskCtx.textBaseline = "middle";
+                maskCtx.fillText("2026", w/2, h/2);
+            }
 
-            class Sparkle {
+            class Spark {
                 constructor() {
-                    this.init(true);
+                    this.init();
                 }
-                init(randomY = false) {
+                init() {
                     this.x = Math.random() * w;
-                    this.y = randomY ? Math.random() * h : h + 10;
-                    this.size = Math.random() * 2 + 0.5; // Маленькие точки
-                    this.speedY = Math.random() * 0.5 + 0.1; // Медленно вверх
+                    this.y = Math.random() * h;
+                    this.vx = (Math.random() - 0.5) * 0.5;
+                    this.vy = (Math.random() - 0.5) * 0.5;
+                    this.size = Math.random() * 2 + 0.5;
+                    this.color = Math.random() > 0.5 ? '#00E5C0' : '#42E3B4'; // Наши цвета
                     this.alpha = Math.random();
-                    this.fadeSpeed = Math.random() * 0.02 + 0.005;
-                    this.fadingOut = Math.random() > 0.5;
+                    this.fade = (Math.random() * 0.01) + 0.002;
                 }
                 update() {
-                    this.y -= this.speedY;
-                    if (this.y < -10) this.init();
-
-                    // Мерцание
-                    if (this.fadingOut) {
-                        this.alpha -= this.fadeSpeed;
-                        if (this.alpha <= 0) { this.alpha = 0; this.fadingOut = false; }
-                    } else {
-                        this.alpha += this.fadeSpeed;
-                        if (this.alpha >= 1) { this.alpha = 1; this.fadingOut = true; }
+                    this.x += this.vx;
+                    this.y += this.vy;
+                    this.alpha -= this.fade;
+                    if (this.alpha <= 0 || this.x < 0 || this.x > w || this.y < 0 || this.y > h) {
+                        this.init();
+                        this.alpha = 0; // Начинаем скрытым и плавно появляем? Нет, просто ресет
+                        this.alpha = 1; 
                     }
                 }
                 draw() {
-                    ctx.fillStyle = `rgba(255, 255, 255, ${this.alpha * 0.7})`; // Полупрозрачные белые
+                    ctx.fillStyle = this.color;
+                    ctx.globalAlpha = this.alpha;
                     ctx.beginPath();
-                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI*2);
                     ctx.fill();
+                    ctx.globalAlpha = 1;
                 }
             }
 
-            // Создаем 150 частиц
-            for (let i = 0; i < 150; i++) sparkles.push(new Sparkle());
+            for(let i=0; i<numParticles; i++) particles.push(new Spark());
 
             function animate() {
+                // 1. Очищаем основной канвас
                 ctx.clearRect(0, 0, w, h);
-                sparkles.forEach(s => { s.update(); s.draw(); });
+                
+                // 2. Рисуем маску на основном канвасе
+                // (В реальной реализации с SVG лучше использовать globalCompositeOperation 'source-in')
+                // Но для производительности с множеством частиц делаем так:
+                
+                // Шаг А: Рисуем маску (она определит ГДЕ видно)
+                ctx.globalCompositeOperation = 'source-over';
+                ctx.drawImage(maskCanvas, 0, 0);
+                
+                // Шаг Б: Меняем режим на 'source-in' - все что нарисуем дальше, будет видно ТОЛЬКО там, где была маска
+                ctx.globalCompositeOperation = 'source-in';
+                
+                // Шаг В: Рисуем частицы
+                particles.forEach(p => {
+                    p.update();
+                    p.draw();
+                });
+                
+                // Сброс режима для следующего кадра (хотя clearRect сбросит)
+                ctx.globalCompositeOperation = 'source-over';
+
                 requestAnimationFrame(animate);
             }
+
+            window.addEventListener('resize', resize);
+            resize();
             animate();
         }
 
-        // --- ЧАСТИЦЫ В КНОПКЕ ---
-        function initButtonParticles(canvasId) {
-            const canvas = document.getElementById(canvasId);
-            const ctx = canvas.getContext('2d');
-            let w, h;
-            const particles = [];
-            const resize = () => {
-                const rect = canvas.parentElement.getBoundingClientRect();
-                w = canvas.width = rect.width; h = canvas.height = rect.height;
-            };
-            window.addEventListener('resize', resize);
-            resize();
-
-            class P {
-                constructor() { this.reset(); }
-                reset() {
-                    this.x = Math.random() * w; this.y = Math.random() * h;
-                    this.vx = (Math.random() - 0.5) * 0.5; this.vy = (Math.random() - 0.5) * 0.5;
-                    this.size = Math.random() * 1.5; this.alpha = Math.random() * 0.5 + 0.1;
-                }
-                update() {
-                    this.x += this.vx; this.y += this.vy;
-                    if(this.x<0||this.x>w||this.y<0||this.y>h) this.reset();
-                    this.alpha += (Math.random()-0.5)*0.05;
-                    if(this.alpha<0) this.alpha=0; if(this.alpha>1) this.alpha=1;
-                }
-                draw() {
-                    ctx.fillStyle = `rgba(255,255,255,${this.alpha})`;
-                    ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI*2); ctx.fill();
-                }
-            }
-            for(let i=0; i<30; i++) particles.push(new P());
-            function loop() {
-                ctx.clearRect(0,0,w,h); particles.forEach(p => { p.update(); p.draw(); });
-                requestAnimationFrame(loop);
-            }
-            loop();
-        }
 
         // --- ЛОГИКА ГАЛЕРЕИ ---
         function renderCarousel() {
@@ -504,17 +741,16 @@
 
             if (!isDragging && state === 'spinning') {
                 const isAnyHovered = cards.some(c => c.isHovered);
-                if (isAnyHovered) {
-                    currentVelocity *= 0.85; 
-                } else {
-                    currentVelocity *= 0.96; 
-                }
+                currentVelocity *= isAnyHovered ? 0.85 : 0.96;
                 angle += currentVelocity;
-                if (Math.abs(currentVelocity) < 0.1 && !isAnyHovered) angle += 0.1; 
+                if (Math.abs(currentVelocity) < 0.1 && !isAnyHovered) angle += 0.05; 
             }
 
-            const radius = window.innerWidth < 768 ? 320 : 600;
-            
+            const baseRadius = window.innerWidth < 768 ? 160 : 350; 
+            const radius = baseRadius;
+            const tilt = Math.max(-10, Math.min(10, currentVelocity * 0.5));
+            carouselRoot.style.transform = `translate(-50%, -50%) rotateX(${tilt}deg)`;
+
             cards.forEach(card => {
                 const base = parseFloat(card.dataset.baseAngle);
                 const theta = (base + angle) * Math.PI / 180;
@@ -523,31 +759,31 @@
                 const z = (Math.cos(theta) * radius) - radius;
                 const rotY = (base + angle);
                 
-                const isInteractive = z > (-0.6 * radius);
+                // Расширенная зона интерактивности
+                // Раньше было -0.6, теперь -0.8 (захватываем больше боковых карт)
+                const isInteractive = z > (-0.8 * radius); 
                 card.dataset.interactive = isInteractive;
 
                 let distFactor = (z + 2 * radius) / (2 * radius);
-                let blur = 0;
-                if (z < -100) blur = Math.abs(z) / 40; 
+                let blur = z < -100 ? Math.abs(z) / 40 : 0;
                 let opacity = 0.4 + (distFactor * 0.6);
                 let scale = 1;
                 let brightness = 0.5 + (distFactor * 0.5);
-                let boxShadow = '0 10px 40px rgba(0,0,0,0.8)';
 
-                card.style.cursor = isInteractive ? 'pointer' : 'default';
+                const inner = card.querySelector('.card');
 
                 if (isInteractive && card.isHovered) {
-                    scale = 1.05; brightness = 1.3; blur = 0; 
-                    boxShadow = '0 0 30px rgba(66, 227, 180, 0.6)'; opacity = 1;
+                    scale = 1.05; brightness = 1.3; blur = 0; opacity = 1;
+                    inner.classList.add('hovered'); // Добавляем класс для подсветки
+                } else {
+                    inner.classList.remove('hovered');
                 }
 
                 card.style.transform = `translate3d(${x}px, 0, ${z}px) rotateY(${rotY}deg) scale(${scale})`;
                 card.style.opacity = opacity;
                 
-                const inner = card.querySelector('.card');
                 inner.style.filter = blur > 0.5 ? `blur(${blur}px)` : 'none';
                 inner.style.brightness = brightness;
-                inner.style.boxShadow = boxShadow;
             });
 
             animationFrame = requestAnimationFrame(renderCarousel);
@@ -600,11 +836,13 @@
             });
 
             cardWrapper.style.transition = 'all 1.0s cubic-bezier(0.19, 1, 0.22, 1)';
+            carouselRoot.style.transform = `translate(-50%, -50%) rotateX(0deg)`;
+            
             cardWrapper.style.transform = `translate3d(0, 0, 100px) rotateY(0deg)`; 
             cardWrapper.style.zIndex = 100;
-            cardWrapper.style.cursor = 'default';
             
             const inner = cardWrapper.querySelector('.card');
+            inner.classList.remove('hovered'); // Убираем подсветку при выборе
             inner.style.filter = 'none';
             inner.style.brightness = '1';
             inner.style.boxShadow = '0 0 50px rgba(66, 227, 180, 0.5)';
@@ -623,7 +861,6 @@
             }, 100);
         }
 
-        // --- ФИНАЛЬНЫЕ ЧАСТИЦЫ ---
         function startEmanatingParticles() {
             if(particleInterval) clearInterval(particleInterval);
             const spawn = () => {
@@ -659,11 +896,13 @@
 
             const activeCard = cards.find(c => c.style.zIndex == '100');
             if(activeCard) {
-                activeCard.style.zIndex = ''; activeCard.style.animation = ''; 
+                activeCard.style.zIndex = ''; 
+                activeCard.style.animation = ''; 
                 const inner = activeCard.querySelector('.card');
+                
                 inner.style.transition = 'transform 1s ease';
-                inner.style.transform = 'rotateY(0deg)';
-                inner.style.boxShadow = '';
+                inner.style.transform = 'rotateY(0deg)'; 
+                inner.style.boxShadow = '0 10px 40px rgba(0,0,0,0.8)';
                 activeCard.querySelector('.face-back').classList.remove('visible');
             }
 
