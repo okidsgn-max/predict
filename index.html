@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Бизнес Предсказание 2026</title>
+    
+    <!-- Подключаем шрифты -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Manrope:wght@400;600&family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+
+    <style>
+        /* --- НАСТРОЙКИ --- */
+        :root {
+            --color-bg: #01110e;
+            --primary: #00E5C0;
+            --secondary: #008E7A;
+            --accent: #42E3B4;
+            
+            --card-ratio: 1.6;
+            --card-height: 55vh;
+            --card-base-width: calc(var(--card-height) / var(--card-ratio)); 
+            
+            --btn-radius: 60px;
+        }
+
+        body, html {
+            margin: 0; padding: 0;
+            width: 100%; height: 100%;
+            overflow: hidden;
+            background-color: var(--color-bg);
+            font-family: 'SB Sans Display', 'Manrope', 'Montserrat', sans-serif;
+            color: white;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: none;
+        }
+
+        /* --- ФОН --- */
+        .ambient-bg {
+            position: absolute; top: 0; left: 0;
+            width: 100%; height: 100%; z-index: 0;
+            background: linear-gradient(135deg, #021813, #002b24);
+            overflow: hidden;
+        }
+
+        .gradient-orb {
+            position: absolute; border-radius: 50%;
+            filter: blur(80px); opacity: 0.6;
+            animation: orbFloat 20s infinite ease-in-out;
+        }
+
+        .orb-1 { width: 80vw; height: 80vw; background: radial-gradient(circle, #004d40 0%, transparent 70%); top: -20%; left: -20%; animation-duration: 25s; }
+        .orb-2 { width: 60vw; height: 60vw; background: radial-gradient(circle, #008E7A 0%, transparent 70%); bottom: -10%; right: -10%; animation-duration: 30s; animation-delay: -5s; }
+        .orb-3 { width: 40vw; height: 40vw; background: radial-gradient(circle, #04C9B0 0%, transparent 70%); top: 40%; left: 40%; opacity: 0.3; animation-duration: 20s; animation-delay: -10s; }
+
+        @keyframes orbFloat {
+            0% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(30px, -50px) scale(1.1); }
+            66% { transform: translate(-20px, 20px) scale(0.9); }
+            100% { transform: translate(0, 0) scale(1); }
+        }
+
+        /* Canvas для блестяшек в маске */
+        #mask-sparkles {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 1; 
+            pointer-events: none;
+            mix-blend-mode: screen; 
+        }
+
+        /* --- КОНТЕЙНЕР --- */
+        #app-container {
+            position: relative;
+            width: 100%; height: 100%;
+            z-index: 10;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            perspective: 1000px; 
+            overflow: hidden;
+        }
+
+        /* --- КНОПКИ --- */
+        .common-btn {
+            position: relative;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 16px 32px;
+            border-radius: var(--btn-radius);
+            font-family: 'Montserrat', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        
+        .common-btn:hover {
+            background: rgba(4, 201, 176, 0.2);
+            border-color: #04C9B0;
+            box-shadow: 0 0 20px rgba(4, 201, 176, 0.4);
+            transform: scale(1.02);
+        }
+
+        .btn-intro {
+            padding: 24px 60px; /* Кнопка побольше */
+            font-size: 18px;
+            background: linear-gradient(90deg, rgba(0,77,64,0.8), rgba(0,142,122,0.8));
+            border: 1px solid #42E3B4;
+            margin-top: 80px; 
+        }
+
+        .stars-btn {
+            width: 60px; height: 60px; /* Чуть больше */
+            background: url('stars.png') no-repeat center center;
+            background-size: contain;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            animation: pulseStar 3s infinite;
+            margin-left: 30px;
+        }
+        
+        .stars-btn:hover {
+            transform: scale(1.1) rotate(15deg);
+            filter: drop-shadow(0 0 15px rgba(66, 227, 180, 0.8));
+        }
+
+        @keyframes pulseStar {
+            0%, 100% { filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.3)); }
+            50% { filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.8)); transform: scale(1.05); }
+        }
+
+        /* --- СЦЕНЫ --- */
+        .scene {
+            position: absolute; width: 100%; height: 100%;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+        #scene-intro { z-index: 20; width: 100%; }
+        .hidden { opacity: 0; pointer-events: none; transform: scale(1.1); }
+        
+        /* ЗАГОЛОВОК (ОБНОВЛЕННАЯ ВЕРСТКА ПОД 1920) */
+        .intro-wrapper {
+            position: relative;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            width: 100%; height: 100%;
+            width: 90%; 
+            max-width: 1800px;
+        }
+
+        .title-block {
+            display: flex; flex-direction: column;
+            width: 100%; 
+            margin-bottom: 30px;
+        }
+
+        .title-row-left {
+            align-self: flex-start;
+            text-align: left;
+            margin-bottom: 20px;
+        }
+        
+        .title-row-right {
+            align-self: flex-end;
+            text-align: right;
+            display: flex; align-items: center;
+            margin-top: 20px;
+        }
+
+        .h1-title {
+            font-family: 'Playfair Display', serif;
+            font-weight: 600;
+            font-size: clamp(60px, 9vw, 160px); 
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            text-shadow: 0 4px 30px rgba(0,0,0,0.6);
+            margin: 0;
+            line-height: 1.0;
+        }
+
+        /* SVG ФОН */
+        .svg-year-container {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%; height: 100%;
+            z-index: -1; 
+            pointer-events: none;
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        .svg-year-img {
+            width: 75%; /* Чуть больше */
+            max-width: 1200px;
+            height: auto;
+            opacity: 0.5;
+            filter: drop-shadow(0 0 40px rgba(66, 227, 180, 0.2));
+        }
+
+        /* ГАЛЕРЕЯ */
+        #scene-vortex {
+            z-index: 15; opacity: 0; pointer-events: none;
+            transform-style: preserve-3d;
+            transition: opacity 1s, transform 1s;
+        }
+        #scene-vortex.active { opacity: 1; pointer-events: auto; }
+        
+        .controls-container {
+            position: absolute; bottom: 8%;
+            display: flex; flex-direction: column; align-items: center; gap: 10px;
+            opacity: 0.8; transition: opacity 0.3s;
+        }
+
+        .carousel-pivot {
+            position: absolute; top: 50%; left: 50%;
+            /* Pivot сам по себе 0x0, чтобы вращаться вокруг центра */
+            width: 0; height: 0;
+            transform-style: preserve-3d;
+            transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); 
+        }
+
+        /* --- КАРТОЧКА --- */
+        .card-wrapper {
+            position: absolute; top: 50%; left: 50%;
+            width: var(--card-base-width); height: var(--card-height);
+            /* ВОССТАНОВЛЕНА ЦЕНТРОВКА ОТСТУПАМИ */
+            margin-left: calc(var(--card-base-width) * -0.5);
+            margin-top: calc(var(--card-height) * -0.5);
+            transform-style: preserve-3d;
+            will-change: transform;
+            pointer-events: auto; 
+        }
+
+        /* УВЕЛИЧЕННАЯ ЗОНА КЛИКА (Невидимая рамка вокруг) */
+        .card-wrapper::before {
+            content: '';
+            position: absolute;
+            top: -60px; left: -60px; right: -60px; bottom: -60px;
+            z-index: -1;
+            /* Раскомментировать для отладки */
+            /* background: rgba(255,0,0,0.1); */
+        }
+        
+        @keyframes floatResult {
+            0%, 100% { transform: translate3d(0, 0, 100px) translateY(0); }
+            50% { transform: translate3d(0, 0, 100px) translateY(-20px); }
+        }
+
+        .card {
+            width: 100%; height: 100%; position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.3s ease, filter 0.3s ease;
+            border-radius: 24px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+        }
+
+        /* Эффект подсветки при наведении */
+        .card.hovered {
+            box-shadow: 0 0 30px rgba(66, 227, 180, 0.8), 0 0 10px rgba(255, 255, 255, 0.5);
+            border: 1px solid rgba(66, 227, 180, 0.8);
+        }
+
+        .card-face {
+            position: absolute; width: 100%; height: 100%;
+            backface-visibility: hidden;
+            border-radius: 24px; overflow: hidden;
+            background: #021813;
+            border: 1px solid rgba(255,255,255,0.15);
+        }
+        
+        .card-face.face-back::after {
+            content: ''; position: absolute; inset: 0;
+            background: linear-gradient(to bottom, transparent 40%, rgba(0,20,16,0.6) 70%, rgba(0,10,8,0.95) 100%);
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        .card-face img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .face-front { transform: rotateY(0deg); }
+        .face-back { transform: rotateY(180deg); }
+
+        /* ТЕКСТ В КАРТОЧКЕ */
+        .pred-content {
+            position: absolute; bottom: 0; left: 0; width: 100%;
+            padding: 24px; 
+            box-sizing: border-box;
+            color: white; text-align: left; z-index: 2;
+            transform: translateY(20px); opacity: 0;
+            transition: opacity 1.5s ease-out, transform 1.5s ease-out;
+        }
+        .face-back.visible .pred-content { transform: translateY(0); opacity: 1; }
+
+        .pred-title {
+            font-family: 'SB Sans Display', 'Manrope', sans-serif;
+            font-size: 14px; 
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: white;
+            line-height: 1.3;
+            text-transform: uppercase;
+        }
+
+        .pred-text { 
+            font-family: 'SB Sans Display', 'Manrope', sans-serif;
+            font-size: 11px;
+            line-height: 1.4; font-weight: 400; color: #e0f2f1; opacity: 0.9;
+        }
+
+        /* --- ПОПАП (Инструкция) --- */
+        #popup-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(1, 17, 14, 0.7);
+            backdrop-filter: blur(20px);
+            z-index: 1000;
+            display: none;
+            align-items: center; justify-content: center;
+            opacity: 0; transition: opacity 0.5s;
+        }
+        #popup-overlay.open { opacity: 1; }
+        
+        .popup-content {
+            background: rgba(0, 43, 36, 0.95);
+            border: 1px solid rgba(66, 227, 180, 0.4);
+            border-radius: 24px;
+            padding: 50px 40px;
+            max-width: 90%; width: 450px;
+            text-align: center; /* Центрирование текста */
+            position: relative;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.7);
+            display: flex; flex-direction: column; align-items: center; /* Центрирование флексом */
+            justify-content: center;
+            transform: scale(0.9); transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        #popup-overlay.open .popup-content { transform: scale(1); }
+
+        .popup-text {
+            font-family: 'Manrope', sans-serif;
+            font-size: 18px; line-height: 1.6; color: #fff;
+            margin-bottom: 30px; text-align: center;
+        }
+        .popup-close {
+            position: absolute; top: 20px; right: 20px;
+            background: transparent; border: none; color: rgba(255,255,255,0.4);
+            font-size: 28px; cursor: pointer; transition: color 0.3s;
+            width: 40px; height: 40px; line-height: 40px;
+        }
+        .popup-close:hover { color: white; }
+
+        /* --- UI ФИНАЛА --- */
+        #final-ui {
+            position: absolute; bottom: 65px; z-index: 100;
+            display: none; flex-direction: row; gap: 15px;
+            justify-content: center; width: 100%;
+            opacity: 0; animation: fadeInUI 1.5s forwards 0.5s; 
+        }
+        @keyframes fadeInUI { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- PARTICLES --- */
+        #particles-container {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 5; pointer-events: none; overflow: hidden;
+        }
+        .particle { position: absolute; background: white; border-radius: 50%; opacity: 0; }
+        @keyframes emanate {
+            0% { opacity: 0; transform: translate(-50%, -50%) scale(0.2); }
+            20% { opacity: 0.8; }
+            100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(1.5); }
+        }
+        .final-glow {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 120vw; height: 120vh;
+            background: radial-gradient(circle, rgba(66, 227, 180, 0.2) 0%, transparent 60%);
+            z-index: 4; opacity: 0; transition: opacity 1.5s; pointer-events: none;
+        }
+
+        /* --- ДИСКЛЕЙМЕР (внизу) --- */
+        .disclaimer {
+            position: absolute; 
+            bottom: 20px; /* Отступ снизу */
+            left: 0; width: 100%;
+            text-align: center;
+            font-family: 'SB Sans Display', 'Manrope', sans-serif; /* Тот же шрифт что и в карточках */
+            font-size: 11px; /* Мелкий */
+            color: rgba(255, 255, 255, 0.4);
+            z-index: 100;
+            pointer-events: none;
+            padding: 0 20px; box-sizing: border-box;
+            letter-spacing: 0.5px;
+        }
+
+        /* --- АДАПТИВ (Laptop & Mobile) --- */
+        /* Средний экран (Laptop 1366) */
+        @media (max-width: 1440px) {
+            .h1-title { font-size: 90px; }
+            .intro-wrapper { width: 95%; }
+        }
+
+        /* Мобильные (до 768px) */
+        @media (max-width: 768px) {
+            :root { --card-height: 50vh; }
+            .intro-wrapper { width: 100%; }
+            .title-block { width: 100%; align-items: center; margin-bottom: 20px; }
+            .title-row-left, .title-row-right { align-self: center; text-align: center; justify-content: center; margin: 5px 0; }
+            .h1-title { font-size: 42px; line-height: 1.1; }
+            .stars-btn { margin-left: 0; margin-top: 15px; }
+            .title-row-right { flex-direction: column; }
+            .svg-year-img { width: 100%; opacity: 0.3; }
+            #final-ui { flex-direction: column; align-items: center; bottom: 10%; gap: 15px; }
+            .common-btn { width: 240px; padding: 14px; font-size: 13px; }
+            .disclaimer { font-size: 9px; bottom: 10px; line-height: 1.2; }
+            .btn-intro { margin-top: 40px; padding: 16px 40px; font-size: 16px; }
+            /* На мобилке попап поменьше */
+            .popup-content { padding: 30px 20px; width: 90%; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ФОН -->
+    <div class="ambient-bg">
+        <div class="gradient-orb orb-1"></div>
+        <div class="gradient-orb orb-2"></div>
+        <div class="gradient-orb orb-3"></div>
+    </div>
+    
+    <!-- Canvas для маски блестяшек (Stars Mask) -->
+    <canvas id="mask-sparkles"></canvas>
+
+    <div id="app-container">
+        
+        <div class="final-glow" id="final-glow"></div>
+        <div id="particles-container"></div>
+
+        <!-- ПОПАП ИНСТРУКЦИЯ -->
+        <div id="popup-overlay">
+            <div class="popup-content">
+                <button class="popup-close" onclick="togglePopup(false)">×</button>
+                <div class="popup-text">
+                    Перед тем, как тянуть карту…<br><br>
+                    Сделайте глубокий вдох. Представьте, как ваш бизнес цветёт в следующем году. Как он выглядит? Что в нём нового? Что работает идеально?<br><br>
+                    А теперь тяните карту. Подсознание уже всё шепнуло.
+                </div>
+                <button class="common-btn" onclick="togglePopup(false)">Понятно</button>
+            </div>
+        </div>
+
+        <!-- СЦЕНА 1: ИНТРО -->
+        <div id="scene-intro" class="scene">
+            <div class="intro-wrapper">
+                <div class="svg-year-container">
+                    <img src="2026.svg" alt="2026" class="svg-year-img" onerror="this.style.display='none'">
+                </div>
+                
+                <div class="title-block">
+                    <div class="title-row-left">
+                        <h1 class="h1-title">Бизнес</h1>
+                    </div>
+                    <div class="title-row-right">
+                        <h1 class="h1-title">Предсказание</h1>
+                        <!-- Кнопка со звездой -->
+                        <button class="stars-btn" onclick="togglePopup(true)" title="Инструкция"></button>
+                    </div>
+                </div>
+
+                <button class="common-btn btn-intro" onclick="startGame()">
+                    Получить знак
+                </button>
+            </div>
+        </div>
+
+        <!-- СЦЕНА 2: ГАЛЕРЕЯ -->
+        <div id="scene-vortex" class="scene">
+            <div class="carousel-pivot" id="carousel-root"></div>
+            
+            <div class="controls-container">
+                <button class="common-btn" onclick="spinCards()">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/></svg>
+                    Вращать
+                </button>
+            </div>
+        </div>
+
+        <!-- UI ФИНАЛА -->
+        <div id="final-ui">
+            <button class="common-btn" onclick="resetGame()">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/></svg>
+                Повторить
+            </button>
+            <button class="common-btn" onclick="shareResult()">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"/></svg>
+                Поделиться
+            </button>
+        </div>
+        
+        <div class="disclaimer">
+            *Предсказание носит развлекательный характер, и не претендует на реальное предвидение событий. Все зависит только от Вас!
+        </div>
+
+    </div>
+
+    <script>
+        // --- ДАННЫЕ ---
+        const predictions = [
+            { 
+                title: "Новые инструменты в симфонии продаж",
+                text: "Найти новый канал продаж. Ваш бизнес играет мелодию, но пока только на одном инструменте! Пора подключать новые и открывать ещё один канал продаж: пусть звон монет звучит в стерео.",
+                img: "images/1.webp" 
+            },
+            { 
+                title: "Дайте им ноты!",
+                text: "Повысить экспертизу сотрудников. Сейчас ваша команда — как джазовый оркестр, где каждый играет душевно, но не всегда в унисон. Предоставьте им обучение, и у вас появится ансамбль, который виртуозно импровизирует.",
+                img: "images/2.webp" 
+            },
+            { 
+                title: "Выйдите на новую сцену",
+                text: "Выйти на новую нишу. Где-то есть клуб, в котором публика ждёт именно ваш жанр музыки. Найдите эту сцену и станьте её хедлайнером.",
+                img: "images/3.webp" 
+            },
+            { 
+                title: "Новые тексты и новые хиты",
+                text: "Переосмыслить рекламные сообщения. Ваши рекламные тексты звучат, как демоверсия: идея есть, но сердечко не цепляет. Освежите лирику, и клиенты будут напевать ваш оффер весь день.",
+                img: "images/4.webp" 
+            },
+            { 
+                title: "Запишите ремейк!",
+                text: "Переосмыслить программу лояльности. Сейчас программа лояльности напоминает оперу на языке, которого никто не знает. Упростите, сделайте ритмичнее, и клиенты будут возвращаться туда, как на любимый концерт.",
+                img: "images/5.webp" 
+            },
+            { 
+                title: "Заземлитесь и послушайте шум дождя",
+                text: "Расслабиться. Всё под контролем, ничего менять не надо. Оркестр играет, дирижёр уверенно машет, а вы ищете, где звук пропал. Успокойтесь, у вас всё работает, как надо.",
+                img: "images/6.webp" 
+            },
+            { 
+                title: "Когда бэк-вокал превращается в солистов",
+                text: "Мотивировать сотрудников. Команда чувствует себя, как бэк-вокал, которому забыли включить микрофоны. Добавьте им признания и энергии, и они запоют так, что продажи взлетят.",
+                img: "images/7.webp" 
+            },
+            { 
+                title: "Персональный плейлист для каждого клиента",
+                text: "Продумать персонализированные предложения. Создайте предложения, которые звучат, как персональный трек: будто вы DJ и знаете вкус каждого слушателя.",
+                img: "images/8.webp" 
+            }
+        ];
+        
+        const backImage = "images/back.webp";
+
+        // --- ЭЛЕМЕНТЫ ---
+        const introScene = document.getElementById('scene-intro');
+        const vortexScene = document.getElementById('scene-vortex');
+        const carouselRoot = document.getElementById('carousel-root');
+        const finalUi = document.getElementById('final-ui');
+        const particlesContainer = document.getElementById('particles-container');
+        const finalGlow = document.getElementById('final-glow');
+        const controlsContainer = document.querySelector('.controls-container');
+        const popupOverlay = document.getElementById('popup-overlay');
+
+        let cards = [];
+        let angle = 0; 
+        let isDragging = false;
+        let startX = 0;
+        let currentVelocity = 0;
+        let animationFrame;
+        let particleInterval;
+        let state = 'intro';
+
+        function init() {
+            createCards();
+            initSparklesMask(); // Запуск блестяшек в маске
+        }
+
+        // --- ПОПАП ---
+        function togglePopup(show) {
+            popupOverlay.style.display = show ? 'flex' : 'none';
+            setTimeout(() => {
+                if(show) popupOverlay.classList.add('open');
+                else popupOverlay.classList.remove('open');
+            }, 10);
+        }
+
+        function createCards() {
+            carouselRoot.innerHTML = '';
+            cards = [];
+            const step = 360 / predictions.length;
+            
+            predictions.forEach((item, index) => {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'card-wrapper';
+                wrapper.innerHTML = `
+                    <div class="card">
+                        <div class="card-face face-front">
+                            <img src="${backImage}" onerror="this.src='https://placehold.co/300x480/004d40/80cbc4?text=◆'" alt="Cover">
+                        </div>
+                        <div class="card-face face-back">
+                            <img src="${item.img}" onerror="this.src='https://placehold.co/300x480/002b24/42E3B4?text=${index+1}'" alt="Pred">
+                            <div class="pred-content">
+                                <div class="pred-title">${item.title}</div>
+                                <div class="pred-text">${item.text}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                wrapper.isHovered = false;
+                wrapper.onmouseenter = () => { wrapper.isHovered = true; };
+                wrapper.onmouseleave = () => { wrapper.isHovered = false; };
+                wrapper.dataset.baseAngle = index * step;
+                wrapper.addEventListener('click', () => {
+                    if (state === 'spinning' && Math.abs(currentVelocity) < 1.5) {
+                        if (wrapper.dataset.interactive === 'true') selectCard(wrapper);
+                    }
+                });
+                carouselRoot.appendChild(wrapper);
+                cards.push(wrapper);
+            });
+        }
+
+        // --- MASKED SPARKLES LOGIC (Блестяшки в маске) ---
+        function initSparklesMask() {
+            const canvas = document.getElementById('mask-sparkles');
+            const ctx = canvas.getContext('2d');
+            let w, h;
+            
+            // Если бы был stars.svg, мы бы загрузили его как Image
+            // Для примера создадим маску программно (облако звезд)
+            const maskCanvas = document.createElement('canvas');
+            const maskCtx = maskCanvas.getContext('2d');
+
+            const particles = [];
+            const numParticles = 200; // Количество блестяшек
+
+            const resize = () => {
+                w = canvas.width = window.innerWidth;
+                h = canvas.height = window.innerHeight;
+                maskCanvas.width = w;
+                maskCanvas.height = h;
+                createMask(); // Перерисовываем маску при ресайзе
+            };
+            
+            // Создаем форму маски (замена stars.svg)
+            function createMask() {
+                maskCtx.clearRect(0,0,w,h);
+                // Эмуляция stars.svg - рисуем большую фигуру
+                // В реальном проекте здесь будет: maskCtx.drawImage(starsSvgImage, ...)
+                
+                maskCtx.fillStyle = '#fff';
+                maskCtx.beginPath();
+                // Рисуем эллиптическое облако в центре как пример маски
+                maskCtx.ellipse(w/2, h/2, w*0.6, h*0.6, 0, 0, Math.PI*2);
+                maskCtx.fill();
+                
+                // Добавим текста "2026" в маску тоже, чтобы блестело внутри него
+                maskCtx.font = "bold 20vw 'Playfair Display'";
+                maskCtx.textAlign = "center";
+                maskCtx.textBaseline = "middle";
+                maskCtx.fillText("2026", w/2, h/2);
+            }
+
+            class Spark {
+                constructor() {
+                    this.init();
+                }
+                init() {
+                    this.x = Math.random() * w;
+                    this.y = Math.random() * h;
+                    this.vx = (Math.random() - 0.5) * 0.5;
+                    this.vy = (Math.random() - 0.5) * 0.5;
+                    this.size = Math.random() * 2 + 0.5;
+                    this.color = Math.random() > 0.5 ? '#00E5C0' : '#42E3B4'; // Наши цвета
+                    this.alpha = Math.random();
+                    this.fade = (Math.random() * 0.01) + 0.002;
+                }
+                update() {
+                    this.x += this.vx;
+                    this.y += this.vy;
+                    this.alpha -= this.fade;
+                    if (this.alpha <= 0 || this.x < 0 || this.x > w || this.y < 0 || this.y > h) {
+                        this.init();
+                        this.alpha = 0; // Начинаем скрытым и плавно появляем? Нет, просто ресет
+                        this.alpha = 1; 
+                    }
+                }
+                draw() {
+                    ctx.fillStyle = this.color;
+                    ctx.globalAlpha = this.alpha;
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI*2);
+                    ctx.fill();
+                    ctx.globalAlpha = 1;
+                }
+            }
+
+            for(let i=0; i<numParticles; i++) particles.push(new Spark());
+
+            function animate() {
+                // 1. Очищаем основной канвас
+                ctx.clearRect(0, 0, w, h);
+                
+                // 2. Рисуем маску на основном канвасе
+                // (В реальной реализации с SVG лучше использовать globalCompositeOperation 'source-in')
+                // Но для производительности с множеством частиц делаем так:
+                
+                // Шаг А: Рисуем маску (она определит ГДЕ видно)
+                ctx.globalCompositeOperation = 'source-over';
+                ctx.drawImage(maskCanvas, 0, 0);
+                
+                // Шаг Б: Меняем режим на 'source-in' - все что нарисуем дальше, будет видно ТОЛЬКО там, где была маска
+                ctx.globalCompositeOperation = 'source-in';
+                
+                // Шаг В: Рисуем частицы
+                particles.forEach(p => {
+                    p.update();
+                    p.draw();
+                });
+                
+                // Сброс режима для следующего кадра (хотя clearRect сбросит)
+                ctx.globalCompositeOperation = 'source-over';
+
+                requestAnimationFrame(animate);
+            }
+
+            window.addEventListener('resize', resize);
+            resize();
+            animate();
+        }
+
+
+        // --- ЛОГИКА ГАЛЕРЕИ ---
+        function renderCarousel() {
+            if (state === 'result') return;
+
+            if (!isDragging && state === 'spinning') {
+                const isAnyHovered = cards.some(c => c.isHovered);
+                currentVelocity *= isAnyHovered ? 0.85 : 0.96;
+                angle += currentVelocity;
+                if (Math.abs(currentVelocity) < 0.1 && !isAnyHovered) angle += 0.05; 
+            }
+
+            const baseRadius = window.innerWidth < 768 ? 160 : 350; 
+            const radius = baseRadius;
+            const tilt = Math.max(-10, Math.min(10, currentVelocity * 0.5));
+            carouselRoot.style.transform = `translate(-50%, -50%) rotateX(${tilt}deg)`;
+
+            cards.forEach(card => {
+                const base = parseFloat(card.dataset.baseAngle);
+                const theta = (base + angle) * Math.PI / 180;
+                
+                const x = Math.sin(theta) * radius;
+                const z = (Math.cos(theta) * radius) - radius;
+                const rotY = (base + angle);
+                
+                // Расширенная зона интерактивности
+                // Раньше было -0.6, теперь -0.8 (захватываем больше боковых карт)
+                const isInteractive = z > (-0.8 * radius); 
+                card.dataset.interactive = isInteractive;
+
+                let distFactor = (z + 2 * radius) / (2 * radius);
+                let blur = z < -100 ? Math.abs(z) / 40 : 0;
+                let opacity = 0.4 + (distFactor * 0.6);
+                let scale = 1;
+                let brightness = 0.5 + (distFactor * 0.5);
+
+                const inner = card.querySelector('.card');
+
+                if (isInteractive && card.isHovered) {
+                    scale = 1.05; brightness = 1.3; blur = 0; opacity = 1;
+                    inner.classList.add('hovered'); // Добавляем класс для подсветки
+                } else {
+                    inner.classList.remove('hovered');
+                }
+
+                card.style.transform = `translate3d(${x}px, 0, ${z}px) rotateY(${rotY}deg) scale(${scale})`;
+                card.style.opacity = opacity;
+                
+                inner.style.filter = blur > 0.5 ? `blur(${blur}px)` : 'none';
+                inner.style.brightness = brightness;
+            });
+
+            animationFrame = requestAnimationFrame(renderCarousel);
+        }
+
+        function spinCards() {
+            if(state !== 'spinning') return;
+            currentVelocity += (Math.random() > 0.5 ? 1 : -1) * (15 + Math.random() * 10);
+        }
+
+        // --- УПРАВЛЕНИЕ ---
+        document.addEventListener('mousedown', e => { if(state==='spinning'){ isDragging=true; startX=e.clientX; } });
+        document.addEventListener('touchstart', e => { if(state==='spinning'){ isDragging=true; startX=e.touches[0].clientX; } }, {passive:false});
+        document.addEventListener('mousemove', e => {
+            if (!isDragging) return;
+            const dx = e.clientX - startX; startX = e.clientX;
+            currentVelocity = dx * 0.3; angle += currentVelocity;
+        });
+        document.addEventListener('touchmove', e => {
+            if (!isDragging) return;
+            const dx = e.touches[0].clientX - startX; startX = e.touches[0].clientX;
+            currentVelocity = dx * 0.3; angle += currentVelocity;
+        }, {passive:false});
+        document.addEventListener('mouseup', () => isDragging = false);
+        document.addEventListener('touchend', () => isDragging = false);
+
+        // --- ИГРОВОЙ ПРОЦЕСС ---
+        function startGame() {
+            introScene.classList.add('hidden');
+            setTimeout(() => {
+                introScene.style.display = 'none';
+                vortexScene.classList.add('active');
+                state = 'spinning';
+                currentVelocity = 20; 
+                renderCarousel();
+            }, 600);
+        }
+
+        function selectCard(cardWrapper) {
+            state = 'selecting';
+            cancelAnimationFrame(animationFrame);
+            controlsContainer.style.display = 'none'; 
+            
+            cards.forEach(c => {
+                if (c !== cardWrapper) {
+                    c.style.transition = 'all 0.8s ease';
+                    c.style.transform = c.style.transform + ' scale(0.1)';
+                    c.style.opacity = 0;
+                }
+            });
+
+            cardWrapper.style.transition = 'all 1.0s cubic-bezier(0.19, 1, 0.22, 1)';
+            carouselRoot.style.transform = `translate(-50%, -50%) rotateX(0deg)`;
+            
+            cardWrapper.style.transform = `translate3d(0, 0, 100px) rotateY(0deg)`; 
+            cardWrapper.style.zIndex = 100;
+            
+            const inner = cardWrapper.querySelector('.card');
+            inner.classList.remove('hovered'); // Убираем подсветку при выборе
+            inner.style.filter = 'none';
+            inner.style.brightness = '1';
+            inner.style.boxShadow = '0 0 50px rgba(66, 227, 180, 0.5)';
+            inner.style.transition = 'transform 0.8s ease';
+
+            setTimeout(() => {
+                inner.style.transform = 'rotateY(180deg)';
+                setTimeout(() => {
+                    cardWrapper.querySelector('.face-back').classList.add('visible');
+                    cardWrapper.style.animation = 'floatResult 4s ease-in-out infinite';
+                    startEmanatingParticles(); 
+                    finalGlow.style.opacity = '1';
+                    finalUi.style.display = 'flex';
+                    state = 'result';
+                }, 800); 
+            }, 100);
+        }
+
+        function startEmanatingParticles() {
+            if(particleInterval) clearInterval(particleInterval);
+            const spawn = () => {
+                if(state !== 'result') return;
+                const p = document.createElement('div');
+                p.className = 'particle';
+                const size = Math.random() * 6 + 2;
+                p.style.width = size + 'px'; p.style.height = size + 'px';
+                const hue = Math.random() > 0.5 ? 160 : 180;
+                p.style.background = `hsl(${hue}, 100%, 70%)`;
+                p.style.boxShadow = `0 0 10px hsl(${hue}, 100%, 60%)`;
+                p.style.left = '50%'; p.style.top = '50%';
+                
+                const angle = Math.random() * Math.PI * 2;
+                const dist = 300 + Math.random() * 200;
+                const tx = Math.cos(angle) * dist + 'px';
+                const ty = Math.sin(angle) * dist + 'px';
+                p.style.setProperty('--tx', tx); p.style.setProperty('--ty', ty);
+                
+                p.style.animation = `emanate ${2 + Math.random()}s ease-out forwards`;
+                particlesContainer.appendChild(p);
+                setTimeout(() => { if(p.parentNode) p.parentNode.removeChild(p); }, 3000);
+            };
+            particleInterval = setInterval(spawn, 50);
+        }
+
+        function resetGame() {
+            finalUi.style.display = 'none'; finalUi.style.opacity = '0';
+            particlesContainer.innerHTML = ''; finalGlow.style.opacity = '0';
+            controlsContainer.style.display = 'flex';
+            if(particleInterval) clearInterval(particleInterval);
+            state = 'spinning';
+
+            const activeCard = cards.find(c => c.style.zIndex == '100');
+            if(activeCard) {
+                activeCard.style.zIndex = ''; 
+                activeCard.style.animation = ''; 
+                const inner = activeCard.querySelector('.card');
+                
+                inner.style.transition = 'transform 1s ease';
+                inner.style.transform = 'rotateY(0deg)'; 
+                inner.style.boxShadow = '0 10px 40px rgba(0,0,0,0.8)';
+                activeCard.querySelector('.face-back').classList.remove('visible');
+            }
+
+            cards.forEach(c => {
+                c.style.transition = 'transform 1s ease, opacity 1s ease';
+                c.style.opacity = 1;
+            });
+            currentVelocity = 10;
+            renderCarousel();
+        }
+
+        function shareResult() {
+            const data = { title: 'Мое предсказание 2026', text: 'Посмотри, что ждет тебя в бизнесе!', url: window.location.href };
+            if (navigator.share) {
+                navigator.share(data).catch(console.error);
+            } else {
+                navigator.clipboard.writeText(window.location.href).then(() => { alert('Ссылка скопирована!'); });
+            }
+        }
+
+        init();
+    </script>
+</body>
+</html>
