@@ -119,24 +119,30 @@
             box-shadow: 0 0 25px rgba(4, 201, 176, 0.3);
         }
 
+        /* Icon Button Style */
+        .btn-icon-only {
+            width: 58px;
+            height: 58px;
+            padding: 0;
+            border-radius: 50%; /* Circle */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .btn-icon-only svg {
+            width: 28px;
+            height: 28px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 0;
+        }
+
         .common-btn:hover {
             background: rgba(4, 201, 176, 0.25);
             border-color: #04C9B0;
             box-shadow: 0 0 30px rgba(4, 201, 176, 0.5);
             transform: scale(1.03);
         }
-
-        /* Star Button (Instruction) */
-        .stars-btn {
-            width: 70px; height: 70px;
-            background: transparent;
-            border: none;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex; align-items: center; justify-content: center;
-        }
-        .stars-btn svg { width: 100%; height: 100%; fill: none; }
-        .stars-btn:hover { transform: scale(1.1) rotate(15deg); filter: drop-shadow(0 0 15px rgba(66, 227, 180, 0.8)); }
 
         /* --- SCENES --- */
         .scene {
@@ -179,14 +185,42 @@
             z-index: 2;
             top: 48%; left: 50%;
             transform: translate(-50%, -50%);
+            /* Enable pointer events for hover */
+            pointer-events: auto;
         }
         
-        /* The shapes inside the 2026 mask need to animate */
+        /* Mask Gradient & Particles (Modified logic) */
+        .mask-content-group {
+            /* Default: Transparent, showing background through text */
+        }
+        
+        .mask-hover-effect {
+            opacity: 0;
+            transition: opacity 0.6s ease-in-out;
+        }
+        
+        /* HOVER STATE FOR MASK */
+        .svg-2026-container:hover .mask-hover-effect {
+            opacity: 1;
+        }
+
         .mask-gradient-blob {
             animation: moveGradient 8s infinite alternate ease-in-out;
+            /* Boost brightness for the hover effect */
+            filter: blur(40px) brightness(1.2);
         }
         .mask-blob-2 { animation-delay: -4s; animation-duration: 12s; }
         
+        /* Shimmer Particles inside Mask */
+        .shimmer-particle {
+            fill: white;
+            animation: shimmerBlink 2s infinite ease-in-out;
+        }
+        @keyframes shimmerBlink {
+            0%, 100% { opacity: 0.2; transform: scale(0.8); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+
         @keyframes moveGradient {
             0% { transform: translate(0, 0) scale(1); }
             100% { transform: translate(100px, 50px) scale(1.2); }
@@ -235,6 +269,12 @@
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             width: 100%; height: 100%;
             text-align: center;
+            /* Allow clicks to pass through empty areas to the mask */
+            pointer-events: none;
+        }
+        
+        .intro-content-layer > * {
+            pointer-events: auto;
         }
 
         .main-title-group {
@@ -243,6 +283,7 @@
             display: flex; flex-direction: column; align-items: center;
             /* Text Shadow for better contrast over the mask */
             text-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            pointer-events: none; /* Let clicks pass to SVG behind if needed, but usually title is on top */
         }
 
         .h1-business {
@@ -269,7 +310,13 @@
             margin-top: 5px;
         }
 
-        .intro-btn-group { margin-top: 4vh; }
+        .intro-btn-group { 
+            margin-top: 4vh;
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 16px; /* Space between buttons */
+        }
         
         .intro-disclaimer {
             position: absolute; bottom: 30px;
@@ -278,12 +325,6 @@
             color: rgba(255,255,255,0.5);
             text-align: center;
             width: 90%;
-        }
-
-        .star-btn-pos {
-            position: absolute;
-            right: 18%; top: 42%;
-            z-index: 20;
         }
 
         /* --- GALLERY SCENE --- */
@@ -489,14 +530,7 @@
             /* Move masking element up */
             .svg-2026-container { width: 100%; top: 40%; }
             
-            /* Adjust Star Button Position */
-            .star-btn-pos {
-                position: relative;
-                right: auto; top: auto;
-                margin-top: 15px; margin-bottom: 20px;
-                order: 2; 
-            }
-            .intro-btn-group { order: 3; margin-top: 10px; }
+            .intro-btn-group { margin-top: 10px; }
             
             .ring-1, .ring-2 { opacity: 0.3; } /* Less clutter */
             
@@ -566,13 +600,21 @@
                             </defs>
                             
                             <!-- Content masked by "2026" -->
-                            <g clip-path="url(#mask-2026)">
-                                <!-- Dark base inside numbers -->
-                                <rect width="100%" height="100%" fill="#001a16" />
-                                <!-- Floating Gradient Blobs inside numbers -->
-                                <circle cx="20%" cy="50%" r="300" fill="#00B399" class="mask-gradient-blob" style="opacity: 0.8; filter: blur(40px);" />
-                                <circle cx="80%" cy="50%" r="350" fill="#008E7A" class="mask-gradient-blob mask-blob-2" style="opacity: 0.8; filter: blur(40px);" />
-                                <circle cx="50%" cy="80%" r="250" fill="#04C9B0" class="mask-gradient-blob" style="opacity: 0.6; filter: blur(50px); animation-duration: 5s;" />
+                            <g clip-path="url(#mask-2026)" class="mask-content-group">
+                                <!-- 1. Transparent base to show background through text -->
+                                <rect width="100%" height="100%" fill="transparent" class="mask-hit-area" />
+                                <rect width="100%" height="100%" fill="transparent" style="cursor: pointer;" />
+                                
+                                <!-- 2. Effects Group (Visible only on HOVER) -->
+                                <g class="mask-hover-effect">
+                                    <!-- Base glow -->
+                                    <circle cx="20%" cy="50%" r="300" fill="#00B399" class="mask-gradient-blob" style="opacity: 0.8;" />
+                                    <circle cx="80%" cy="50%" r="350" fill="#008E7A" class="mask-gradient-blob mask-blob-2" style="opacity: 0.8;" />
+                                    <circle cx="50%" cy="80%" r="250" fill="#04C9B0" class="mask-gradient-blob" style="opacity: 0.6; filter: blur(50px); animation-duration: 5s;" />
+                                    
+                                    <!-- Particles Container (Populated by JS) -->
+                                    <g id="mask-particles"></g>
+                                </g>
                             </g>
                         </svg>
                     </div>
@@ -603,14 +645,12 @@
                          <button class="common-btn btn-intro" onclick="startGame()">
                             Получить предсказание
                         </button>
-                    </div>
-                    
-                    <div class="star-btn-pos">
-                         <button class="stars-btn" onclick="togglePopup(true)" title="Инструкция">
-                             <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <!-- New Icon Button next to main button -->
+                        <button class="common-btn btn-icon-only" onclick="togglePopup(true)" title="Инструкция">
+                            <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M40 0C42.2963 21.0671 58.9329 37.7037 80 40C58.9329 42.2963 42.2963 58.9329 40 80C37.7037 58.9329 21.0671 42.2963 0 40C21.0671 37.7037 37.7037 21.0671 40 0Z" fill="#04C9B0"/>
-                             </svg>
-                         </button>
+                            </svg>
+                        </button>
                     </div>
 
                     <div class="intro-disclaimer">
@@ -715,6 +755,25 @@
         function init() {
             createCards();
             initTrail(); // Cursor trail
+            initMaskParticles(); // Mask shimmer particles
+        }
+
+        // --- MASK PARTICLES (SHIMMER) ---
+        function initMaskParticles() {
+            const container = document.getElementById('mask-particles');
+            const particleCount = 40;
+            
+            for(let i=0; i<particleCount; i++) {
+                const c = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+                c.setAttribute("r", Math.random() * 2 + 1);
+                // Distribute randomly across the roughly 1200x500 area
+                c.setAttribute("cx", Math.random() * 1264);
+                c.setAttribute("cy", Math.random() * 525);
+                c.classList.add('shimmer-particle');
+                // Randomize animation delay
+                c.style.animationDelay = (Math.random() * 2) + "s";
+                container.appendChild(c);
+            }
         }
 
         // --- POPUP ---
