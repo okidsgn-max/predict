@@ -18,6 +18,14 @@
             --secondary: #008E7A;
             --accent: #04C9B0;
             
+            /* Fluid Aurora Palette (RGB values) */
+            --color1: 0, 26, 22;      /* Darkest Base */
+            --color2: 0, 179, 153;    /* Primary */
+            --color3: 4, 201, 176;    /* Accent */
+            --color4: 0, 142, 122;    /* Secondary */
+            --color5: 0, 60, 50;      /* Deep Emerald */
+            --color-interactive: 100, 255, 218;
+            
             /* Card Dimensions */
             --card-ratio: 1.6;
             --card-height: 55vh; /* Desktop height */
@@ -31,7 +39,7 @@
             width: 100%; height: 100%;
             overflow: hidden;
             background-color: var(--color-bg);
-            /* Fallback font stack including SB Sans request */
+            /* Fallback font stack */
             font-family: 'SB Sans Display', 'SB Sans Regular', 'Manrope', 'Montserrat', sans-serif;
             color: white;
             user-select: none;
@@ -39,31 +47,102 @@
             touch-action: none;
         }
 
-        /* --- BACKGROUND & AMBIANCE --- */
+        /* --- OPTIMIZED BACKGROUND (Fluid Gradient Aurora) --- */
         .ambient-bg {
             position: absolute; top: 0; left: 0;
             width: 100%; height: 100%; z-index: 0;
-            background: #001511; /* Deep base */
+            background: var(--color-bg);
             overflow: hidden;
         }
-        
-        /* Floating Gradient Orbs (Global Background) */
-        .grad-orb {
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(80px);
-            opacity: 0.5;
-            animation: floatOrb 25s infinite ease-in-out;
-            mix-blend-mode: screen;
-        }
-        .orb-1 { width: 100vw; height: 100vw; background: radial-gradient(circle, var(--primary) 0%, transparent 70%); top: -40%; left: -20%; }
-        .orb-2 { width: 90vw; height: 90vw; background: radial-gradient(circle, var(--secondary) 0%, transparent 70%); bottom: -30%; right: -20%; animation-delay: -5s; }
-        .orb-3 { width: 70vw; height: 70vw; background: radial-gradient(circle, var(--accent) 0%, transparent 70%); top: 30%; left: 30%; opacity: 0.3; animation-duration: 18s; animation-delay: -10s; }
 
-        @keyframes floatOrb {
-            0%, 100% { transform: translate(0, 0); }
-            33% { transform: translate(40px, -40px); }
-            66% { transform: translate(-40px, 40px); }
+        .gradients-container {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0; left: 0;
+            /* Performance Optimization: Use CSS blur instead of SVG filter */
+            filter: blur(80px); 
+            /* Force hardware acceleration */
+            transform: translate3d(0, 0, 0);
+        }
+
+        .g-blob {
+            position: absolute;
+            background: radial-gradient(circle at center, rgba(var(--color-rgb), 0.8) 0, rgba(var(--color-rgb), 0) 50%) no-repeat;
+            mix-blend-mode: hard-light;
+            width: var(--size);
+            height: var(--size);
+            top: calc(50% - var(--size) / 2);
+            left: calc(50% - var(--size) / 2);
+            transform-origin: center center;
+            opacity: 1;
+            will-change: transform, opacity; /* Hint to browser */
+        }
+
+        .g1 {
+            --color-rgb: var(--color1);
+            --size: 80vw;
+            animation: moveVertical 30s ease infinite;
+        }
+
+        .g2 {
+            --color-rgb: var(--color2);
+            --size: 60vw;
+            animation: moveInCircle 20s reverse infinite;
+            transform-origin: calc(50% - 400px);
+        }
+
+        .g3 {
+            --color-rgb: var(--color3);
+            --size: 50vw;
+            animation: moveInCircle 40s linear infinite;
+            transform-origin: calc(50% + 400px);
+            top: calc(50% - var(--size) / 2 + 200px);
+            left: calc(50% - var(--size) / 2 - 500px);
+        }
+
+        .g4 {
+            --color-rgb: var(--color4);
+            --size: 40vw;
+            animation: moveHorizontal 40s ease infinite;
+            transform-origin: calc(50% - 200px);
+            opacity: 0.7;
+        }
+
+        .g5 {
+            --color-rgb: var(--color5);
+            --size: 80vw;
+            animation: moveInCircle 20s ease infinite;
+            transform-origin: calc(50% - 800px) calc(50% + 200px);
+        }
+        
+        .interactive {
+            --color-rgb: var(--color-interactive);
+            --size: 40vw;
+            background: radial-gradient(circle at center, rgba(var(--color-rgb), 0.8) 0, rgba(var(--color-rgb), 0) 50%) no-repeat;
+            mix-blend-mode: hard-light;
+            width: 100%; height: 100%;
+            top: -50%; left: -50%;
+            opacity: 0.4;
+            animation: moveInCircle 60s ease infinite;
+        }
+
+        @keyframes moveInCircle {
+            0% { transform: rotate(0deg); }
+            50% { transform: rotate(180deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes moveVertical {
+            0% { transform: translateY(-50%); }
+            50% { transform: translateY(50%); }
+            100% { transform: translateY(-50%); }
+        }
+
+        @keyframes moveHorizontal {
+            0% { transform: translateX(-50%) translateY(-10%); }
+            50% { transform: translateX(50%) translateY(10%); }
+            100% { transform: translateX(-50%) translateY(-10%); }
         }
 
         /* Cursor Trail Canvas */
@@ -84,47 +163,41 @@
         }
 
         /* --- BUTTONS --- */
-        /* Global button style per request #10 & #12 */
         .common-btn {
             position: relative;
-            background: rgba(255, 255, 255, 0.05); /* Slight fill */
+            background: rgba(255, 255, 255, 0.05);
             backdrop-filter: blur(12px);
-            border: 1px solid rgba(4, 201, 176, 0.6); /* Greenish outline */
+            border: 1px solid rgba(4, 201, 176, 0.6);
             color: white;
             border-radius: var(--btn-radius);
             font-family: 'SB Sans Regular', 'Manrope', sans-serif;
             font-weight: 400; 
-            text-transform: none; /* "Написание с заглавной дальше строчные" handled by HTML text */
+            text-transform: none; 
             cursor: pointer;
             transition: all 0.3s ease;
             display: flex; align-items: center; justify-content: center; gap: 10px;
             overflow: hidden;
             box-shadow: 0 4px 20px rgba(0,0,0,0.3);
             z-index: 50;
-            
-            /* Request #10: 14px regular for standard buttons */
             font-size: 14px; 
             padding: 12px 24px;
         }
 
-        /* Main CTA Override (Request #3: 16px) */
         .btn-intro {
-            font-family: 'SB Sans Display', 'Manrope', sans-serif; /* Display font for main button */
+            font-family: 'SB Sans Display', 'Manrope', sans-serif;
             font-size: 16px; 
             font-weight: 600;
             padding: 18px 48px;
-            /* Gradient background like in maindsgn */
             background: linear-gradient(65deg, rgba(0, 102, 89, 0.5) 0%, rgba(0, 166, 145, 0.5) 100%);
-            border: 1px solid #04C9B0; /* 1px border */
+            border: 1px solid #04C9B0;
             box-shadow: 0 0 25px rgba(4, 201, 176, 0.3);
         }
 
-        /* Icon Button Style */
         .btn-icon-only {
             width: 58px;
             height: 58px;
             padding: 0;
-            border-radius: 50%; /* Circle */
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -161,7 +234,6 @@
             display: flex; align-items: center; justify-content: center;
         }
 
-        /* Background Graphics Layer */
         .design-elements {
             position: absolute; inset: 0;
             pointer-events: none;
@@ -169,7 +241,6 @@
             display: flex; align-items: center; justify-content: center;
         }
 
-        /* The Blob SVG Background */
         .svg-blob-bg {
             position: absolute; 
             width: 120%; min-width: 1200px;
@@ -178,55 +249,25 @@
             mix-blend-mode: screen;
         }
 
-        /* 2026 MASK CONTAINER */
+        /* --- 2026 STATIC DARK WATERMARK --- */
         .svg-2026-container {
             position: absolute;
             width: 85%; max-width: 1100px;
             z-index: 2;
             top: 48%; left: 50%;
             transform: translate(-50%, -50%);
-            /* Enable pointer events for hover */
-            pointer-events: auto;
+            /* Полностью отключаем взаимодействие */
+            pointer-events: none; 
+            opacity: 0.6; /* Slight transparency for watermark feel */
         }
         
-        /* Mask Gradient & Particles (Modified logic) */
-        .mask-content-group {
-            /* Default: Transparent, showing background through text */
-        }
-        
-        .mask-hover-effect {
-            opacity: 0;
-            transition: opacity 0.6s ease-in-out;
-        }
-        
-        /* HOVER STATE FOR MASK */
-        .svg-2026-container:hover .mask-hover-effect {
-            opacity: 1;
+        .svg-2026-path {
+            /* Темнее фона (фон #001a16), значит почти черный */
+            fill: #000a08; 
+            stroke: rgba(255, 255, 255, 0.03); /* Очень тонкая обводка для читаемости */
+            stroke-width: 1px;
         }
 
-        .mask-gradient-blob {
-            animation: moveGradient 8s infinite alternate ease-in-out;
-            /* Boost brightness for the hover effect */
-            filter: blur(40px) brightness(1.2);
-        }
-        .mask-blob-2 { animation-delay: -4s; animation-duration: 12s; }
-        
-        /* Shimmer Particles inside Mask */
-        .shimmer-particle {
-            fill: white;
-            animation: shimmerBlink 2s infinite ease-in-out;
-        }
-        @keyframes shimmerBlink {
-            0%, 100% { opacity: 0.2; transform: scale(0.8); }
-            50% { opacity: 1; transform: scale(1.2); }
-        }
-
-        @keyframes moveGradient {
-            0% { transform: translate(0, 0) scale(1); }
-            100% { transform: translate(100px, 50px) scale(1.2); }
-        }
-
-        /* Decorative Rings */
         .ring-shape {
             position: absolute;
             border-radius: 50%;
@@ -248,7 +289,6 @@
             transform: rotate(21deg);
         }
         
-        /* Stars */
         .star-decor {
             position: absolute;
             width: 50px; height: 50px;
@@ -263,13 +303,11 @@
             50% { filter: drop-shadow(0 0 12px rgba(4, 201, 176, 0.9)); transform: scale(1.15); }
         }
 
-        /* Intro Text Content */
         .intro-content-layer {
             position: relative; z-index: 10;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             width: 100%; height: 100%;
             text-align: center;
-            /* Allow clicks to pass through empty areas to the mask */
             pointer-events: none;
         }
         
@@ -281,9 +319,8 @@
             position: relative;
             margin-bottom: 50px;
             display: flex; flex-direction: column; align-items: center;
-            /* Text Shadow for better contrast over the mask */
             text-shadow: 0 10px 30px rgba(0,0,0,0.8);
-            pointer-events: none; /* Let clicks pass to SVG behind if needed, but usually title is on top */
+            pointer-events: none;
         }
 
         .h1-business {
@@ -294,7 +331,7 @@
             line-height: 1.0;
             margin: 0;
             align-self: flex-start;
-            margin-left: -15%; /* Asymmetric layout */
+            margin-left: -15%;
         }
         
         .h1-prediction {
@@ -305,7 +342,6 @@
             line-height: 1.0;
             margin: 0;
             text-align: center;
-            /* Request #1: "предсказание" with lowercase */
             text-transform: lowercase; 
             margin-top: 5px;
         }
@@ -315,7 +351,7 @@
             display: flex; 
             align-items: center; 
             justify-content: center; 
-            gap: 16px; /* Space between buttons */
+            gap: 16px; 
         }
         
         .intro-disclaimer {
@@ -339,7 +375,6 @@
             position: absolute; top: 50%; left: 50%;
             width: 0; height: 0;
             transform-style: preserve-3d;
-            /* Request #6: Remove Y-axis deviation (tilt) */
             transform: translate(-50%, -50%) rotateX(0deg) !important; 
         }
 
@@ -353,7 +388,6 @@
             pointer-events: auto; 
         }
 
-        /* Interaction Zone */
         .card-wrapper::before {
             content: ''; position: absolute;
             top: -50px; left: -50px; right: -50px; bottom: -50px;
@@ -394,7 +428,6 @@
         .face-front { transform: rotateY(0deg); }
         .face-back { transform: rotateY(180deg); }
 
-        /* TEXT CONTENT STYLING (Request #9) */
         .pred-content {
             position: absolute; bottom: 0; left: 0; width: 100%;
             padding: 20px 16px; 
@@ -410,7 +443,7 @@
 
         .pred-title {
             font-family: 'SB Sans Display', 'Manrope', sans-serif;
-            font-size: 16px; /* Optimized */
+            font-size: 16px;
             font-weight: 700;
             margin-bottom: 8px;
             color: #fff;
@@ -420,7 +453,7 @@
 
         .pred-text { 
             font-family: 'SB Sans Regular', 'Manrope', sans-serif;
-            font-size: 11px; /* Request #9: Reduced size */
+            font-size: 11px;
             line-height: 1.4; 
             font-weight: 400; 
             color: #ccfbf5; 
@@ -478,7 +511,6 @@
         }
         @keyframes fadeInUI { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Animation for selected card */
         @keyframes floatResult {
             0%, 100% { transform: translate3d(0, 0, 100px) translateY(0); }
             50% { transform: translate3d(0, 0, 100px) translateY(-15px); }
@@ -509,43 +541,32 @@
         }
 
         @media (max-width: 768px) {
-            /* Request #7: Mobile optimizations */
             :root { 
-                --card-height: 48vh; /* Proportional increase for touch */
-                --card-ratio: 1.45;  /* Slightly wider cards */
+                --card-height: 48vh; 
+                --card-ratio: 1.45;  
             }
-            
             .intro-design-wrapper { flex-direction: column; }
-            
-            /* Center title on mobile */
-            .h1-business { 
-                align-self: center; 
-                margin-left: 0; 
-                font-size: 48px;
-            }
-            .h1-prediction {
-                font-size: 48px;
-            }
-            
-            /* Move masking element up */
+            .h1-business { align-self: center; margin-left: 0; font-size: 48px; }
+            .h1-prediction { font-size: 48px; }
             .svg-2026-container { width: 100%; top: 40%; }
-            
             .intro-btn-group { margin-top: 10px; }
-            
-            .ring-1, .ring-2 { opacity: 0.3; } /* Less clutter */
-            
-            /* Buttons on mobile */
+            .ring-1, .ring-2 { opacity: 0.3; } 
             .btn-intro { padding: 15px 35px; font-size: 15px; }
         }
     </style>
 </head>
 <body>
 
-    <!-- Ambient Background -->
+    <!-- Ambient Aurora Background (Optimized CSS Version) -->
     <div class="ambient-bg">
-        <div class="grad-orb orb-1"></div>
-        <div class="grad-orb orb-2"></div>
-        <div class="grad-orb orb-3"></div>
+        <div class="gradients-container">
+            <div class="g-blob g1"></div>
+            <div class="g-blob g2"></div>
+            <div class="g-blob g3"></div>
+            <div class="g-blob g4"></div>
+            <div class="g-blob g5"></div>
+            <div class="g-blob interactive"></div>
+        </div>
     </div>
 
     <!-- Cursor Trail Canvas -->
@@ -589,33 +610,11 @@
                         </svg>
                     </div>
 
-                    <!-- 2026 MASK with Floating Gradients inside (#13) -->
+                    <!-- 2026 STATIC & DARK -->
                     <div class="svg-2026-container">
                         <svg viewBox="0 0 1264 525" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <!-- Definition of the Mask -->
-                            <defs>
-                                <clipPath id="mask-2026">
-                                    <path d="M809.035 60.0586C834.708 60.0586 856.377 69.0082 874.041 86.9082C891.941 104.808 900.891 126.948 900.891 153.327C900.891 194.309 862.383 253.662 785.365 331.386C758.751 358.236 738.142 379.434 723.539 394.979C738.613 395.921 753.098 396.745 766.994 397.451C780.89 397.922 794.198 398.157 806.916 398.157C842.009 398.157 867.446 396.98 883.227 394.625C899.242 392.034 910.194 387.912 916.082 382.26C923.619 374.723 931.392 364.477 939.399 351.523C947.407 338.569 952.236 332.093 953.885 332.093C955.298 332.093 956.947 332.681 958.831 333.858C960.715 335.036 961.657 335.979 961.657 336.686C961.656 337.079 959.529 340.993 955.285 348.433L957.419 346.578L878.282 524.637C879.869 516.699 892.859 453.979 874.937 434.376C870.168 433.313 863.864 432.78 856.023 432.78H847.19C789.722 432.78 734.373 434.075 681.145 436.666C673.372 436.902 668.662 437.02 667.013 437.02H662.066C659.711 437.02 658.298 436.666 657.827 435.96C657.356 435.489 657.12 434.193 657.12 432.073C657.121 429.718 663.951 423.83 677.611 414.409C691.272 404.753 705.168 392.976 719.3 379.08C764.285 335.508 798.201 295.468 821.047 258.961C843.893 222.219 855.316 189.48 855.316 160.746C855.316 136.958 848.839 117.881 835.886 103.514C823.167 89.1465 806.209 81.9629 785.012 81.9629C759.339 81.9629 732.018 96.3301 703.048 125.064C697.16 130.952 693.627 133.896 692.449 133.896C691.272 133.896 689.388 132.718 686.797 130.363C684.442 128.008 683.264 126.359 683.264 125.417C683.264 117.88 696.807 105.162 723.893 87.2617C751.214 69.1263 779.594 60.0586 809.035 60.0586ZM151.915 60.0586C177.587 60.0586 199.256 69.0082 216.921 86.9082C234.821 104.808 243.77 126.948 243.771 153.327C243.771 194.309 205.262 253.662 128.244 331.386C101.63 358.236 81.0216 379.434 66.4189 394.979C81.4924 395.921 95.9771 396.745 109.873 397.451C123.769 397.922 137.077 398.157 149.795 398.157C184.888 398.157 210.326 396.98 226.106 394.625C242.122 392.034 253.074 387.912 258.962 382.26C266.499 374.723 274.271 364.477 282.279 351.523C290.287 338.569 295.116 332.093 296.765 332.093C298.178 332.093 299.826 332.681 301.71 333.858C303.594 335.036 304.536 335.979 304.536 336.686C304.534 337.108 302.084 341.59 297.191 350.137L304.536 343.751L225.399 521.81C226.845 514.577 237.758 461.864 226.129 437.726C225.067 437.059 224 436.471 222.927 435.96C217.981 433.84 209.972 432.78 198.902 432.78H190.07C132.602 432.78 77.2525 434.075 24.0234 436.666C16.2519 436.902 11.5416 437.02 9.89258 437.02H4.94629C2.59138 437.02 1.1783 436.666 0.707031 435.96C0.235977 435.489 0 434.193 0 432.073C0.000669264 429.718 6.83131 423.83 20.4912 414.409C34.1516 404.753 48.0472 392.976 62.1787 379.08C107.164 335.508 141.081 295.468 163.927 258.961C186.773 222.219 198.196 189.48 198.196 160.746C198.196 136.958 191.719 117.881 178.765 103.514C166.046 89.1466 149.089 81.963 127.892 81.9629C102.219 81.9629 74.8976 96.3301 45.9277 125.064C40.0398 130.952 36.5068 133.896 35.3291 133.896C34.1515 133.896 32.2675 132.718 29.6768 130.363C27.3215 128.008 26.1436 126.359 26.1436 125.417C26.1439 117.88 39.6864 105.161 66.7715 87.2617C94.0926 69.1261 122.474 60.0586 151.915 60.0586ZM1211.08 0C1212.73 2.72746e-05 1214.02 0.588275 1214.97 1.76562C1216.14 2.70773 1216.73 4.12164 1216.73 6.00586C1216.73 7.89042 1209.31 13.3075 1194.48 22.2568C1179.87 31.2068 1166.09 40.7455 1153.14 50.873C1116.87 78.4297 1089.67 109.52 1071.53 144.143C1053.39 178.529 1044.33 216.567 1044.33 258.255C1044.33 304.889 1055.75 343.987 1078.6 375.548C1101.44 406.873 1128.65 422.535 1160.21 422.535C1181.64 422.535 1198.95 415.116 1212.14 400.278C1225.33 385.205 1231.92 365.184 1231.92 340.219C1231.92 307.176 1222.9 277.94 1204.85 252.509C1196.21 266.473 1180.79 269.937 1180.7 269.957C1180.75 269.781 1194.11 222.683 1141.49 210.278C1138.82 209.997 1136.1 209.855 1133.36 209.854C1118.05 209.854 1101.44 215.507 1083.54 226.812C1080.72 228.461 1079.07 229.285 1078.6 229.285C1078.12 229.285 1077.18 228.461 1075.77 226.812C1074.59 225.164 1074 224.104 1074 223.633C1074 220.335 1084.37 212.916 1105.09 201.375C1125.82 189.599 1144.66 183.711 1161.62 183.711C1190.12 183.711 1214.26 195.604 1234.04 219.393C1253.83 242.945 1263.72 272.151 1263.72 307.009C1263.72 345.4 1251.94 377.314 1228.39 402.751C1204.84 427.952 1175.16 440.553 1139.36 440.553C1099.79 440.553 1066.7 424.773 1040.09 393.212C1017.66 366.18 1004.77 332.765 1001.41 292.966C982.988 223.427 998.667 143.72 1027.39 114.596C1027.34 114.712 1004.42 158.173 1016.62 184.661C1021.3 172.331 1027 160.12 1033.73 148.028C1055.87 107.989 1086.49 73.8374 1125.58 45.5742C1141.6 34.0334 1159.03 23.5519 1177.87 14.1309C1196.71 4.70994 1207.78 0 1211.08 0ZM488.247 68.8906C532.997 68.8907 569.503 85.7318 597.767 119.412C601.084 123.366 604.205 127.456 607.134 131.679C662.378 195.511 673.243 301.832 648.761 343.72C648.79 343.533 661.253 291.612 639.362 270.387C635.846 314.931 620.687 353.164 593.881 385.086C563.262 421.593 526.638 439.847 484.008 439.847C441.849 439.847 406.519 422.77 378.021 388.619C367.281 375.552 358.584 361.176 351.925 345.49C309.113 277.737 307.815 180.199 333.801 142.405C333.772 142.545 316.934 195.253 338.902 217.406C344.865 181.857 358.964 150.723 381.2 124.005C411.819 87.2626 447.501 68.8906 488.247 68.8906ZM479.768 81.9629C450.327 81.963 426.421 96.3302 408.05 125.064C389.679 153.799 380.493 191.954 380.493 239.53C380.493 293.937 391.21 338.805 412.643 374.134C434.076 409.463 460.808 427.128 492.84 427.128C524.165 427.128 549.013 412.761 567.384 384.026C585.99 355.292 595.294 316.077 595.294 266.381C595.294 212.21 584.46 167.93 562.791 133.543C541.123 99.1562 513.448 81.9629 479.768 81.9629ZM486.258 148.606C486.501 146.209 489.995 146.208 490.237 148.606L497.706 222.389C498.854 233.732 507.824 242.701 519.167 243.85L592.949 251.318C595.347 251.561 595.347 255.055 592.949 255.298L519.167 262.767C507.824 263.915 498.854 272.885 497.706 284.228L490.237 358.01C489.995 360.408 486.501 360.408 486.258 358.01L478.788 284.228C477.64 272.885 468.671 263.915 457.328 262.767L383.546 255.298C381.148 255.055 381.148 251.561 383.546 251.318L457.328 243.85C468.671 242.701 477.64 233.731 478.788 222.389L486.258 148.606Z" />
-                                </clipPath>
-                            </defs>
-                            
-                            <!-- Content masked by "2026" -->
-                            <g clip-path="url(#mask-2026)" class="mask-content-group">
-                                <!-- 1. Transparent base to show background through text -->
-                                <rect width="100%" height="100%" fill="transparent" class="mask-hit-area" />
-                                <rect width="100%" height="100%" fill="transparent" style="cursor: pointer;" />
-                                
-                                <!-- 2. Effects Group (Visible only on HOVER) -->
-                                <g class="mask-hover-effect">
-                                    <!-- Base glow -->
-                                    <circle cx="20%" cy="50%" r="300" fill="#00B399" class="mask-gradient-blob" style="opacity: 0.8;" />
-                                    <circle cx="80%" cy="50%" r="350" fill="#008E7A" class="mask-gradient-blob mask-blob-2" style="opacity: 0.8;" />
-                                    <circle cx="50%" cy="80%" r="250" fill="#04C9B0" class="mask-gradient-blob" style="opacity: 0.6; filter: blur(50px); animation-duration: 5s;" />
-                                    
-                                    <!-- Particles Container (Populated by JS) -->
-                                    <g id="mask-particles"></g>
-                                </g>
-                            </g>
+                            <!-- Paths filled directly with dark color, no masking logic -->
+                            <path class="svg-2026-path" d="M809.035 60.0586C834.708 60.0586 856.377 69.0082 874.041 86.9082C891.941 104.808 900.891 126.948 900.891 153.327C900.891 194.309 862.383 253.662 785.365 331.386C758.751 358.236 738.142 379.434 723.539 394.979C738.613 395.921 753.098 396.745 766.994 397.451C780.89 397.922 794.198 398.157 806.916 398.157C842.009 398.157 867.446 396.98 883.227 394.625C899.242 392.034 910.194 387.912 916.082 382.26C923.619 374.723 931.392 364.477 939.399 351.523C947.407 338.569 952.236 332.093 953.885 332.093C955.298 332.093 956.947 332.681 958.831 333.858C960.715 335.036 961.657 335.979 961.657 336.686C961.656 337.079 959.529 340.993 955.285 348.433L957.419 346.578L878.282 524.637C879.869 516.699 892.859 453.979 874.937 434.376C870.168 433.313 863.864 432.78 856.023 432.78H847.19C789.722 432.78 734.373 434.075 681.145 436.666C673.372 436.902 668.662 437.02 667.013 437.02H662.066C659.711 437.02 658.298 436.666 657.827 435.96C657.356 435.489 657.12 434.193 657.12 432.073C657.121 429.718 663.951 423.83 677.611 414.409C691.272 404.753 705.168 392.976 719.3 379.08C764.285 335.508 798.201 295.468 821.047 258.961C843.893 222.219 855.316 189.48 855.316 160.746C855.316 136.958 848.839 117.881 835.886 103.514C823.167 89.1465 806.209 81.9629 785.012 81.9629C759.339 81.9629 732.018 96.3301 703.048 125.064C697.16 130.952 693.627 133.896 692.449 133.896C691.272 133.896 689.388 132.718 686.797 130.363C684.442 128.008 683.264 126.359 683.264 125.417C683.264 117.88 696.807 105.162 723.893 87.2617C751.214 69.1263 779.594 60.0586 809.035 60.0586ZM151.915 60.0586C177.587 60.0586 199.256 69.0082 216.921 86.9082C234.821 104.808 243.77 126.948 243.771 153.327C243.771 194.309 205.262 253.662 128.244 331.386C101.63 358.236 81.0216 379.434 66.4189 394.979C81.4924 395.921 95.9771 396.745 109.873 397.451C123.769 397.922 137.077 398.157 149.795 398.157C184.888 398.157 210.326 396.98 226.106 394.625C242.122 392.034 253.074 387.912 258.962 382.26C266.499 374.723 274.271 364.477 282.279 351.523C290.287 338.569 295.116 332.093 296.765 332.093C298.178 332.093 299.826 332.681 301.71 333.858C303.594 335.036 304.536 335.979 304.536 336.686C304.534 337.108 302.084 341.59 297.191 350.137L304.536 343.751L225.399 521.81C226.845 514.577 237.758 461.864 226.129 437.726C225.067 437.059 224 436.471 222.927 435.96C217.981 433.84 209.972 432.78 198.902 432.78H190.07C132.602 432.78 77.2525 434.075 24.0234 436.666C16.2519 436.902 11.5416 437.02 9.89258 437.02H4.94629C2.59138 437.02 1.1783 436.666 0.707031 435.96C0.235977 435.489 0 434.193 0 432.073C0.000669264 429.718 6.83131 423.83 20.4912 414.409C34.1516 404.753 48.0472 392.976 62.1787 379.08C107.164 335.508 141.081 295.468 163.927 258.961C186.773 222.219 198.196 189.48 198.196 160.746C198.196 136.958 191.719 117.881 178.765 103.514C166.046 89.1466 149.089 81.963 127.892 81.9629C102.219 81.9629 74.8976 96.3301 45.9277 125.064C40.0398 130.952 36.5068 133.896 35.3291 133.896C34.1515 133.896 32.2675 132.718 29.6768 130.363C27.3215 128.008 26.1436 126.359 26.1436 125.417C26.1439 117.88 39.6864 105.161 66.7715 87.2617C94.0926 69.1261 122.474 60.0586 151.915 60.0586ZM1211.08 0C1212.73 2.72746e-05 1214.02 0.588275 1214.97 1.76562C1216.14 2.70773 1216.73 4.12164 1216.73 6.00586C1216.73 7.89042 1209.31 13.3075 1194.48 22.2568C1179.87 31.2068 1166.09 40.7455 1153.14 50.873C1116.87 78.4297 1089.67 109.52 1071.53 144.143C1053.39 178.529 1044.33 216.567 1044.33 258.255C1044.33 304.889 1055.75 343.987 1078.6 375.548C1101.44 406.873 1128.65 422.535 1160.21 422.535C1181.64 422.535 1198.95 415.116 1212.14 400.278C1225.33 385.205 1231.92 365.184 1231.92 340.219C1231.92 307.176 1222.9 277.94 1204.85 252.509C1196.21 266.473 1180.79 269.937 1180.7 269.957C1180.75 269.781 1194.11 222.683 1141.49 210.278C1138.82 209.997 1136.1 209.855 1133.36 209.854C1118.05 209.854 1101.44 215.507 1083.54 226.812C1080.72 228.461 1079.07 229.285 1078.6 229.285C1078.12 229.285 1077.18 228.461 1075.77 226.812C1074.59 225.164 1074 224.104 1074 223.633C1074 220.335 1084.37 212.916 1105.09 201.375C1125.82 189.599 1144.66 183.711 1161.62 183.711C1190.12 183.711 1214.26 195.604 1234.04 219.393C1253.83 242.945 1263.72 272.151 1263.72 307.009C1263.72 345.4 1251.94 377.314 1228.39 402.751C1204.84 427.952 1175.16 440.553 1139.36 440.553C1099.79 440.553 1066.7 424.773 1040.09 393.212C1017.66 366.18 1004.77 332.765 1001.41 292.966C982.988 223.427 998.667 143.72 1027.39 114.596C1027.34 114.712 1004.42 158.173 1016.62 184.661C1021.3 172.331 1027 160.12 1033.73 148.028C1055.87 107.989 1086.49 73.8374 1125.58 45.5742C1141.6 34.0334 1159.03 23.5519 1177.87 14.1309C1196.71 4.70994 1207.78 0 1211.08 0ZM488.247 68.8906C532.997 68.8907 569.503 85.7318 597.767 119.412C601.084 123.366 604.205 127.456 607.134 131.679C662.378 195.511 673.243 301.832 648.761 343.72C648.79 343.533 661.253 291.612 639.362 270.387C635.846 314.931 620.687 353.164 593.881 385.086C563.262 421.593 526.638 439.847 484.008 439.847C441.849 439.847 406.519 422.77 378.021 388.619C367.281 375.552 358.584 361.176 351.925 345.49C309.113 277.737 307.815 180.199 333.801 142.405C333.772 142.545 316.934 195.253 338.902 217.406C344.865 181.857 358.964 150.723 381.2 124.005C411.819 87.2626 447.501 68.8906 488.247 68.8906ZM479.768 81.9629C450.327 81.963 426.421 96.3302 408.05 125.064C389.679 153.799 380.493 191.954 380.493 239.53C380.493 293.937 391.21 338.805 412.643 374.134C434.076 409.463 460.808 427.128 492.84 427.128C524.165 427.128 549.013 412.761 567.384 384.026C585.99 355.292 595.294 316.077 595.294 266.381C595.294 212.21 584.46 167.93 562.791 133.543C541.123 99.1562 513.448 81.9629 479.768 81.9629ZM486.258 148.606C486.501 146.209 489.995 146.208 490.237 148.606L497.706 222.389C498.854 233.732 507.824 242.701 519.167 243.85L592.949 251.318C595.347 251.561 595.347 255.055 592.949 255.298L519.167 262.767C507.824 263.915 498.854 272.885 497.706 284.228L490.237 358.01C489.995 360.408 486.501 360.408 486.258 358.01L478.788 284.228C477.64 272.885 468.671 263.915 457.328 262.767L383.546 255.298C381.148 255.055 381.148 251.561 383.546 251.318L457.328 243.85C468.671 242.701 477.64 233.731 478.788 222.389L486.258 148.606Z" />
                         </svg>
                     </div>
 
@@ -645,7 +644,6 @@
                          <button class="common-btn btn-intro" onclick="startGame()">
                             Получить предсказание
                         </button>
-                        <!-- New Icon Button next to main button -->
                         <button class="common-btn btn-icon-only" onclick="togglePopup(true)" title="Инструкция">
                             <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M40 0C42.2963 21.0671 58.9329 37.7037 80 40C58.9329 42.2963 42.2963 58.9329 40 80C37.7037 58.9329 21.0671 42.2963 0 40C21.0671 37.7037 37.7037 21.0671 40 0Z" fill="#04C9B0"/>
@@ -755,25 +753,7 @@
         function init() {
             createCards();
             initTrail(); // Cursor trail
-            initMaskParticles(); // Mask shimmer particles
-        }
-
-        // --- MASK PARTICLES (SHIMMER) ---
-        function initMaskParticles() {
-            const container = document.getElementById('mask-particles');
-            const particleCount = 40;
-            
-            for(let i=0; i<particleCount; i++) {
-                const c = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-                c.setAttribute("r", Math.random() * 2 + 1);
-                // Distribute randomly across the roughly 1200x500 area
-                c.setAttribute("cx", Math.random() * 1264);
-                c.setAttribute("cy", Math.random() * 525);
-                c.classList.add('shimmer-particle');
-                // Randomize animation delay
-                c.style.animationDelay = (Math.random() * 2) + "s";
-                container.appendChild(c);
-            }
+            // No more heavy particle generation JS needed
         }
 
         // --- POPUP ---
@@ -887,18 +867,14 @@
                 if (Math.abs(currentVelocity) < 0.1 && !isAnyHovered) angle += 0.05; 
             }
 
-            // Calculation for spacing
             const count = predictions.length;
-            // Spacing Multiplier: 2% gap implies roughly 1.02 multiplier on width per item in perimeter
-            const spacingMultiplier = 1.05; // Slightly more for comfort
+            const spacingMultiplier = 1.05; 
             
-            // Get current CSS width in pixels
             const cardElem = document.querySelector('.card-wrapper');
-            let cardWidth = 300; // Default fallback
+            let cardWidth = 300; 
             if(cardElem) {
                 cardWidth = cardElem.offsetWidth;
             } else {
-                 // Estimation if not rendered yet
                  const compStyles = getComputedStyle(document.documentElement);
                  const h = window.innerHeight * parseFloat(compStyles.getPropertyValue('--card-height')) / 100;
                  const r = parseFloat(compStyles.getPropertyValue('--card-ratio'));
