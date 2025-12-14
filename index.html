@@ -2,9 +2,12 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Бизнес Предсказание 2026</title>
     
+    <!-- Telegram Web App Script -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -32,6 +35,9 @@
             --card-width: calc(var(--card-height) / var(--card-ratio));
             
             --btn-radius: 96px;
+            
+            /* Safe Area for Telegram Mini Apps on iPhone */
+            --safe-area-bottom: env(safe-area-inset-bottom, 20px);
         }
 
         body, html {
@@ -39,7 +45,6 @@
             width: 100%; height: 100%;
             overflow: hidden;
             background-color: var(--color-bg);
-            /* Fallback font stack */
             font-family: 'SB Sans Display', 'SB Sans Regular', 'Manrope', 'Montserrat', sans-serif;
             color: white;
             user-select: none;
@@ -60,9 +65,7 @@
             height: 100%;
             position: absolute;
             top: 0; left: 0;
-            /* Performance Optimization: Use CSS blur instead of SVG filter */
             filter: blur(80px); 
-            /* Force hardware acceleration */
             transform: translate3d(0, 0, 0);
         }
 
@@ -76,7 +79,7 @@
             left: calc(50% - var(--size) / 2);
             transform-origin: center center;
             opacity: 1;
-            will-change: transform, opacity; /* Hint to browser */
+            will-change: transform, opacity;
         }
 
         .g1 {
@@ -256,15 +259,13 @@
             z-index: 2;
             top: 48%; left: 50%;
             transform: translate(-50%, -50%);
-            /* Полностью отключаем взаимодействие */
             pointer-events: none; 
-            opacity: 0.6; /* Slight transparency for watermark feel */
+            opacity: 0.6; 
         }
         
         .svg-2026-path {
-            /* Темнее фона (фон #001a16), значит почти черный */
             fill: #000a08; 
-            stroke: rgba(255, 255, 255, 0.03); /* Очень тонкая обводка для читаемости */
+            stroke: rgba(255, 255, 255, 0.03); 
             stroke-width: 1px;
         }
 
@@ -355,7 +356,7 @@
         }
         
         .intro-disclaimer {
-            position: absolute; bottom: 30px;
+            position: absolute; bottom: calc(30px + var(--safe-area-bottom));
             font-family: 'SB Sans Display', 'Manrope', sans-serif;
             font-size: 11px;
             color: rgba(255,255,255,0.5);
@@ -372,7 +373,7 @@
         #scene-vortex.active { opacity: 1; pointer-events: auto; }
         
         .carousel-pivot {
-            position: absolute; top: 50%; left: 50%;
+            position: absolute; top: 45%; left: 50%; /* Чуть выше центра для баланса на мобильном */
             width: 0; height: 0;
             transform-style: preserve-3d;
             transform: translate(-50%, -50%) rotateX(0deg) !important; 
@@ -498,13 +499,17 @@
 
         /* --- UI CONTROLS --- */
         .controls-container {
-            position: absolute; bottom: 8%;
+            position: absolute; 
+            bottom: calc(8% + var(--safe-area-bottom));
             display: flex; flex-direction: column; align-items: center; gap: 10px;
             opacity: 0.9; transition: opacity 0.3s; z-index: 30;
+            width: 100%;
         }
 
         #final-ui {
-            position: absolute; bottom: 8%; z-index: 100;
+            position: absolute; 
+            bottom: calc(8% + var(--safe-area-bottom));
+            z-index: 100;
             display: none; flex-direction: row; gap: 15px;
             justify-content: center; width: 100%;
             opacity: 0; animation: fadeInUI 1.5s forwards 0.5s; 
@@ -613,7 +618,6 @@
                     <!-- 2026 STATIC & DARK -->
                     <div class="svg-2026-container">
                         <svg viewBox="0 0 1264 525" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <!-- Paths filled directly with dark color, no masking logic -->
                             <path class="svg-2026-path" d="M809.035 60.0586C834.708 60.0586 856.377 69.0082 874.041 86.9082C891.941 104.808 900.891 126.948 900.891 153.327C900.891 194.309 862.383 253.662 785.365 331.386C758.751 358.236 738.142 379.434 723.539 394.979C738.613 395.921 753.098 396.745 766.994 397.451C780.89 397.922 794.198 398.157 806.916 398.157C842.009 398.157 867.446 396.98 883.227 394.625C899.242 392.034 910.194 387.912 916.082 382.26C923.619 374.723 931.392 364.477 939.399 351.523C947.407 338.569 952.236 332.093 953.885 332.093C955.298 332.093 956.947 332.681 958.831 333.858C960.715 335.036 961.657 335.979 961.657 336.686C961.656 337.079 959.529 340.993 955.285 348.433L957.419 346.578L878.282 524.637C879.869 516.699 892.859 453.979 874.937 434.376C870.168 433.313 863.864 432.78 856.023 432.78H847.19C789.722 432.78 734.373 434.075 681.145 436.666C673.372 436.902 668.662 437.02 667.013 437.02H662.066C659.711 437.02 658.298 436.666 657.827 435.96C657.356 435.489 657.12 434.193 657.12 432.073C657.121 429.718 663.951 423.83 677.611 414.409C691.272 404.753 705.168 392.976 719.3 379.08C764.285 335.508 798.201 295.468 821.047 258.961C843.893 222.219 855.316 189.48 855.316 160.746C855.316 136.958 848.839 117.881 835.886 103.514C823.167 89.1465 806.209 81.9629 785.012 81.9629C759.339 81.9629 732.018 96.3301 703.048 125.064C697.16 130.952 693.627 133.896 692.449 133.896C691.272 133.896 689.388 132.718 686.797 130.363C684.442 128.008 683.264 126.359 683.264 125.417C683.264 117.88 696.807 105.162 723.893 87.2617C751.214 69.1263 779.594 60.0586 809.035 60.0586ZM151.915 60.0586C177.587 60.0586 199.256 69.0082 216.921 86.9082C234.821 104.808 243.77 126.948 243.771 153.327C243.771 194.309 205.262 253.662 128.244 331.386C101.63 358.236 81.0216 379.434 66.4189 394.979C81.4924 395.921 95.9771 396.745 109.873 397.451C123.769 397.922 137.077 398.157 149.795 398.157C184.888 398.157 210.326 396.98 226.106 394.625C242.122 392.034 253.074 387.912 258.962 382.26C266.499 374.723 274.271 364.477 282.279 351.523C290.287 338.569 295.116 332.093 296.765 332.093C298.178 332.093 299.826 332.681 301.71 333.858C303.594 335.036 304.536 335.979 304.536 336.686C304.534 337.108 302.084 341.59 297.191 350.137L304.536 343.751L225.399 521.81C226.845 514.577 237.758 461.864 226.129 437.726C225.067 437.059 224 436.471 222.927 435.96C217.981 433.84 209.972 432.78 198.902 432.78H190.07C132.602 432.78 77.2525 434.075 24.0234 436.666C16.2519 436.902 11.5416 437.02 9.89258 437.02H4.94629C2.59138 437.02 1.1783 436.666 0.707031 435.96C0.235977 435.489 0 434.193 0 432.073C0.000669264 429.718 6.83131 423.83 20.4912 414.409C34.1516 404.753 48.0472 392.976 62.1787 379.08C107.164 335.508 141.081 295.468 163.927 258.961C186.773 222.219 198.196 189.48 198.196 160.746C198.196 136.958 191.719 117.881 178.765 103.514C166.046 89.1466 149.089 81.963 127.892 81.9629C102.219 81.9629 74.8976 96.3301 45.9277 125.064C40.0398 130.952 36.5068 133.896 35.3291 133.896C34.1515 133.896 32.2675 132.718 29.6768 130.363C27.3215 128.008 26.1436 126.359 26.1436 125.417C26.1439 117.88 39.6864 105.161 66.7715 87.2617C94.0926 69.1261 122.474 60.0586 151.915 60.0586ZM1211.08 0C1212.73 2.72746e-05 1214.02 0.588275 1214.97 1.76562C1216.14 2.70773 1216.73 4.12164 1216.73 6.00586C1216.73 7.89042 1209.31 13.3075 1194.48 22.2568C1179.87 31.2068 1166.09 40.7455 1153.14 50.873C1116.87 78.4297 1089.67 109.52 1071.53 144.143C1053.39 178.529 1044.33 216.567 1044.33 258.255C1044.33 304.889 1055.75 343.987 1078.6 375.548C1101.44 406.873 1128.65 422.535 1160.21 422.535C1181.64 422.535 1198.95 415.116 1212.14 400.278C1225.33 385.205 1231.92 365.184 1231.92 340.219C1231.92 307.176 1222.9 277.94 1204.85 252.509C1196.21 266.473 1180.79 269.937 1180.7 269.957C1180.75 269.781 1194.11 222.683 1141.49 210.278C1138.82 209.997 1136.1 209.855 1133.36 209.854C1118.05 209.854 1101.44 215.507 1083.54 226.812C1080.72 228.461 1079.07 229.285 1078.6 229.285C1078.12 229.285 1077.18 228.461 1075.77 226.812C1074.59 225.164 1074 224.104 1074 223.633C1074 220.335 1084.37 212.916 1105.09 201.375C1125.82 189.599 1144.66 183.711 1161.62 183.711C1190.12 183.711 1214.26 195.604 1234.04 219.393C1253.83 242.945 1263.72 272.151 1263.72 307.009C1263.72 345.4 1251.94 377.314 1228.39 402.751C1204.84 427.952 1175.16 440.553 1139.36 440.553C1099.79 440.553 1066.7 424.773 1040.09 393.212C1017.66 366.18 1004.77 332.765 1001.41 292.966C982.988 223.427 998.667 143.72 1027.39 114.596C1027.34 114.712 1004.42 158.173 1016.62 184.661C1021.3 172.331 1027 160.12 1033.73 148.028C1055.87 107.989 1086.49 73.8374 1125.58 45.5742C1141.6 34.0334 1159.03 23.5519 1177.87 14.1309C1196.71 4.70994 1207.78 0 1211.08 0ZM488.247 68.8906C532.997 68.8907 569.503 85.7318 597.767 119.412C601.084 123.366 604.205 127.456 607.134 131.679C662.378 195.511 673.243 301.832 648.761 343.72C648.79 343.533 661.253 291.612 639.362 270.387C635.846 314.931 620.687 353.164 593.881 385.086C563.262 421.593 526.638 439.847 484.008 439.847C441.849 439.847 406.519 422.77 378.021 388.619C367.281 375.552 358.584 361.176 351.925 345.49C309.113 277.737 307.815 180.199 333.801 142.405C333.772 142.545 316.934 195.253 338.902 217.406C344.865 181.857 358.964 150.723 381.2 124.005C411.819 87.2626 447.501 68.8906 488.247 68.8906ZM479.768 81.9629C450.327 81.963 426.421 96.3302 408.05 125.064C389.679 153.799 380.493 191.954 380.493 239.53C380.493 293.937 391.21 338.805 412.643 374.134C434.076 409.463 460.808 427.128 492.84 427.128C524.165 427.128 549.013 412.761 567.384 384.026C585.99 355.292 595.294 316.077 595.294 266.381C595.294 212.21 584.46 167.93 562.791 133.543C541.123 99.1562 513.448 81.9629 479.768 81.9629ZM486.258 148.606C486.501 146.209 489.995 146.208 490.237 148.606L497.706 222.389C498.854 233.732 507.824 242.701 519.167 243.85L592.949 251.318C595.347 251.561 595.347 255.055 592.949 255.298L519.167 262.767C507.824 263.915 498.854 272.885 497.706 284.228L490.237 358.01C489.995 360.408 486.501 360.408 486.258 358.01L478.788 284.228C477.64 272.885 468.671 263.915 457.328 262.767L383.546 255.298C381.148 255.055 381.148 251.561 383.546 251.318L457.328 243.85C468.671 242.701 477.64 233.731 478.788 222.389L486.258 148.606Z" />
                         </svg>
                     </div>
@@ -751,9 +755,14 @@
         let state = 'intro';
 
         function init() {
+            // Telegram Mini App Initialization
+            if (window.Telegram && window.Telegram.WebApp) {
+                window.Telegram.WebApp.ready();
+                window.Telegram.WebApp.expand();
+            }
+
             createCards();
             initTrail(); // Cursor trail
-            // No more heavy particle generation JS needed
         }
 
         // --- POPUP ---
@@ -773,6 +782,7 @@
             predictions.forEach((item, index) => {
                 const wrapper = document.createElement('div');
                 wrapper.className = 'card-wrapper';
+                // Note: Added robust error handling for images to support preview without local files
                 wrapper.innerHTML = `
                     <div class="card">
                         <div class="card-face face-front">
@@ -1047,11 +1057,28 @@
         }
 
         function shareResult() {
-            const data = { title: 'Мое предсказание 2026', text: 'Посмотри, что ждет тебя в бизнесе!', url: window.location.href };
-            if (navigator.share) {
-                navigator.share(data).catch(console.error);
+            // Find the visible result text
+            const title = document.querySelector('.card-wrapper[style*="z-index: 100"] .pred-title')?.innerText || 'Мое предсказание';
+            const shareText = `🔮 Мое бизнес-предсказание на 2026 год: ${title}. Узнай своё будущее!`;
+            const shareUrl = window.location.href;
+
+            if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initData.length > 0) {
+                // We are inside Telegram!
+                // Best way: Open the share dialog
+                const tgShareUrl = `https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareText)}`;
+                window.Telegram.WebApp.openTelegramLink(tgShareUrl);
+            } else if (navigator.share) {
+                // Mobile browser fallback
+                navigator.share({
+                    title: 'Бизнес Предсказание 2026',
+                    text: shareText,
+                    url: shareUrl
+                }).catch(console.error);
             } else {
-                navigator.clipboard.writeText(window.location.href).then(() => { alert('Ссылка скопирована!'); });
+                // Desktop browser fallback
+                navigator.clipboard.writeText(shareText + " " + shareUrl).then(() => { 
+                    alert('Текст предсказания скопирован! Вы можете отправить его в чат.'); 
+                });
             }
         }
 
