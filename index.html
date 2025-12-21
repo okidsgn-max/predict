@@ -37,6 +37,7 @@
             --btn-radius: 96px;
             
             /* Safe Area for Telegram Mini Apps on iPhone */
+            --safe-area-top: env(safe-area-inset-top, 20px);
             --safe-area-bottom: env(safe-area-inset-bottom, 20px);
         }
 
@@ -163,6 +164,10 @@
             align-items: center; justify-content: center;
             perspective: 1000px; 
             overflow: hidden;
+            /* Padding for safe areas */
+            padding-top: var(--safe-area-top);
+            padding-bottom: var(--safe-area-bottom);
+            box-sizing: border-box;
         }
 
         /* --- BUTTONS --- */
@@ -290,19 +295,7 @@
             transform: rotate(21deg);
         }
         
-        .star-decor {
-            position: absolute;
-            width: 50px; height: 50px;
-            z-index: 3;
-            animation: pulseStar 3s infinite;
-        }
-        .star-1 { left: 12%; top: 25%; }
-        .star-2 { right: 18%; bottom: 25%; }
-
-        @keyframes pulseStar {
-            0%, 100% { filter: drop-shadow(0 0 2px rgba(4, 201, 176, 0.4)); transform: scale(1); }
-            50% { filter: drop-shadow(0 0 12px rgba(4, 201, 176, 0.9)); transform: scale(1.15); }
-        }
+        /* REMOVED STAR DECOR CSS */
 
         .intro-content-layer {
             position: relative; z-index: 10;
@@ -316,10 +309,16 @@
             pointer-events: auto;
         }
 
+        /* --- UPDATED TITLES ALIGNMENT --- */
         .main-title-group {
             position: relative;
             margin-bottom: 50px;
-            display: flex; flex-direction: column; align-items: center;
+            display: flex; flex-direction: column; 
+            width: 100%;
+            /* Changed for 12-column layout width */
+            max-width: 1200px; 
+            padding: 0 30px; /* Padding for mobile edges */
+            box-sizing: border-box;
             text-shadow: 0 10px 30px rgba(0,0,0,0.8);
             pointer-events: none;
         }
@@ -327,24 +326,29 @@
         .h1-business {
             font-family: 'Playfair Display', serif;
             font-weight: 600;
-            font-size: clamp(50px, 9vw, 130px);
+            font-size: clamp(50px, 12vw, 130px);
             color: white;
             line-height: 1.0;
             margin: 0;
+            
+            /* Align LEFT */
             align-self: flex-start;
-            margin-left: -15%;
+            text-align: left;
         }
         
         .h1-prediction {
             font-family: 'Playfair Display', serif;
             font-weight: 600;
-            font-size: clamp(50px, 9vw, 130px);
+            font-size: clamp(40px, 10vw, 130px);
             color: white;
             line-height: 1.0;
             margin: 0;
-            text-align: center;
+            margin-top: 10px;
+            
+            /* Align RIGHT */
+            align-self: flex-end;
+            text-align: right;
             text-transform: lowercase; 
-            margin-top: 5px;
         }
 
         .intro-btn-group { 
@@ -373,7 +377,7 @@
         #scene-vortex.active { opacity: 1; pointer-events: auto; }
         
         .carousel-pivot {
-            position: absolute; top: 45%; left: 50%; /* Чуть выше центра для баланса на мобильном */
+            position: absolute; top: 45%; left: 50%;
             width: 0; height: 0;
             transform-style: preserve-3d;
             transform: translate(-50%, -50%) rotateX(0deg) !important; 
@@ -461,7 +465,7 @@
             opacity: 0.9;
         }
 
-        /* --- POPUP --- */
+        /* --- POPUP (CENTERED FIX) --- */
         #popup-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(1, 20, 17, 0.85);
@@ -479,10 +483,17 @@
             border-radius: 24px;
             padding: 40px;
             max-width: 90%; width: 400px;
-            text-align: center;
+            
             position: relative;
             box-shadow: 0 0 50px rgba(0,0,0,0.8);
             transform: scale(0.9); transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            
+            /* ADDED: Flex centering ensures text and button are perfectly centered */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
         }
         #popup-overlay.open .popup-content { transform: scale(1); }
 
@@ -490,6 +501,7 @@
             font-family: 'Manrope', sans-serif;
             font-size: 15px; line-height: 1.6; color: #fff;
             margin-bottom: 25px;
+            text-align: center; /* Ensures text lines are centered */
         }
         .popup-close {
             position: absolute; top: 15px; right: 15px;
@@ -541,7 +553,6 @@
 
         /* --- RESPONSIVE --- */
         @media (max-width: 1440px) {
-            .h1-business, .h1-prediction { font-size: 90px; }
             :root { --card-height: 50vh; }
         }
 
@@ -551,8 +562,18 @@
                 --card-ratio: 1.45;  
             }
             .intro-design-wrapper { flex-direction: column; }
-            .h1-business { align-self: center; margin-left: 0; font-size: 48px; }
-            .h1-prediction { font-size: 48px; }
+            
+            /* Responsive adjustments for titles */
+            .h1-business { 
+                align-self: flex-start; /* Keep left on mobile */
+                margin-left: 0; 
+                text-align: left;
+            }
+            .h1-prediction { 
+                align-self: flex-end; /* Keep right on mobile */
+                text-align: right;
+            }
+            
             .svg-2026-container { width: 100%; top: 40%; }
             .intro-btn-group { margin-top: 10px; }
             .ring-1, .ring-2 { opacity: 0.3; } 
@@ -590,6 +611,7 @@
                     Сделайте глубокий вдох. Представьте, как ваш бизнес цветёт в следующем году.<br><br>
                     Тяните карту. Подсознание уже всё знает.
                 </div>
+                <!-- Centered button by flex container -->
                 <button class="common-btn" onclick="togglePopup(false)">Понятно</button>
             </div>
         </div>
@@ -624,17 +646,6 @@
 
                     <div class="ring-shape ring-1"></div>
                     <div class="ring-shape ring-2"></div>
-                    
-                    <div class="star-decor star-1">
-                        <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M40 0C42.2963 21.0671 58.9329 37.7037 80 40C58.9329 42.2963 42.2963 58.9329 40 80C37.7037 58.9329 21.0671 42.2963 0 40C21.0671 37.7037 37.7037 21.0671 40 0Z" fill="#04C9B0"/>
-                        </svg>
-                    </div>
-                    <div class="star-decor star-2">
-                         <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M40 0C42.2963 21.0671 58.9329 37.7037 80 40C58.9329 42.2963 42.2963 58.9329 40 80C37.7037 58.9329 21.0671 42.2963 0 40C21.0671 37.7037 37.7037 21.0671 40 0Z" fill="#04C9B0"/>
-                        </svg>
-                    </div>
                 </div>
 
                 <!-- Intro Content -->
@@ -759,6 +770,9 @@
             if (window.Telegram && window.Telegram.WebApp) {
                 window.Telegram.WebApp.ready();
                 window.Telegram.WebApp.expand();
+                // Ensure colors match if needed, but we use a custom aurora theme
+                window.Telegram.WebApp.setHeaderColor('#001a16'); 
+                window.Telegram.WebApp.setBackgroundColor('#001a16');
             }
 
             createCards();
