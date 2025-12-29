@@ -1141,26 +1141,71 @@
             // Find the visible result text
             const title = document.querySelector('.card-wrapper[style*="z-index: 100"] .pred-title')?.innerText || 'Мое предсказание';
             const shareText = `🔮 Мое бизнес-предсказание на 2026 год: ${title}. Узнай своё будущее!`;
+            // NOTE: window.location.href внутри iframe вернет ссылку на github pages. 
+            // В идеале вы можете заменить это на жесткую ссылку на вашу страницу в Tilda.
+            // const shareUrl = 'https://mysite.tilda.ws/predict';
             const shareUrl = window.location.href;
 
             if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initData.length > 0) {
                 // We are inside Telegram!
-                // Best way: Open the share dialog
                 const tgShareUrl = `https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareText)}`;
                 window.Telegram.WebApp.openTelegramLink(tgShareUrl);
             } else if (navigator.share) {
-                // Mobile browser fallback
+                // Mobile browser share (Needs 'allow="web-share"' on iframe)
                 navigator.share({
                     title: 'Бизнес Предсказание 2026',
                     text: shareText,
                     url: shareUrl
-                }).catch(console.error);
-            } else {
-                // Desktop browser fallback
-                navigator.clipboard.writeText(shareText + " " + shareUrl).then(() => { 
-                    alert('Текст предсказания скопирован! Вы можете отправить его в чат.'); 
+                }).catch((error) => {
+                    console.log('Sharing failed', error);
+                    // Fallback if user cancels or it fails
+                    copyToClipboardFallback(shareText + " " + shareUrl);
                 });
+            } else {
+                // Desktop or unsupported browser
+                copyToClipboardFallback(shareText + " " + shareUrl);
             }
+        }
+
+        // Improved Clipboard Function with Fallback for iframes
+        function copyToClipboardFallback(text) {
+            // Attempt Modern API first (Needs 'allow="clipboard-write"' on iframe)
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                 navigator.clipboard.writeText(text).then(() => { 
+                    alert('Текст предсказания скопирован! Вы можете отправить его в чат.'); 
+                }).catch(err => {
+                    console.warn('Clipboard API failed, trying legacy', err);
+                    legacyCopy(text);
+                });
+            } else {
+                legacyCopy(text);
+            }
+        }
+
+        // Legacy Copy Method (Works better in some restrictive iframes)
+        function legacyCopy(text) {
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+            
+            // Ensure element is part of DOM but invisible
+            textArea.style.position = "fixed";
+            textArea.style.left = "-9999px";
+            textArea.style.top = "0";
+            document.body.appendChild(textArea);
+            
+            textArea.focus();
+            textArea.select();
+            
+            try {
+                const successful = document.execCommand('copy');
+                const msg = successful ? 'Текст предсказания скопирован! Вы можете отправить его в чат.' : 'Не удалось скопировать текст. Пожалуйста, сделайте скриншот.';
+                alert(msg);
+            } catch (err) {
+                console.error('Fallback: Oops, unable to copy', err);
+                alert('Не удалось скопировать текст. Пожалуйста, сделайте скриншот.');
+            }
+            
+            document.body.removeChild(textArea);
         }
 
         init();
